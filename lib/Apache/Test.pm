@@ -282,6 +282,7 @@ sub need_module {
                 $mod .= '.c'
             }
             next if $cfg->{modules}->{$mod};
+            next if $cfg->{modules}->{'mod_' . $mod };
             if (exists $cfg->{cmodules_disabled}->{$mod}) {
                 push @reasons, $cfg->{cmodules_disabled}->{$mod};
                 next;
