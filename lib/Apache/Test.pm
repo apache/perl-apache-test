@@ -277,7 +277,7 @@ sub need_module {
     for (@modules) {
         if (/^[a-z0-9_.]+$/) {
             my $mod = $_;
-            $mod .= '.c' unless ($mod =~ /\.c$/);
+            $mod .= '.c' unless $mod =~ /\.c$/;
             next if $cfg->{modules}->{$mod};
             $mod = 'mod_' . $mod unless $mod =~ /^mod_/;
             next if $cfg->{modules}->{$mod};
