@@ -38,7 +38,6 @@ if ($mp_gen == 1) {
 
 }
 else {
-    require Apache2;
     require ModPerl::MM;
     ModPerl::MM::WriteMakefile(
         %common_opts,

@@ -2210,8 +2210,8 @@ If for some reason you want to skip the test suite, type: skip
     {
         my %choices = ();
         my @tries = qw(httpd httpd2);
-        # Win32 uses Apache or perhaps Apache2, not apache/apache2
-        push @tries, WIN32 ? qw(Apache Apache2) : qw(apache apache2);
+        # Win32 uses Apache not apache
+        push @tries, WIN32 ? qw(Apache) : qw(apache);
         for (grep defined $_,
              map({ catfile $vars->{$_}, $vars->{target} } qw(sbindir bindir)),
              $self->default_httpd, which($vars->{target}),
