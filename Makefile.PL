@@ -171,7 +171,7 @@ sub MY::postamble {
 
     $string .= <<'EOF';
 tag :
-	svn copy . https://svn.apache.org/repos/asf/httpd/test/tags/APACHE_TEST_$(VERSION_SYM)
+	svn copy . https://svn.apache.org/repos/asf/perl/Apache-Test/tags/APACHE_TEST_$(VERSION_SYM)
 	@echo update lib/Apache/Test.pm VERSION now
 EOF
 
