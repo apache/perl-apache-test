@@ -77,6 +77,7 @@ sub get_tests {
         else {
             finddepth(sub {
                           return unless /\.(t|php)$/;
+                          return if /test-more.php$/;
                           my $t = catfile $File::Find::dir, $_;
                           my $dotslash = catfile '.', "";
                           $t =~ s:^\Q$dotslash::;
