@@ -38,6 +38,7 @@ use constant IS_APACHE_TEST_BUILD =>
 
 use constant CUSTOM_CONFIG_FILE => 'Apache/TestConfigData.pm';
 
+use lib ();
 use File::Copy ();
 use File::Find qw(finddepth);
 use File::Basename qw(dirname);
