@@ -765,18 +765,6 @@ arguments or a reference to a list.
 In case of C modules, depending on how the module name was passed it
 may pass through the following completions:
 
-=item need_min_module_version
-
-Used to require a minimum version of a module
-
-For example:
-
-  plan tests => 5, need_min_module_version(CGI => 2.81);
-
-requires C<CGI.pm> version 2.81 or higher.
-
-Currently works only for perl modules.
-
 =over
 
 =item 1 need_module 'proxy_http.c'
@@ -795,6 +783,18 @@ The I<.c> extension and I<mod_> prefix will be added before the
 lookup, turning it into I<'mod_cgi.c'>.
 
 =back
+
+=item need_min_module_version
+
+Used to require a minimum version of a module
+
+For example:
+
+  plan tests => 5, need_min_module_version(CGI => 2.81);
+
+requires C<CGI.pm> version 2.81 or higher.
+
+Currently works only for perl modules.
 
 =item need
 
