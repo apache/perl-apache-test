@@ -277,12 +277,10 @@ sub need_module {
     for (@modules) {
         if (/^[a-z0-9_.]+$/) {
             my $mod = $_;
-            unless ($mod =~ /\.c$/) {
-                $mod = 'mod_' . $mod unless $mod =~ /^mod_/;
-                $mod .= '.c'
-            }
+            $mod .= '.c' unless ($mod =~ /\.c$/);
             next if $cfg->{modules}->{$mod};
-            next if $cfg->{modules}->{'mod_' . $mod };
+            $mod = 'mod_' . $mod unless $mod =~ /^mod_/;
+            next if $cfg->{modules}->{$mod};
             if (exists $cfg->{cmodules_disabled}->{$mod}) {
                 push @reasons, $cfg->{cmodules_disabled}->{$mod};
                 next;
