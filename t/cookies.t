@@ -8,7 +8,7 @@ use Apache::TestRequest;
 use Apache::TestUtil;
 
 plan tests => 2, need [qw(CGI CGI::Cookie)],
-    need_module('mod_cgi.c'), need_lwp;
+                      need_cgi, need_lwp;
 
 Apache::TestRequest::user_agent( cookie_jar => {} );
 

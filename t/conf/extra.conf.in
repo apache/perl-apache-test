@@ -32,7 +32,7 @@
 </IfModule>
 
 
-<IfModule mod_cgi.c>
+<IfModule @CGI_MODULE@>
   ScriptAlias /cgi-bin/ "@ServerRoot@/cgi-bin/"
 
   <Directory "@ServerRoot@/cgi-bin/">
