@@ -50,7 +50,7 @@ sub configure_modperl {
 
     # sanity checking and loading the right mod_perl version
     if ($rev == 2) {
-        eval { require Apache2 && require mod_perl };
+        eval { require mod_perl2 };
     } else {
         eval { require mod_perl };
     }

@@ -1263,8 +1263,6 @@ sub generate_script {
 
     my $body = "BEGIN { eval { require blib && blib->import; } }\n";
 
-    $body .= Apache::TestConfig->modperl_2_inc_fixup;
-
     my %args = @Apache::TestMM::Argv;
     while (my($k, $v) = each %args) {
         $v =~ s/\|/\\|/g;
