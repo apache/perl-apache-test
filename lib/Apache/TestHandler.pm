@@ -86,7 +86,7 @@ sub same_interp_fixup {
     }
     elsif ($interp ne $same_interp_id) {
         # this is not the request interpreter instance
-        return Apache2::NOT_FOUND;
+        return Apache2::Const::NOT_FOUND;
     }
 
     $same_interp_counter++;
@@ -95,7 +95,7 @@ sub same_interp_fixup {
     # value
     $r->headers_out->set(Apache::TestRequest::INTERP_KEY, $id);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;
