@@ -8,6 +8,19 @@ Changes - Apache::Test change logfile
 
 =item 1.22-dev
 
+    ******************** IMPORTANT ********************
+      this version of Apache-Test does not completely
+    configure mod_perl for mod_perl versions 1.99_21 or
+    earlier.  Please read the below changes carefully.
+    ***************************************************
+
+remove Apache::TestConfig::modperl_2_inc_fixup().  Apache-Test
+is no longer Apache2.pm aware - it will not configure mod_perl
+support to look in Apache2/ automatically.  [joes]
+
+Add support for mp2's Apache:: -> Apache2:: rename [joes]
+
+
 
 =item 1.21 - March 23, 2005
 

@@ -138,8 +138,7 @@ sub generate_script {
     unlink $script if -e $script;
 
     # Start the contents of t/TEST.
-    my $body = "BEGIN { eval { require blib && blib->import; } }\n"
-      . Apache::TestConfig->modperl_2_inc_fixup;
+    my $body = "BEGIN { eval { require blib && blib->import; } }\n";
 
     # Configure the arguments for t/TEST.
     while (my($k, $v) = each %{ $self->apache_test_args }) {

@@ -38,7 +38,6 @@ if ($mp_gen == 1) {
 
 }
 else {
-    require Apache2;
     require ModPerl::MM;
     ModPerl::MM::WriteMakefile(
         %common_opts,
@@ -80,16 +79,14 @@ sub satisfy_mp_generation {
     }
     elsif ($wanted == 2) {
         #warn "Looking for mod_perl 2.0";
-        require Apache2;
-        require_mod_perl();
+        require_mod_perl2();
         if ($mod_perl::VERSION < 1.99) {
             die "You don't seem to have mod_perl 2.0 installed";
         }
         $selected = 2;
     }
     else {
-        require_mod_perl();
-        $selected = $mod_perl::VERSION >= 1.99 ? 2 : 1;
+        $selected = eval { require_mod_perl2() or require_mod_perl() };
         warn "Using $mod_perl::VERSION\n";
     }
 
@@ -99,6 +96,13 @@ sub satisfy_mp_generation {
 sub require_mod_perl {
     eval { require mod_perl };
     die "Can't find mod_perl installed\nThe error was: $@" if $@;
+    1;
+}
+
+sub require_mod_perl2 {
+    eval { require mod_perl2 };
+    die "Can't find mod_perl installed\nThe error was: $@" if $@;
+    2;
 }
 
 
@@ -149,7 +153,7 @@ EOF
 
     unless ($wanted) {
         # if still unknown try to require mod_perl.pm
-        eval { require mod_perl };
+        eval { require mod_perl2 or require mod_perl };
         unless ($@) {
             $wanted = $mod_perl::VERSION >= 1.99 ? 2 : 1;
         }
@@ -206,7 +210,7 @@ EOF
 
     unless ($wanted) {
         # if still unknown try to require mod_perl.pm
-        eval { require mod_perl };
+        eval { require mod_perl2 or require mod_perl };
         unless ($@) {
             $wanted = $mod_perl::VERSION >= 1.99 ? 2 : 1;
         }

@@ -1,6 +1,6 @@
 package TestBasic::Vhost;
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 use Apache::Test;
 
 # XXX: adjust the test that it'll work under mp1 as well
@@ -13,7 +13,7 @@ sub handler {
 
   ok 1;
 
-  return Apache::OK;
+  return Apache2::OK;
 }
 
 1;

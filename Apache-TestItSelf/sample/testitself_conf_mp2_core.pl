@@ -11,7 +11,7 @@
 );
 
 my $path = '/home/stas/httpd';
-my $common_makepl_arg = "MP_INST_APACHE2=1 MP_MAINTAINER=1";
+my $common_makepl_arg = "MP_MAINTAINER=1";
 
 @Apache::TestItSelf::Configs = ();
 for (qw(prefork worker)) {

@@ -155,12 +155,12 @@ sub test_pm_refresh {
 sub init_test_pm {
     my $r = shift;
 
-    # needed to load Apache::RequestRec::TIEHANDLE
-    eval {require Apache::RequestIO};
-    if (defined &Apache::RequestRec::TIEHANDLE) {
+    # needed to load Apache2::RequestRec::TIEHANDLE
+    eval {require Apache2::RequestIO};
+    if (defined &Apache2::RequestRec::TIEHANDLE) {
         untie *STDOUT;
         tie *STDOUT, $r;
-        require Apache::RequestRec; # $r->pool
+        require Apache2::RequestRec; # $r->pool
         require APR::Pool;
         $r->pool->cleanup_register(sub { untie *STDOUT });
     }

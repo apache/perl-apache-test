@@ -20,18 +20,18 @@ use warnings FATAL => 'all';
 use Apache::Test ();
 use Apache::TestRequest ();
 
-use Apache::Const -compile => qw(OK NOT_FOUND SERVER_ERROR);
+use Apache2::Const -compile => qw(OK NOT_FOUND SERVER_ERROR);
 
 #some utility handlers for testing hooks other than response
 #see modperl-2.0/t/hooks/TestHooks/authen.pm
 
-if ($ENV{MOD_PERL} && require mod_perl && $mod_perl::VERSION > 1.99) {
-    require Apache::RequestIO; # puts
+if ($ENV{MOD_PERL} && require mod_perl2) {
+    require Apache2::RequestIO; # puts
 }
 
 #compat with 1.xx
 my $send_http_header = Apache->can('send_http_header') || sub {};
-my $print = Apache->can('print') || Apache::RequestRec->can('puts');
+my $print = Apache2->can('print') || Apache2::RequestRec->can('puts');
 
 sub ok {
     my $r = shift;
@@ -86,7 +86,7 @@ sub same_interp_fixup {
     }
     elsif ($interp ne $same_interp_id) {
         # this is not the request interpreter instance
-        return Apache::NOT_FOUND;
+        return Apache2::NOT_FOUND;
     }
 
     $same_interp_counter++;
@@ -95,7 +95,7 @@ sub same_interp_fixup {
     # value
     $r->headers_out->set(Apache::TestRequest::INTERP_KEY, $id);
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

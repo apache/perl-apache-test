@@ -184,8 +184,6 @@ sub configure_startup_pl {
         if (-d $tlib) {
             print $fh "use lib '$tlib';\n";
         }
-        my $fixup = Apache::TestConfig->modperl_2_inc_fixup();
-        print $fh $fixup;
 
         # if Apache::Test is used to develop a project, we want the
         # project/lib directory to be first in @INC (loaded last)

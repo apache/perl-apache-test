@@ -28,10 +28,10 @@ use constant COLOR   => ($ENV{APACHE_TEST_COLOR} && -t STDOUT) ? 1 : 0;
 use constant DEFAULT_PORT => 8529;
 
 use constant IS_MOD_PERL_2       =>
-    eval { require mod_perl && $mod_perl::VERSION >= 1.99 } || 0;
+    eval { require mod_perl2 } || 0;
 
 use constant IS_MOD_PERL_2_BUILD => IS_MOD_PERL_2 &&
-    require Apache::Build && Apache::Build::IS_MOD_PERL_BUILD();
+    require Apache2::Build && Apache2::Build::IS_MOD_PERL_BUILD();
 
 use constant IS_APACHE_TEST_BUILD =>
     grep { -e "$_/lib/Apache/TestConfig.pm" } qw(Apache-Test . ..);
@@ -86,7 +86,7 @@ my %vars_to_env = (
    sbindir         => 'Apache sbin/ dir (default is apxs -q SBINDIR)',
    httpd           => 'server to use for testing (default is $bindir/httpd)',
    target          => 'name of server binary (default is apxs -q TARGET)',
-   apxs            => 'location of apxs (default is from Apache::BuildConfig)',
+   apxs            => 'location of apxs (default is from Apache2::BuildConfig)',
    startup_timeout => 'seconds to wait for the server to start (default is 60)',
    httpd_conf      => 'inherit config from this file (default is apxs derived)',
    httpd_conf_extra=> 'inherit additional config from this file',
@@ -172,10 +172,6 @@ sub passenv_makestr {
 
 sub server { shift->{server} }
 
-sub modperl_2_inc_fixup {
-    (IS_MOD_PERL_2 && !IS_MOD_PERL_2_BUILD) ? "use Apache2;\n" : '';
-}
-
 sub modperl_build_config {
 
     # we don't want to get mp2 preconfigured data in order to be able
@@ -183,9 +179,9 @@ sub modperl_build_config {
     return undef if $ENV{APACHE_TEST_INTERACTIVE_CONFIG_TEST};
 
     eval {
-        require Apache::Build;
+        require Apache2::Build;
     } or return undef;
-    return Apache::Build->build_config;
+    return Apache2::Build->build_config;
 }
 
 sub new_test_server {
@@ -2214,8 +2210,8 @@ If for some reason you want to skip the test suite, type: skip
     {
         my %choices = ();
         my @tries = qw(httpd httpd2);
-        # Win32 uses Apache or perhaps Apache2, not apache/apache2
-        push @tries, WIN32 ? qw(Apache Apache2) : qw(apache apache2);
+        # Win32 uses Apache not apache
+        push @tries, WIN32 ? qw(Apache) : qw(apache);
         for (grep defined $_,
              map({ catfile $vars->{$_}, $vars->{target} } qw(sbindir bindir)),
              $self->default_httpd, which($vars->{target}),

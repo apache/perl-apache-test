@@ -37,7 +37,6 @@ sub generate_script {
 
     my $content = join "\n",
         "BEGIN { eval { require blib && blib->import; } }",
-        Apache::TestConfig->modperl_2_inc_fixup,
         Apache::TestConfig->perlscript_header,
         "use $class;",
         "$class->new(\@ARGV)->run;";
