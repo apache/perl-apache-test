@@ -14,8 +14,8 @@ Instructions for Apache-Test Release Manager
 
 2. once confident that the package is good, upload a release candidate
    to perl.apache.org/~username and post 24 hour-ish candidate alert
-   to the httpd-test/modperl/dev list (may be longer to give most people 
-   a chance to catch up). no need to tag this package
+   to the httpd-test/modperl/dev/test-dev listis (may be longer to give
+   most people a chance to catch up). no need to tag this package
 
   a. if problems are detected during stage 2, repeat stages 1 and 2.
 
