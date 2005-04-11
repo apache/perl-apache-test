@@ -16,10 +16,10 @@ Instructions for Apache-Test Release Manager
    to perl.apache.org/~username and post 24 hour-ish candidate alert
    to the various lists
 
-     o test-dev@perl.apache.org
-     o test-dev@httpd.apache.org
-     o dev@perl.apache.org
-     o modperl@perl.apache.org
+     o test-dev/perl.apache.org
+     o test-dev/httpd.apache.org
+     o dev perl/apache.org
+     o modperl/perl.apache.org
 
    (or maybe longer to give most people a chance to catch up). no need
    to tag this package
