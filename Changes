@@ -6,7 +6,7 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.22-dev
+=item 1.22
 
     ******************** IMPORTANT ********************
       this version of Apache-Test does not completely
