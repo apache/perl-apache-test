@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.23-dev
 
+tweaks to Apache::TestClient to better deal with corrupted responses
+when LWP is not available. [Stas]
+
+
 
 =item 1.22
 

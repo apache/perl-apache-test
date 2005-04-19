@@ -74,6 +74,7 @@ sub request {
         }, 'Apache::TestClientRequest'),
         headers_as_string => '',
         method => $method,
+        code   => -1, # unknown
     };
 
     my($response_line, $header_term);
@@ -85,9 +86,9 @@ sub request {
         $res->{headers_as_string} .= $_;
         if (m:^(HTTP/\d+\.\d+)[ \t]+(\d+)[ \t]*(.*?)$eol:io) {
             $res->{protocol} = $1;
-            $res->{code} = $2;
-            $res->{message} = $3;
-            $response_line = 1;
+            $res->{code}     = $2;
+            $res->{message}  = $3;
+            $response_line   = 1;
         }
         elsif (/^([a-zA-Z0-9_\-]+)\s*:\s*(.*?)$eol/o) {
             $res->{headers}->{lc $1} = $2;
@@ -143,6 +144,7 @@ for my $header (@headers) {
 
 sub is_success {
     my $code = shift->{code};
+    return 0 unless defined $code && $code;
     $code >= 200 && $code < 300;
 }
 
