@@ -111,7 +111,7 @@ sub module2url {
     my $module   = shift;
     my $opt      = shift || {};
     my $scheme   = $opt->{scheme} || 'http';
-    my $path     = $opt->{path}   || module2path($module);
+    my $path     = exists $opt->{path} ? $opt->{path} : module2path($module);
 
     module($module);
 
