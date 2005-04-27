@@ -180,16 +180,19 @@ sub do_request {
 
 sub hostport {
     my $config = shift || Apache::Test::config();
-    local $config->{vars}->{scheme} =
-      $Apache::TestRequest::Scheme || $config->{vars}->{scheme};
+    my $vars = $config->{vars};
+    local $vars->{scheme} =
+        $Apache::TestRequest::Scheme || $vars->{scheme};
     my $hostport = $config->hostport;
 
+    my $default_hostport = join ':', $vars->{servername}, $vars->{port};
     if (my $module = $Apache::TestRequest::Module) {
-        $hostport = $config->{vhosts}->{$module}->{hostport}
-          unless $module eq 'default';
+        $hostport = $module eq 'default'
+            ? $default_hostport
+            : $config->{vhosts}->{$module}->{hostport};
     }
 
-    $hostport;
+    $hostport || $default_hostport;
 }
 
 sub resolve_url {
@@ -268,9 +271,7 @@ sub vhost_socket {
     local $Apache::TestRequest::Module = $module if $module;
 
     my $hostport = hostport(Apache::Test::config());
-    die "can't find hostport for '$module',\n",
-        "make sure that vhost_socket() was passed a valid module name"
-            unless defined $hostport;
+
     my($host, $port) = split ':', $hostport;
     my(%args) = (PeerAddr => $host, PeerPort => $port);
 
