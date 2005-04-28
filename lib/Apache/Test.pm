@@ -56,11 +56,9 @@ my @testmore;
 sub import {
     my $class = shift;
 
-    # once Test::More always Test::More until plan() is called
-    if (($_[0] and $_[0] =~ m/^-withtestmore/) || @testmore) {
-        # special hoops for Test::More support
+# XXX: we need to bundle Test::More in the distro
 
-        $real_plan = eval { 
+        $real_plan = eval {
 
             require Test::More; 
 
@@ -80,15 +78,6 @@ sub import {
         # clean up arguments to export_to_level
         shift;
         @EXPORT = (@test_more_exports, @Test::More::EXPORT);
-    }
-    else {
-        # the default - Test.pm support
-
-        require Test;
-        Test->import(qw(ok skip));
-        @testmore = ();               # reset, just in case.
-        $real_plan = \&Test::plan;
-    }
 
     $class->export_to_level(1, undef, @_ ? @_ : @EXPORT);
 }
