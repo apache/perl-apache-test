@@ -17,6 +17,10 @@ package Apache::Test;
 use strict;
 use warnings FATAL => 'all';
 
+# must be run first, so that Test::Builder will be threads-aware
+BEGIN { use Config; require threads if $] >= 5.008 && $Config{useithreads}}
+use Test::Builder;
+
 use Exporter ();
 use Config;
 use Apache::TestConfig ();
@@ -56,10 +60,7 @@ my @testmore;
 sub import {
     my $class = shift;
 
-# XXX: we need to bundle Test::More in the distro
-
         $real_plan = eval {
-
             require Test::More; 
 
             no warnings qw(numeric);
@@ -495,8 +496,13 @@ for my $func (@have) {
 
 package Apache::TestToString;
 
+use Config;
 sub TIEHANDLE {
     my $string = "";
+    if ($] >= 5.008 && $Config{useithreads} && $INC{'threads.pm'}) {
+        require threads::shared;
+        &threads::shared::share(\$string);
+    }
     bless \$string;
 }
 
@@ -519,6 +525,22 @@ sub finish {
     untie *STDOUT;
     $s;
 }
+
+package Apache::TestToStringRequest;
+
+sub new {
+    my($class, $r) = @_;
+    die '$r is required' unless $r;
+    Apache::TestToString->start;
+    return bless \$r, __PACKAGE__;
+}
+
+sub DESTROY {
+    my $self = shift;
+    $$self->print(Apache::TestToString->finish);
+}
+
+
 
 1;
 __END__
