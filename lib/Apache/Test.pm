@@ -17,10 +17,6 @@ package Apache::Test;
 use strict;
 use warnings FATAL => 'all';
 
-# must be run first, so that Test::Builder will be threads-aware
-BEGIN { use Config; require threads if $] >= 5.008 && $Config{useithreads}}
-use Test::Builder;
-
 use Exporter ();
 use Config;
 use Apache::TestConfig ();
@@ -60,7 +56,12 @@ my @testmore;
 sub import {
     my $class = shift;
 
-        $real_plan = eval {
+    # once Test::More always Test::More until plan() is called
+    if (($_[0] and $_[0] =~ m/^-withtestmore/) || @testmore) {
+        # special hoops for Test::More support
+
+        $real_plan = eval { 
+
             require Test::More; 
 
             no warnings qw(numeric);
@@ -79,6 +80,15 @@ sub import {
         # clean up arguments to export_to_level
         shift;
         @EXPORT = (@test_more_exports, @Test::More::EXPORT);
+    }
+    else {
+        # the default - Test.pm support
+
+        require Test;
+        Test->import(qw(ok skip));
+        @testmore = ();               # reset, just in case.
+        $real_plan = \&Test::plan;
+    }
 
     $class->export_to_level(1, undef, @_ ? @_ : @EXPORT);
 }
@@ -496,13 +506,8 @@ for my $func (@have) {
 
 package Apache::TestToString;
 
-use Config;
 sub TIEHANDLE {
     my $string = "";
-    if ($] >= 5.008 && $Config{useithreads} && $INC{'threads.pm'}) {
-        require threads::shared;
-        &threads::shared::share(\$string);
-    }
     bless \$string;
 }
 
@@ -525,22 +530,6 @@ sub finish {
     untie *STDOUT;
     $s;
 }
-
-package Apache::TestToStringRequest;
-
-sub new {
-    my($class, $r) = @_;
-    die '$r is required' unless $r;
-    Apache::TestToString->start;
-    return bless \$r, __PACKAGE__;
-}
-
-sub DESTROY {
-    my $self = shift;
-    $$self->print(Apache::TestToString->finish);
-}
-
-
 
 1;
 __END__
