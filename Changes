@@ -19,7 +19,7 @@ when LWP is not available. [Stas]
 
 
 
-=item 1.22
+=item 1.22 - April 14, 2005
 
     ******************** IMPORTANT ********************
       this version of Apache-Test does not completely
