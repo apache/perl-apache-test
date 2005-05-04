@@ -78,4 +78,4 @@ Instructions for Apache-Test Release Manager
      command.
 
   d. commit Changes
-     % svn ci -m "start 1.24-dev cycle" Changes RELEASE lib/Apache/Test.pm
+     % svn ci -m "start 1.25-dev cycle" Changes RELEASE lib/Apache/Test.pm
