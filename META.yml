@@ -12,5 +12,7 @@ no_index:
     package:
         - HTTP::Request::Common
         - warnings
+        - TestMore::testmorepm
+        - TestMore::testpm
     directory:
         - Apache-TestItSelf
