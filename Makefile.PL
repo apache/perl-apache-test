@@ -71,6 +71,7 @@ WriteMakefile(
     VERSION   => $VERSION,
     PREREQ_PM => \%prereq,
     NO_META   => $no_meta,
+    DIR       => [get_sub_dirs()],
     dist      => {
         COMPRESS => 'gzip -9f', SUFFIX => 'gz',
     },
@@ -223,3 +224,22 @@ sub add_Apache__test_target {
         $string;
     };
 }
+
+# which sub-dirs should MakeMaker descend into
+sub get_sub_dirs {
+    my @sub_dirs = qw(Apache-TestItSelf);
+
+    # XXX: META.yml is updated to tell PAUSE to ignore Test-Simple
+    # but when A-T is bundled with mp2, this META.yml is not included
+    # need to ask Andreas to fix the multiple META.yml files issue
+
+    # XXX: automate this by checking Test-Simple/lib/Test/Simple.pm
+    my $our_version = '0.60';
+    unless (eval { require Test::Simple } &&
+            $Test::Simple::VERSION >= $our_version) {
+        push @sub_dirs, 'Test-Simple';
+    }
+
+    return @sub_dirs;
+}
+
