@@ -50,11 +50,27 @@ my %spec_apply = (
 #where to add config, default is preamble
 my %spec_postamble = map { $_, 'postamble' } qw(TypesConfig);
 
+# need to enclose the following directives into <IfModule
+# mod_foo.c>..</IfModule>, since mod_foo might be unavailable
+my %ifmodule = (
+    TypesConfig => 'mod_mime.c',
+);
+
 sub spec_add_config {
     my($self, $directive, $val) = @_;
 
     my $where = $spec_postamble{$directive} || 'preamble';
-    $self->$where($directive => $val);
+
+    if (my $ifmodule = $ifmodule{TypesConfig}) {
+        $self->postamble(<<EOI);
+<IfModule $ifmodule>
+    $directive $val
+</IfModule>
+EOI
+    }
+    else {
+        $self->$where($directive => $val);
+    }
 }
 
 # resolve relative files like Apache->server_root_relative
