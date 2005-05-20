@@ -6,7 +6,7 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.24-dev
+=item 1.24 - May 20, 2005
 
 When adding TypesConfig directives (either inherited from the global
 httpd.conf or from the locally generated mime.types) make sure to
