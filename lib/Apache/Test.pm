@@ -285,6 +285,9 @@ sub need_module {
                 push @reasons, $cfg->{cmodules_disabled}->{$mod};
                 next;
             }
+            # if the module was explicitly passed with a .c extension,
+            # do not try to eval it as a Perl module
+            return 0 if /\.c$/
         }
         die "bogus module name $_" unless /^[\w:.]+$/;
         eval "require $_";

@@ -8,6 +8,12 @@ Changes - Apache::Test change logfile
 
 =item 1.25-dev
 
+adjust need_module()/have_module() to not try to require a module if
+it was explicitly passed with a .c extension. in certain cases this
+prevents a fatal error (e.g. trying to call
+Apache::Test::have_module('mod_alias.c') from the <Perl>
+sections. [Stas]
+
 
 
 =item 1.24 - May 20, 2005
