@@ -8,6 +8,11 @@ Changes - Apache::Test change logfile
 
 =item 1.25-dev
 
+provide $Apache::TestUtil::DEBUG_OUTPUT as target for t_debug()
+statements, defaulting to STDOUT.  this allows for changing
+t_debug() to STDERR when using functions like t_write_file()
+from within handler() server-side tests.  [Geoffrey Young]
+
 adjust need_module()/have_module() to not try to require a module if
 it was explicitly passed with a .c extension. in certain cases this
 prevents a fatal error (e.g. trying to call

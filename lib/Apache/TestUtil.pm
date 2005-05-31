@@ -45,6 +45,8 @@ $VERSION = '0.01';
 
 %CLEAN = ();
 
+$Apache::TestUtil::DEBUG_OUTPUT = \*STDOUT;
+
 # 5.005's Data::Dumper has problems to dump certain datastructures
 use constant HAS_DUMPER => eval { $] >= 5.6 && require Data::Dumper; };
 use constant INDENT     => 4;
@@ -145,7 +147,8 @@ sub t_filepath_cmp ($$;$) {
     sub { @_ };
 
 sub t_debug {
-    print map {"# $_\n"} map {split /\n/} grep {defined} expand(@_);
+    my $out = $Apache::TestUtil::DEBUG_OUTPUT;
+    print $out map {"# $_\n"} map {split /\n/} grep {defined} expand(@_);
 }
 
 sub t_open_file {
@@ -497,6 +500,26 @@ C<Test::Harness>'s requirements. This function should be always used
 for debug prints, since if in the future the debug printing will
 change (e.g. redirected into a file) your tests won't need to be
 changed.
+
+the special global variable $Apache::TestUtil::DEBUG_OUTPUT can
+be used to redirect the output from t_debug() and related calls
+such as t_write_file().  for example, from a server-side test
+you would probably need to redirect it to STDERR:
+
+  sub handler {
+    plan $r, tests => 1;
+
+    local $Apache::TestUtil::DEBUG_OUTPUT = \*STDERR;
+
+    t_write_file('/tmp/foo', 'bar');
+    ...
+  }
+
+left to its own devices, t_debug() will collide with the standard
+HTTP protocol during server-side tests, resulting in a situation
+both confusing difficult to debug.  but STDOUT is left as the
+default, since you probably don't want debug output under normal
+circumstances unless running under verbose mode.
 
 This function is exported by default.
 
