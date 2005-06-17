@@ -6,7 +6,7 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.25-dev
+=item 1.25 - June 17, 2005
 
 provide $Apache::TestUtil::DEBUG_OUTPUT as target for t_debug()
 statements, defaulting to STDOUT.  this allows for changing
