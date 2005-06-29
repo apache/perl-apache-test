@@ -6,7 +6,35 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.23-dev
+=item 1.26-dev
+
+
+
+=item 1.25 - June 17, 2005
+
+provide $Apache::TestUtil::DEBUG_OUTPUT as target for t_debug()
+statements, defaulting to STDOUT.  this allows for changing
+t_debug() to STDERR when using functions like t_write_file()
+from within handler() server-side tests.  [Geoffrey Young]
+
+adjust need_module()/have_module() to not try to require a module if
+it was explicitly passed with a .c extension. in certain cases this
+prevents a fatal error (e.g. trying to call
+Apache::Test::have_module('mod_alias.c') from the <Perl>
+sections. [Stas]
+
+
+
+=item 1.24 - May 20, 2005
+
+When adding TypesConfig directives (either inherited from the global
+httpd.conf or from the locally generated mime.types) make sure to
+enclose it in <IfModule mod_mime.c>..</IfModule>, since mod_mime might
+be unavailable. [Stas]
+
+
+
+=item 1.23 - May 3, 2005
 
 Fix Apache::TestRequest::hostport to return the default host:port
 string if $Apache::TestRequest::Module is 'default' or undef [Stas]
@@ -19,7 +47,7 @@ when LWP is not available. [Stas]
 
 
 
-=item 1.22
+=item 1.22 - April 14, 2005
 
     ******************** IMPORTANT ********************
       this version of Apache-Test does not completely

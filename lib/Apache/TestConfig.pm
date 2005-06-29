@@ -1283,7 +1283,11 @@ sub generate_types_config {
             print $fh $self->types_config_template;
             close $fh;
         }
-        $self->postamble(TypesConfig => qq("$types"));
+        $self->postamble(<<EOI);
+<IfModule mod_mime.c>
+    TypesConfig "$types"
+</IfModule>
+EOI
     }
 }
 
