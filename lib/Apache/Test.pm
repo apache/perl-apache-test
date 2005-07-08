@@ -132,17 +132,19 @@ EOE
 #so Perl's Test.pm can be run inside mod_perl
 sub test_pm_refresh {
     if (@testmore) {
-        Test::Builder->reset;
+        my $builder = Test::Builder->new;
 
-        Test::Builder->output(\*STDOUT);
-        Test::Builder->todo_output(\*STDOUT);
+        $builder->reset;
+
+        $builder->output(\*STDOUT);
+        $builder->todo_output(\*STDOUT);
 
         # this is STDOUT because Test::More seems to put 
         # most of the stuff we want on STDERR, so it ends
         # up in the error_log instead of where the user can
         # see it.   consider leaving it alone based on
         # later user reports.
-        Test::Builder->failure_output(\*STDOUT);
+        $builder->failure_output(\*STDOUT);
     }
     else {
         $Test::TESTOUT = \*STDOUT;
