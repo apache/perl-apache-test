@@ -79,6 +79,7 @@ sub configure_parrot_tests {
         push @args, SetHandler => 'parrot-code';
         push @args, ParrotHandler => $module;
 
+        $self->postamble(ParrotLoad => $file);
         $self->postamble($self->location_container($module), \@args);
 
         $self->write_pm_test($module, lc $sub, map { lc } @base);
