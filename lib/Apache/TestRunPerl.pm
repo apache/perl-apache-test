@@ -49,6 +49,11 @@ sub configure_modperl {
     my $ver = $test_config->server->{version};
 
     # sanity checking and loading the right mod_perl version
+
+    # remove mod_perl.pm from %INC so that the below require()
+    # calls accurately populate $mp_ver
+    delete $INC{'mod_perl.pm'};
+
     if ($rev == 2) {
         eval { require mod_perl2 };
     } else {
