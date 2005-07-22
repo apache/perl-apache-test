@@ -184,7 +184,9 @@ sub modperl_build_config {
     # even if mod_perl2 is installed on the box
     # similarly, we shouldn't be loading mp2 if we're not
     # absolutely certain we're in a 2.X environment yet
-    if ($self->server->{rev} && $self->server->{rev} == 2) {
+    # (such as mod_perl's own build environment)
+    if (($self->server->{rev} && $self->server->{rev} == 2) ||
+        IS_MOD_PERL_2_BUILD) {
         eval {
             require Apache2::Build;
         } or return;
