@@ -176,6 +176,8 @@ sub modperl_build_config {
 
     my $self = shift;
 
+    my $server = ref $self ? $self->server : new_test_server();
+
     # we don't want to get mp2 preconfigured data in order to be able
     # to get the interactive tests running.
     return undef if $ENV{APACHE_TEST_INTERACTIVE_CONFIG_TEST};
@@ -184,9 +186,9 @@ sub modperl_build_config {
     # even if mod_perl2 is installed on the box
     # similarly, we shouldn't be loading mp2 if we're not
     # absolutely certain we're in a 2.X environment yet
-    # (such as mod_perl's own build environment)
-    if (($self->server->{rev} && $self->server->{rev} == 2) ||
-        IS_MOD_PERL_2_BUILD) {
+    # (such as mod_perl's own build or runtime environment)
+    if (($server->{rev} && $server->{rev} == 2) ||
+        IS_MOD_PERL_2_BUILD || $ENV{MOD_PERL_API_VERSION}) {
         eval {
             require Apache2::Build;
         } or return;
