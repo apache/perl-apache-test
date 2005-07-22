@@ -461,10 +461,13 @@ sub need_threads {
 
     # check APR support
     my $build_config = Apache::TestConfig->modperl_build_config;
-    my $apr_config = $build_config->get_apr_config();
-    unless ($apr_config->{HAS_THREADS}) {
-        $status = 0;
-        push @SkipReasons, "Apache/APR was built without threads support";
+
+    if ($build_config) {
+        my $apr_config = $build_config->get_apr_config();
+        unless ($apr_config->{HAS_THREADS}) {
+            $status = 0;
+            push @SkipReasons, "Apache/APR was built without threads support";
+        }
     }
 
     # check Perl's useithreads
