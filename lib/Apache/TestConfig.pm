@@ -174,14 +174,24 @@ sub server { shift->{server} }
 
 sub modperl_build_config {
 
+    my $self = shift;
+
     # we don't want to get mp2 preconfigured data in order to be able
     # to get the interactive tests running.
     return undef if $ENV{APACHE_TEST_INTERACTIVE_CONFIG_TEST};
 
-    eval {
-        require Apache2::Build;
-    } or return undef;
-    return Apache2::Build->build_config;
+    # we can't do this if we're using httpd 1.3.X
+    # even if mod_perl2 is installed on the box
+    # similarly, we shouldn't be loading mp2 if we're not
+    # absolutely certain we're in a 2.X environment yet
+    if ($self->server->{rev} && $self->server->{rev} == 2) {
+        eval {
+            require Apache2::Build;
+        } or return;
+        return Apache2::Build->build_config;
+    }
+
+    return;
 }
 
 sub new_test_server {
@@ -357,7 +367,7 @@ sub httpd_config {
         # continue because the interactive config can't work with
         # mod_perl 2.0 build (by design)
         if (IS_MOD_PERL_2_BUILD){
-            my $mp2_build = modperl_build_config();
+            my $mp2_build = $self->modperl_build_config();
             # if mod_perl 2 was built against the httpd source it
             # doesn't know where to find apxs/httpd, so in this case
             # fall back to interactive config
@@ -682,7 +692,7 @@ sub default_apxs {
 
     return $self->{vars}->{apxs} if $self->{vars}->{apxs};
 
-    if (my $build_config = modperl_build_config()) {
+    if (my $build_config = $self->modperl_build_config()) {
         return $build_config->{MP_APXS};
     }
 
@@ -690,9 +700,11 @@ sub default_apxs {
 }
 
 sub default_httpd {
-    my $vars = shift->{vars};
+    my $self = shift;
 
-    if (my $build_config = modperl_build_config()) {
+    my $vars = $self->{vars};
+
+    if (my $build_config = $self->modperl_build_config()) {
         if (my $p = $build_config->{MP_AP_PREFIX}) {
             for my $bindir (qw(bin sbin)) {
                 my $httpd = catfile $p, $bindir, $vars->{target};

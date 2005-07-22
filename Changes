@@ -9,7 +9,7 @@ Changes - Apache::Test change logfile
 =item 1.26-dev
 
 make sure mp2 loading doesn't make it impossible to complete
-mp1 runs.  [Matt Sergeant]
+mp1 runs.  [Matt Sergeant, Geoffrey Young]
 
 add Apache::TestConfigParrot and Apache::TestRunParrot to
 support mod_parrot server-side testing [Geoffrey Young]
