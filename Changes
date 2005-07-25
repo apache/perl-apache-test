@@ -6,7 +6,11 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.26
+=item 1.27-dev
+
+
+
+=item 1.26 - July 25, 2005
 
 make sure mp2 loading doesn't make it impossible to complete
 mp1 runs.  [Matt Sergeant, Geoffrey Young]
