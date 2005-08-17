@@ -1549,7 +1549,7 @@ sub generate_httpd_conf {
 
     for my $name (qw(user group)) { #win32/cygwin do not support
         if ($vars->{$name}) {
-            print $out "\u$name    $vars->{$name}\n";
+            print $out qq[\u$name    "$vars->{$name}"\n];
         }
     }
 
