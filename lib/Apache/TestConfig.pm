@@ -1197,6 +1197,8 @@ sub parse_vhost {
         }
     }
 
+    $self->{vars}->{$module . '_port'} = $port;
+
     #there are two ways of building a vhost
     #first is when we parse test .pm and .c files
     #second is when we scan *.conf.in
