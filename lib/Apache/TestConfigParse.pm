@@ -351,11 +351,11 @@ sub inherit_config {
                 $file = $default_conf;
             }
             else {
-              # try a little harder
-              if (my $root = $self->{httpd_defines}->{HTTPD_ROOT}) {
-                  debug "using HTTPD_ROOT to resolve $default_conf";
-                  $file = catfile $root, $default_conf;
-              }
+                # try a little harder
+                if (my $root = $self->{httpd_defines}->{HTTPD_ROOT}) {
+                    debug "using HTTPD_ROOT to resolve $default_conf";
+                    $file = catfile $root, $default_conf;
+                }
             }
         }
     }
