@@ -8,6 +8,9 @@ Changes - Apache::Test change logfile
 
 =item 1.27-dev
 
+fall back on using httpd-defined HTTPD_ROOT as the base for
+httpd.conf if all other options fail.  [Geoffrey Young]
+
 
 
 =item 1.26 - July 25, 2005
