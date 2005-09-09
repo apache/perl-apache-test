@@ -1837,7 +1837,8 @@ sub as_string {
         $command = "$httpd -V";
         $cfg .= "\n*** $command\n";
         $cfg .= qx{$command};
-    } else {
+    } 
+    else {
         $cfg .= "\n\n*** The httpd binary was not found\n";
     }
 
