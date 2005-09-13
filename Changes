@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.27-dev
 
+Add the output of ldd(unix/cygwin) and otool -L (darwin)
+for httpd to the mp2bug report script.
+[Philip M. Gollucci]
+
 fall back on using httpd-defined HTTPD_ROOT as the base for
 httpd.conf if all other options fail.  [Geoffrey Young]
 
