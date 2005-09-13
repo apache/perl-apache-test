@@ -1837,6 +1837,21 @@ sub as_string {
         $command = "$httpd -V";
         $cfg .= "\n*** $command\n";
         $cfg .= qx{$command};
+
+        my $command;
+        if (OSX) {
+            my $otool = Apache::TestConfig::which('otool');
+            $command = "$otool -L $httpd" if $otool;
+        }
+        elsif (!WIN32) {
+            my $ldd = Apache::TestConfig::which('ldd');
+            $command = "$ldd $httpd" if $ldd;
+        }
+
+        if ($command) {
+            $cfg .= "\n*** $command\n";
+            $cfg .= qx{$command};
+        }
     } 
     else {
         $cfg .= "\n\n*** The httpd binary was not found\n";
