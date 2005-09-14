@@ -1838,20 +1838,7 @@ sub as_string {
         $cfg .= "\n*** $command\n";
         $cfg .= qx{$command};
 
-        my $command;
-        if (OSX) {
-            my $otool = Apache::TestConfig::which('otool');
-            $command = "$otool -L $httpd" if $otool;
-        }
-        elsif (!WIN32) {
-            my $ldd = Apache::TestConfig::which('ldd');
-            $command = "$ldd $httpd" if $ldd;
-        }
-
-        if ($command) {
-            $cfg .= "\n*** $command\n";
-            $cfg .= qx{$command};
-        }
+        $cfg .= ldd_as_string($httpd);
     } 
     else {
         $cfg .= "\n\n*** The httpd binary was not found\n";
@@ -1866,6 +1853,27 @@ sub as_string {
     return $cfg;
 }
 
+sub ldd_as_string {
+    my $httpd = shift;
+
+    my $command;
+    if (OSX) {
+        my $otool = which('otool');
+        $command = "$otool -L $httpd" if $otool;
+    }
+    elsif (!WIN32) {
+        my $ldd = which('ldd');
+        $command = "$ldd $httpd" if $ldd;
+    }
+
+    if ($command) {
+        $cfg .= "\n*** $command\n";
+        $cfg .= qx{$command};
+    }
+
+    return $cfg;
+}
+  
 # make a string suitable for feed to shell calls (wrap in quotes and
 # escape quotes)
 sub shell_ready {
