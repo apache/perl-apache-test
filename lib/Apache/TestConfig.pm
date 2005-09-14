@@ -1866,6 +1866,7 @@ sub ldd_as_string {
         $command = "$ldd $httpd" if $ldd;
     }
 
+    my $cfg = '';
     if ($command) {
         $cfg .= "\n*** $command\n";
         $cfg .= qx{$command};
