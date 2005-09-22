@@ -1138,7 +1138,7 @@ The default scheme used is C<http>. You can override this by passing
 your preferred scheme into an optional second param. For example:
 
   $module = 'MyTestModule::TestHandler';
-  $url = Apache::TestRequest::module2uri($module, {scheme => 'https'});
+  $url = Apache::TestRequest::module2url($module, {scheme => 'https'});
 
 returns:
 
@@ -1147,7 +1147,7 @@ returns:
 You may also override the default path with a path of your own:
 
   $module = 'MyTestModule::TestHandler';
-  $url = Apache::TestRequest::module2uri($module, {path => '/foo'});
+  $url = Apache::TestRequest::module2url($module, {path => '/foo'});
 
 returns:
 
