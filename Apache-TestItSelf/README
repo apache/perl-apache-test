@@ -48,7 +48,7 @@ the normal run-time test suite.
   ~/apache.org/modperl-2.0, the following will run the tests against the
   modperl-2.0 test suite
 
-  % t/TEST -base ~/apache.org/mp2-svn \
+  % t/TEST -base ~/apache.org/modperl-2.0 \
   -config sample/testitself_conf_mp2_core.pl t/httpd_arg.t t/interactive.t
 
 
