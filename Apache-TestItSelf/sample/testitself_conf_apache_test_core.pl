@@ -2,7 +2,7 @@
 
 %Apache::TestItSelf::Config = (
     repos_type    => 'apache_test_core',
-    perl_exec     => '/home/stas/perl/5.8.5-ithread/bin/perl5.8.5',
+    perl_exec     => "/home/$ENV{USER}/perl/5.8.5-ithread/bin/perl5.8.5",
     mp_gen        => '2.0',
     httpd_gen     => '2.0',
     httpd_version => 'Apache/2.0.53-dev',
@@ -10,7 +10,7 @@
     test_verbose  => 0,
 );
 
-my $path = '/home/stas/httpd';
+my $path = "/home/$ENV{USER}/httpd";
 
 @Apache::TestItSelf::Configs = ();
 for (qw(prefork worker)) {

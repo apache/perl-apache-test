@@ -29,8 +29,8 @@ my %opts;
 # grab from @ARGV only the options that we expect
 GetOptions(\%opts, @flag_opts, (map "$_=s", @string_opts));
 
-# t/TEST -v -base /home/stas/apache.org/Apache-Test \
-# -config /home/stas/.apache-test/apache_test_config.pm
+# t/TEST -v -base /home/$ENV{USER}/apache.org/Apache-Test \
+# -config /home/$ENV{USER}/.apache-test/apache_test_config.pm
 #
 
 $Test::Harness::verbose = 1 if $opts{verbose};
