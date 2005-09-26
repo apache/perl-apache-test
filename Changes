@@ -8,6 +8,9 @@ Changes - Apache::Test change logfile
 
 =item 1.27-dev
 
+make sure that the TESTS Makefile.PL parameter is properly
+recognized ["Christopher H. Laco" <apache-test chrislaco.com>]
+
 Add the output of ldd(unix/cygwin) and otool -L (darwin)
 for httpd to the mp2bug report script.
 [Philip M. Gollucci]

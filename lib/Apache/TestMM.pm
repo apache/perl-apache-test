@@ -51,8 +51,9 @@ sub clean {
 }
 
 sub test {
-
+    my $self = shift;
     my $env = Apache::TestConfig->passenv_makestr();
+    my $tests = 'TEST_FILES = ' . (exists $self->{'test'} ? $self->{'test'}->{'TESTS'} : '') . "\n";
 
     my $preamble = Apache::TestConfig::WIN32 ? "" : <<EOF;
 PASSENV = $env
@@ -81,9 +82,8 @@ testcover :
 EOF
     }
 
-    return $preamble . <<'EOF' . $cover;
+    return $preamble . $tests . <<'EOF' . $cover;
 TEST_VERBOSE = 0
-TEST_FILES =
 
 test_clean :
 	$(FULLPERL) -I$(INST_ARCHLIB) -I$(INST_LIB) \
