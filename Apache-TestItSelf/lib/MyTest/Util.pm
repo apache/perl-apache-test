@@ -137,7 +137,7 @@ META: expand
       makepl_arg    => 'MOD_PERL=2 -libmodperl mod_perl-5.8.5-ithread.so',
   );
   
-  my $path = '/home/$ENV{USER}/httpd';
+  my $path = "/home/$ENV{USER}/httpd";
   
   @Apache::TestItSelf::Configs = (
       {
