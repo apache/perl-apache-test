@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.27-dev
 
+Prevent the config file from being overwritten
+on platforms such as WIN32 under certain conditions.
+[Randy Kobes]
+
 make sure that the TESTS Makefile.PL parameter is properly
 recognized ["Christopher H. Laco" <apache-test chrislaco.com>]
 

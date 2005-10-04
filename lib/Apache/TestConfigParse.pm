@@ -347,14 +347,16 @@ sub inherit_config {
             $file = catfile $base, $default_conf;
 
             # SERVER_CONFIG_FILE might be an absolute path
-            if (! -e $file && -e $default_conf) {
-                $file = $default_conf;
-            }
-            else {
-                # try a little harder
-                if (my $root = $self->{httpd_defines}->{HTTPD_ROOT}) {
-                    debug "using HTTPD_ROOT to resolve $default_conf";
-                    $file = catfile $root, $default_conf;
+            unless (-e $file) {
+                if (-e $default_conf) {
+                    $file = $default_conf;
+                }
+                else {
+                    # try a little harder
+                    if (my $root = $self->{httpd_defines}->{HTTPD_ROOT}) {
+                        debug "using HTTPD_ROOT to resolve $default_conf";
+                        $file = catfile $root, $default_conf;
+                    }
                 }
             }
         }
