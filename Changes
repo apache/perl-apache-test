@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.27-dev
 
+localize ScriptSock directive to always point to t/logs/cgisock
+regardless of inherited and custom mod_cgid settings
+[Geoffrey Young]
+
 Prevent the config file from being overwritten
 on platforms such as WIN32 under certain conditions.
 [Randy Kobes]

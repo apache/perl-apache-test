@@ -2559,6 +2559,10 @@ LogLevel    debug
     TransferLog @t_logs@/access_log
 </IfModule>
 
+<IfModule mod_cgid.c>
+    ScriptSock @t_logs@/cgisock
+</IfModule>
+
 ServerAdmin @ServerAdmin@
 
 #needed for http/1.1 testing
