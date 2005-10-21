@@ -6,7 +6,7 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.27-dev
+=item 1.27 - October 20, 2005
 
 localize ScriptSock directive to always point to t/logs/cgisock
 regardless of inherited and custom mod_cgid settings
