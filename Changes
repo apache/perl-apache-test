@@ -8,6 +8,12 @@ Changes - Apache::Test change logfile
 
 =item 1.28-dev
 
+Adjust Apache::TestConfig::add_inc to add lib/ in separate call to
+lib::->import at the very end of @INC manipulation to ensure it'll be
+on top of @INC. For some reason lib has changed to add directories in
+a different order than it did before. [Stas]
+
+
 
 =item 1.27 - October 20, 2005
 

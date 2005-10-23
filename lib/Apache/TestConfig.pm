@@ -1747,12 +1747,15 @@ sub add_inc {
     my $apache_test_dir = catdir $top_dir, "Apache-Test";
     unshift @dirs, $apache_test_dir if -d $apache_test_dir;
 
+    lib::->import(@dirs);
+
     if ($ENV{APACHE_TEST_LIVE_DEV}) {
+        # add lib/ in a separate call to ensure that it'll end up on
+        # top of @INC
         my $lib_dir = catdir $top_dir, "lib";
-        push @dirs, $lib_dir if -d $lib_dir;
+        lib::->import($lib_dir) if -d $lib_dir;
     }
 
-    lib::->import(@dirs);
     #print join "\n", "add_inc", @INC, "";
 }
 
