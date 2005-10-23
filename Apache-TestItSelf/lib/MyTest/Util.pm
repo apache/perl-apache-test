@@ -132,7 +132,7 @@ META: expand
       perl_exec     => "/home/$ENV{USER}/perl/5.8.5-ithread/bin/perl5.8.5",
       mp_gen        => '2.0',
       httpd_gen     => '2.0',
-      httpd_version => 'Apache/2.0.53-dev',
+      httpd_version => 'Apache/2.0.55',
       timeout       => 200,
       makepl_arg    => 'MOD_PERL=2 -libmodperl mod_perl-5.8.5-ithread.so',
   );

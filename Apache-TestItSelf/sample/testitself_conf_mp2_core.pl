@@ -5,7 +5,7 @@
     perl_exec     => "/home/$ENV{USER}/perl/5.8.7-ithread/bin/perl5.8.7",
     mp_gen        => '2.0',
     httpd_gen     => '2.0',
-    httpd_version => 'Apache/2.0.54',
+    httpd_version => 'Apache/2.0.55',
     timeout       => 900, # make test may take a long time
     test_verbose  => 0,
 );
