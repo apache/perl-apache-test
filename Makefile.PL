@@ -124,8 +124,8 @@ sub set_version {
     my $fh = Symbol::gensym();
     open $fh, 'Changes' or die "Can't open Changes: $!";
     while (<$fh>) {
-        if(/^=item.*-dev/) {
-            $VERSION .= '-dev';
+        if(/^=item.*-(dev|rc\d+)/) {
+            $VERSION .= "-$1";
             last;
         }
         last if /^=item/;
