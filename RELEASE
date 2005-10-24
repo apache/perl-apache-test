@@ -33,7 +33,7 @@ Instructions for Apache-Test Release Manager
    package to be released
 
   a. edit ./Changes:
-     - remove -rc\d+ start with -rc1
+     - remove -rc\d+
      - add release date
 
   b. rerun:
