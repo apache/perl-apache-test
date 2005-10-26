@@ -1,5 +1,8 @@
 Instructions for Apache-Test Release Manager
 
+0.  Ask the PMC to verify that you have the appropriate CPAN permissions
+    on test-dev@.
+
 1. 'make dist' - to make sure nothing is missing from the manifest,
    etc. Now test this generated package (not svn) with as many
    configurations as possible on as many platforms as possible.
