@@ -1118,9 +1118,15 @@ sub replace {
 
     s[@(\w+)@]
      [ my $key = lc $1;
-      exists $self->{vars}->{$key}
-      ? $self->{vars}->{$key}
-      : die "invalid token: \@$1\@ $file\n";
+       if ($key eq 'nextavailableport') {
+           $self->server->select_next_port;
+       }
+       elsif (exists $self->{vars}->{$key}) {
+           $self->{vars}->{$key};
+       }
+       else {
+           die "invalid token: \@$1\@ $file\n";
+       }
      ]ge;
 }
 

@@ -44,9 +44,11 @@ lib/Apache/TestUtil.pm
 lib/Bundle/ApacheTest.pm
 t/TEST.PL
 t/bad_coding.t
+t/cgi-bin/cookies.pl.PL
+t/cgi-bin/next_available_port.pl.PL
 t/conf/extra.conf.in
 t/cookies.t
-t/cgi-bin/cookies.pl.PL
+t/next_available_port.t
 t/ping.t
 t/redirect.t
 t/request.t
