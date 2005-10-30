@@ -1111,6 +1111,10 @@ sub clean {
     }
 }
 
+my %special_tokens = (
+    nextavailableport => sub { shift->server->select_next_port }
+);
+
 sub replace {
     my $self = shift;
     my $file = $Apache::TestConfig::File
@@ -1118,8 +1122,8 @@ sub replace {
 
     s[@(\w+)@]
      [ my $key = lc $1;
-       if ($key eq 'nextavailableport') {
-           $self->server->select_next_port;
+       if (my $callback = $special_tokens{$key}) {
+           $self->$callback;
        }
        elsif (exists $self->{vars}->{$key}) {
            $self->{vars}->{$key};
