@@ -2543,7 +2543,42 @@ a tty. But sometimes there is a program that can answer the prompts
 interactive config won't be skipped (if needed).
 
 
+=head1 Special Placeholders
 
+When generating configuration files from the I<*.in> templates,
+special placeholder variables get substituted. To embed a placeholder
+use the C<@foo@> syntax. For example in I<extra.conf.in> you can
+write:
+
+  Include @ServerRoot@/conf/myconfig.conf
+
+When I<extra.conf> is generated, C<@ServerRoot@> will get replaced
+with the location of the server root.
+
+Placeholders are case-insensitive.
+
+Available placeholders:
+
+=head2 Configuration Options
+
+All configuration variables that can be passed to C<t/TEST>, such as
+C<MaxClients>, C<DocumentRoot>, C<ServerRoot>, etc. To see the
+complete list run:
+
+  % t/TEST --help
+
+and you will find them in the C<configuration options> sections.
+
+=head2 NextAvailablePort
+
+Every time this placeholder is encountered it'll be replaced with the
+next available port. This is very useful if you need to allocate a
+special port, but not hardcode it. Later when running:
+
+  % t/TEST -port=select
+
+it's possible to run several concurrent test suites on the same
+machine, w/o having port collisions.
 
 =head1 AUTHOR
 
