@@ -79,6 +79,7 @@ EOF
 
 testcover :
 	@echo "Cannot run testcover action unless Devel::Cover is installed"
+	@echo "Don't forget to rebuild your Makefile after installing Devel::Cover"
 EOF
     }
 

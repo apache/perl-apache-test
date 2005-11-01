@@ -65,7 +65,9 @@ sub ACTION_testcover {
 
     unless ($self->find_module_by_name('Devel::Cover', \@INC)) {
         warn("Cannot run testcover action unless Devel::Cover "
-             . "is installed.\n");
+             . "is installed.\n" .
+             "Don't forget to rebuild your Makefile after "
+             . "installing Devel::Cover\n");
         return;
     }
 
