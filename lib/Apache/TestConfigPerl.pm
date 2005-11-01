@@ -159,7 +159,7 @@ sub startup_pl_code {
     my $serverroot = $self->{vars}->{serverroot};
 
     my $cover = <<'EOF';
-    if ($ENV{HARNESS_PERL_SWITCHES} =~ m/Devel::Cover/) {
+    if (($ENV{HARNESS_PERL_SWITCHES}||'') =~ m/Devel::Cover/) {
         eval {
             # 0.48 is the first version of Devel::Cover that can
             # really generate mod_perl coverage statistics
