@@ -145,16 +145,34 @@ EOF
     close $fh or die "close $t: $!";
 }
 
-# propogate trace overrides to the server
-sub configure_trace {
+# propogate PerlPassEnv settings to the server
+sub configure_env {
     my $self = shift;
-    $self->postamble(IfModule => 'mod_perl.c',
-                     "PerlPassEnv APACHE_TEST_TRACE_LEVEL\n");
+    $self->preamble(IfModule => 'mod_perl.c', 
+                        [ qw(PerlPassEnv APACHE_TEST_TRACE_LEVEL
+                             PerlPassEnv HARNESS_PERL_SWITCHES)
+                        ]);
 }
 
 sub startup_pl_code {
     my $self = shift;
     my $serverroot = $self->{vars}->{serverroot};
+
+    my $cover = <<'EOF';
+    if ($ENV{HARNESS_PERL_SWITCHES} =~ m/Devel::Cover/) {
+        eval {
+            # 0.48 is the first version of Devel::Cover that can
+            # really generate mod_perl coverage statistics
+            require Devel::Cover;
+            Devel::Cover->VERSION(0.48);
+
+            # this ignores coverage data for some generated files
+            Devel::Cover->import('+inc' => 't/response/',);
+
+            1;
+        } or die "Devel::Cover error: $@";
+    }
+EOF
 
     return <<"EOF";
 BEGIN {
@@ -163,6 +181,8 @@ BEGIN {
         eval { require "conf/\$file" } or
             die if grep { -e "\$_/conf/\$file" } \@INC;
     }
+
+$cover
 }
 
 1;

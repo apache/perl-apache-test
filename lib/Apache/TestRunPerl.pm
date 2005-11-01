@@ -73,10 +73,10 @@ sub configure_modperl {
         Apache::TestRun::exit_perl(0);
     }
 
-    $test_config->preamble_register(qw(configure_libmodperl));
+    $test_config->preamble_register(qw(configure_libmodperl
+                                       configure_env));
 
     $test_config->postamble_register(qw(configure_inc
-                                        configure_trace
                                         configure_pm_tests_inc
                                         configure_startup_pl
                                         configure_pm_tests));

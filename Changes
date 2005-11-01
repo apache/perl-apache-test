@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.28-dev
 
+Devel::Cover magic is now fully integrated.  no more modperl_extra.pl
+or extra.conf.in fiddling - 'make testcover' should be all you need
+to do now [Geoffrey Young]
+
 Implemented a magic @NextAvailablePort@ to be used in config files to
 automatically allocate the next available port [Stas]
 
