@@ -8,6 +8,9 @@ Changes - Apache::Test change logfile
 
 =item 1.28-dev
 
+use which("cover") to find the cover utility from Devel::Cover and run
+it only if found. [Stas]
+
 Devel::Cover magic is now fully integrated.  no more modperl_extra.pl
 or extra.conf.in fiddling - 'make testcover' should be all you need
 to do now [Geoffrey Young]

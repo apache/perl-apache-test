@@ -64,14 +64,14 @@ EOF
     if (eval { require Devel::Cover }) {
         my $atdir = File::Spec->catfile($ENV{HOME}, '.apache-test');
 
-        $cover = <<"EOF"
+        my $cover_exec = Apache::TestConfig::which("cover");
 
-testcover :
-	-\@cover -delete
-	-HARNESS_PERL_SWITCHES=-MDevel::Cover=+inc,$atdir \\
-	APACHE_TEST_EXTRA_ARGS=-one-process \$(MAKE) test
-	-\@cover
-EOF
+        my @cover = ("", "testcover :", );
+        push @cover, "\t-\@$cover_exec -delete" if $cover_exec;
+        push @cover, "\t-HARNESS_PERL_SWITCHES=-MDevel::Cover=+inc,$atdir \\",
+            "\tAPACHE_TEST_EXTRA_ARGS=-one-process \$(MAKE) test";
+        push @cover, "\t-\@$cover_exec" if $cover_exec;
+        $cover = join "\n", @cover, "";
     }
     else {
 
