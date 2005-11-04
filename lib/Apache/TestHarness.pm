@@ -111,14 +111,14 @@ sub prune {
     my($self, @tests) = @_;
     my(@new_tests, %skip_dirs);
 
-    for my $test (@tests) {
+    foreach my $test (@tests) {
         next if $test =~ /\.#/; # skip temp emacs files
         my $dir = dirname $test;
         if ($test =~ m:\Wall\.t$:) {
             unless ($self->run_t($test)) {
                 $skip_dirs{$dir} = 1;
-                @new_tests = grep { $test =~ m:\Wall\.t$: ||
-                                    not $skip_dirs{dirname $test} } @new_tests;
+                @new_tests = grep { m:\Wall\.t$: ||
+                                    not $skip_dirs{dirname $_} } @new_tests;
                 push @new_tests, $test;
             }
         }
