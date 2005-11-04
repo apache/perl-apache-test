@@ -886,9 +886,11 @@ sub warn_style_sub_ref {
 sub genwarning {
     my($self, $filename, $from_filename) = @_;
     return unless $filename;
+    my $time = scalar localtime;
     my $warning = "WARNING: this file is generated";
     $warning .= " (from $from_filename)" if defined $from_filename;
     $warning .= ", do not edit\n";
+    $warning .= "generated on $time\n";
     $warning .= calls_trace();
     return $self->warn_style_sub_ref($filename)->($warning);
 }
