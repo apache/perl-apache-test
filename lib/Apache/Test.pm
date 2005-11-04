@@ -22,6 +22,18 @@ use Exporter ();
 use Config;
 use Apache::TestConfig ();
 
+BEGIN {
+    # Apache::Test loads a bunch of mp2 stuff while getting itself
+    # together.  because we need to choose one of mp1 or mp2 to load
+    # check first (and we choose mp2) $mod_perl::VERSION == 2.0
+    # just because someone loaded Apache::Test.  This Is Bad.  so,
+    # let's try to correct for that here by removing mod_perl from
+    # %INC after the above use() statements settle in.  nobody 
+    # should be relying on us loading up mod_perl.pm anyway...
+
+    delete $INC{'mod_perl.pm'};
+}
+
 use vars qw(@ISA @EXPORT %EXPORT_TAGS $VERSION %SubTests @SkipReasons);
 
 $VERSION = '1.28';

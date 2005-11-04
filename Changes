@@ -8,6 +8,12 @@ Changes - Apache::Test change logfile
 
 =item 1.28-dev
 
+remove the mod_perl.pm entry from %INC after Apache::Test finishes
+initializing itself.  because both mp1 and mp2 share the entry,
+leaving it around means that Apache::Test might prevent later modules
+from loading the real mod_perl module they're interested in, leading
+to bad things  [Geoffrey Young]
+
 use which("cover") to find the cover utility from Devel::Cover and run
 it only if found. [Stas]
 
