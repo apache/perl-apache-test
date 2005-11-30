@@ -53,7 +53,12 @@ sub clean {
 sub test {
     my $self = shift;
     my $env = Apache::TestConfig->passenv_makestr();
-    my $tests = 'TEST_FILES = ' . (exists $self->{'test'} ? $self->{'test'}->{'TESTS'} : '') . "\n";
+
+    my $tests = "TEST_FILES =\n";
+
+    if (ref $self && exists $self->{'test'}) {
+        $tests = 'TEST_FILES = ' . $self->{'test'}->{'TESTS'} . "\n";
+    }
 
     my $preamble = Apache::TestConfig::WIN32 ? "" : <<EOF;
 PASSENV = $env
