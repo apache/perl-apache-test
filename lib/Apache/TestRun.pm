@@ -331,7 +331,7 @@ sub default_run_opts {
             $opts->{'run-tests'} = 1;
         }
         else {
-            #default is server-server run-tests stop-server
+            #default is start-server run-tests stop-server
             $opts->{$_} = 1 for @std_run;
         }
     }
