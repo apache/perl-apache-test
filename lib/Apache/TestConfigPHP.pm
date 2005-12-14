@@ -94,19 +94,21 @@ sub write_php_test {
 
     my $dir = catfile $self->{vars}->{t_dir}, lc $path;
     my $t = catfile $dir, $file;
+    my $php_t = catfile $dir, $test;
     return if -e $t;
 
-    unless (-e $t) {
-        $self->gendir($dir);
-        my $fh = $self->genfile($t);
+    # don't write out foo.t if foo.php already exists
+    return if -e $php_t;
 
-        print $fh <<EOF;
+    $self->gendir($dir);
+    my $fh = $self->genfile($t);
+
+    print $fh <<EOF;
 use Apache::TestRequest 'GET_BODY_ASSERT';
 print GET_BODY_ASSERT "/$location/$test";
 EOF
 
-        close $fh or die "close $t: $!";
-    }
+    close $fh or die "close $t: $!";
 
     # write out an all.t file for the directory
     # that will skip running all PHP test unless have_php
