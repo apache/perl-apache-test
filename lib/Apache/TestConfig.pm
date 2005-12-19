@@ -1043,10 +1043,12 @@ sub make_shebang {
     # if perlpath is longer than 62 chars, some shells on certain
     # platforms won't be able to run the shebang line, so when seeing
     # a long perlpath use the eval workaround.
+    # see: http://en.wikipedia.org/wiki/Shebang
+    # http://homepages.cwi.nl/~aeb/std/shebang/
     my $shebang = length $Config{perlpath} < 62
         ? "#!$Config{perlpath}\n"
         : <<EOI;
-#!/usr/bin/perl
+$Config{'startperl'}
     eval 'exec $Config{perlpath} -S \$0 \${1+"\$@"}'
         if \$running_under_some_shell;
 EOI
