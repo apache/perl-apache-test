@@ -75,6 +75,7 @@ my %vars_to_env = (
    t_dir           => 'the t/ test directory (default is $top_dir/t)',
    t_conf          => 'the conf/ test directory (default is $t_dir/conf)',
    t_logs          => 'the logs/ test directory (default is $t_dir/logs)',
+   t_pid_file      => 'location of the pid file (default is $t_logs/httpd.pid)',
    t_conf_file     => 'test httpd.conf file (default is $t_conf/httpd.conf)',
    src_dir         => 'source directory to look for mod_foos.so',
    serverroot      => 'ServerRoot (default is $t_dir)',
@@ -103,7 +104,7 @@ my %vars_to_env = (
 );
 
 my %filepath_conf_opts = map { $_ => 1 }
-    qw(top_dir t_dir t_conf t_logs t_conf_file src_dir serverroot
+    qw(top_dir t_dir t_conf t_logs t_pid_file t_conf_file src_dir serverroot
        documentroot bindir sbindir httpd apxs httpd_conf httpd_conf_extra
        perlpod sslca libmodperl);
 
@@ -308,6 +309,7 @@ sub new {
     $vars->{sslcaorg}     ||= 'asf';
     $vars->{t_logs}       ||= catfile $vars->{serverroot}, 'logs';
     $vars->{t_conf_file}  ||= catfile $vars->{t_conf},   'httpd.conf';
+    $vars->{t_pid_file}   ||= catfile $vars->{t_logs},   'httpd.pid';
 
     if (WINFU) {
         for (keys %$vars) {
@@ -2601,7 +2603,7 @@ Listen     0.0.0.0:@Port@
 ServerRoot   "@ServerRoot@"
 DocumentRoot "@DocumentRoot@"
 
-PidFile     @t_logs@/httpd.pid
+PidFile     @t_pid_file@
 ErrorLog    @t_logs@/error_log
 LogLevel    debug
 
