@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.28-dev
 
+If perlpath is longer than 62 chars, some shells on certain platforms
+won't be able to run the shebang line, so when seeing a long perlpath
+use the eval workaround [Mike Smith <mike@mailchannels.com>]
+
 Location of the pid file is now configurable via the command line
 -t_pid_file option [Joe Orton]
 

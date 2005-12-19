@@ -1028,8 +1028,8 @@ sub write_perlscript {
 
     my $fh = $self->genfile($file, undef, 1);
 
-    # shebang
-    print $fh "#!$Config{perlpath}\n";
+    my $shebang = make_shebang();
+    print $fh $shebang;
 
     $self->genfile_warning($file, undef, $fh);
 
@@ -1037,6 +1037,21 @@ sub write_perlscript {
 
     close $fh;
     chmod 0755, $file;
+}
+
+sub make_shebang {
+    # if perlpath is longer than 62 chars, some shells on certain
+    # platforms won't be able to run the shebang line, so when seeing
+    # a long perlpath use the eval workaround.
+    my $shebang = length $Config{perlpath} < 62
+        ? "#!$Config{perlpath}\n"
+        : <<EOI;
+#!/usr/bin/perl
+    eval 'exec $Config{perlpath} -S \$0 \${1+"\$@"}'
+        if \$running_under_some_shell;
+EOI
+
+    return $shebang;
 }
 
 sub cpfile {
