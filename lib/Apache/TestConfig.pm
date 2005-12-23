@@ -1751,7 +1751,7 @@ sub untaint_path {
     # win32 uses ';' for a path separator, assume others use ':'
     my $sep = WIN32 ? ';' : ':';
     # -T disallows relative and empty directories in the PATH
-    return join $sep, grep !/^(\.|$)/, split /$sep/, $path;
+    return join $sep, grep !m#^(?:[^/]|$)#, split /$sep/, $path;
 }
 
 sub pop_dir {
