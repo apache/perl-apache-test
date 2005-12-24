@@ -1744,14 +1744,15 @@ sub apxs {
     $self->{_apxs}{$q};
 }
 
-# Temporarily untaint PATH
+# return an untainted PATH
 sub untaint_path {
     my $path = shift;
     ($path) = ( $path =~ /(.*)/ );
     # win32 uses ';' for a path separator, assume others use ':'
     my $sep = WIN32 ? ';' : ':';
     # -T disallows relative and empty directories in the PATH
-    return join $sep, grep !m#^(?:[^/]|$)#, split /$sep/, $path;
+    return join $sep, grep File::Spec->file_name_is_absolute($_),
+        grep length($_), split /$sep/, $path;
 }
 
 sub pop_dir {
