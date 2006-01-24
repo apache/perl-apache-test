@@ -372,10 +372,10 @@ sub _need_multi {
     my @need = @_;
 
     my $rc;
-                                                                                                                             
+
     {
         local @SkipReasons;
-                                                                                                                             
+
         $rc = grep { need_module($_) } @need;
     }
 
@@ -383,7 +383,7 @@ sub _need_multi {
 
     push @SkipReasons, "cannot find one of $reason"
         unless $rc;
-                                                                                                                             
+
     return $rc;
 }
 
