@@ -348,23 +348,43 @@ sub need_min_module_version {
 }
 
 sub need_cgi {
-    need_module('cgi') || need_module('cgid');
+    return _need_multi(qw(cgi cgid));
 }
 
 sub need_php {
-    need_module('php4') || need_module('php5') || need_module('sapi_apache2.c');
+    return _need_multi(qw(php4 php5 sapi_apache2.c));
 }
 
 sub need_php4 {
-    need_module('php4') || need_module('sapi_apache2.c');
+    return _need_multi(qw(php4 php5));
 }
 
 sub need_access {
-    need_module('access') || need_module('authz_host');
+    return _need_multi(qw(access authz_host));
 }
 
 sub need_auth {
-    need_module('auth') || need_module('auth_basic');
+    return _need_multi(qw(auth auth_basic));
+}
+
+sub _need_multi {
+
+    my @need = @_;
+
+    my $rc;
+                                                                                                                             
+    {
+        local @SkipReasons;
+                                                                                                                             
+        $rc = grep { need_module($_) } @need;
+    }
+
+    my $reason = join ' or ', @need;
+
+    push @SkipReasons, "cannot find one of $reason"
+        unless $rc;
+                                                                                                                             
+    return $rc;
 }
 
 sub need_apache {
