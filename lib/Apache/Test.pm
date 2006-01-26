@@ -348,27 +348,27 @@ sub need_min_module_version {
 }
 
 sub need_cgi {
-    return _need_multi(qw(cgi cgid));
+    return need_module("cgi") || need_module("cgid");
 }
 
 sub need_php {
-    return _need_multi(qw(php4 php5 sapi_apache2.c));
+    return need_module("php4") || need_module("php5") || need_module("sapi_apache2.c");
 }
 
 sub need_php4 {
-    return _need_multi(qw(php4 php5));
+    return need_module("php4") || need_module("php5");
 }
 
 sub need_access {
-    return _need_multi(qw(access authz_host));
+    return need_module("access") || need_module("authz_host");
 }
 
 sub need_auth {
-    return _need_multi(qw(auth auth_basic));
+    return need_module("auth") || need_module("auth_basic");
 }
 
 sub need_imagemap {
-    return _need_multi(qw(imagemap imap));
+    return need_module("imagemap") || need_module("imap");
 }
 
 sub _need_multi {
@@ -376,16 +376,19 @@ sub _need_multi {
     my $reason = join ' or ', @need;
     my $rc;
 
+    for (@need)
     {
         local @SkipReasons;
 
-        $rc = grep { need_module($_) } @need;
+        if (need_module($_)) {
+	    return 1;
+        }
     }
-
+    
     push @SkipReasons, "cannot find one of $reason"
         unless $rc;
 
-    return $rc;     
+    return 0;     
 }
 
 sub need_apache {
