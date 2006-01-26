@@ -42,7 +42,7 @@ my @need = qw(need_lwp need_http11 need_cgi need_access need_auth
               need_module need_apache need_min_apache_version
               need_apache_version need_perl need_min_perl_version
               need_min_module_version need_threads need_apache_mpm
-              need_php need_php4 need_ssl);
+              need_php need_php4 need_ssl need_imagemap);
 
 my @have = map { (my $need = $_) =~ s/need/have/; $need } @need;
 
@@ -367,19 +367,16 @@ sub need_auth {
     return _need_multi(qw(auth auth_basic));
 }
 
+sub need_imagemap {
+    return _need_multi(qw(imagemap imap));
+}
+
 sub _need_multi {
-
     my @need = @_;
-
+    my $reason = join ' or ', @need;
     my $rc;
 
-    {
-        local @SkipReasons;
-
-        $rc = grep { need_module($_) } @need;
-    }
-
-    my $reason = join ' or ', @need;
+    $rc = grep { need_module($_) } @need;
 
     push @SkipReasons, "cannot find one of $reason"
         unless $rc;
