@@ -376,12 +376,16 @@ sub _need_multi {
     my $reason = join ' or ', @need;
     my $rc;
 
-    $rc = grep { need_module($_) } @need;
+    {
+        local @SkipReasons;
+
+        $rc = grep { need_module($_) } @need;
+    }
 
     push @SkipReasons, "cannot find one of $reason"
         unless $rc;
 
-    return $rc;
+    return $rc;     
 }
 
 sub need_apache {
