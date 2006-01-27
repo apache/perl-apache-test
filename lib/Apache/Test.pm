@@ -348,23 +348,23 @@ sub need_min_module_version {
 }
 
 sub need_cgi {
-    return need_module("cgi") || need_module("cgid");
+    return _need_multi(qw(cgi cgid));
 }
 
 sub need_php {
-    return need_module("php4") || need_module("php5") || need_module("sapi_apache2.c");
+    return _need_multi(qw(php4 php5 sapi_apache2.c));
 }
 
 sub need_php4 {
-    return need_module("php4") || need_module("php5");
+    return _need_multi(qw(php4 sapi_apache2.c));
 }
 
 sub need_access {
-    return need_module("access") || need_module("authz_host");
+    return _need_multi(qw(access authz_host));
 }
 
 sub need_auth {
-    return need_module("auth") || need_module("auth_basic");
+    return _need_multi(qw(auth auth_basic));
 }
 
 sub need_imagemap {
@@ -372,23 +372,25 @@ sub need_imagemap {
 }
 
 sub _need_multi {
-    my @need = @_;
-    my $reason = join ' or ', @need;
-    my $rc;
 
-    for (@need)
+    my @check = @_;
+
+    my $rc = 0;
+
     {
         local @SkipReasons;
 
-        if (need_module($_)) {
-	    return 1;
+        foreach my $module (@check) {
+          $rc ||= need_module($module);
         }
     }
-    
+
+    my $reason = join ' or ', @check;
+
     push @SkipReasons, "cannot find one of $reason"
         unless $rc;
 
-    return 0;     
+    return $rc;
 }
 
 sub need_apache {
@@ -735,6 +737,12 @@ Requires a PHP module to be installed (version 4 or 5).
   plan tests => 5, need_php4;
 
 Requires a PHP version 4 module to be installed.
+
+=item need_imagemap
+
+  plan tests => 5, need_imagemap;
+
+Requires a mod_imagemap or mod_imap be installed
 
 =item need_apache
 
