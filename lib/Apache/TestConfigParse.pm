@@ -174,7 +174,6 @@ my %modname_alias = (
     'mod_proxy_balancer.c' => 'proxy_balancer.c',
     'mod_proxy_connect.c'  => 'proxy_connect.c',
     'mod_modperl.c'        => 'mod_perl.c',
-    'mod_imap.c'           => 'mod_imagemap.c',
 );
 
 #XXX mod_jk requires JkWorkerFile or JkWorker to be configured
