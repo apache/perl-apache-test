@@ -347,6 +347,11 @@ my @cmodule_config_defines = map {
     cmodule_define($_);
 } @cmodule_config_names;
 
+my $cmodule_config_extra = 
+    "#ifndef APACHE_HTTPD_TEST_EXTRA_HOOKS\n".
+    "#define APACHE_HTTPD_TEST_EXTRA_HOOKS(p) do { } while (0)\n".
+    "#endif\n";
+
 my $cmodule_config_hooks = join ",\n    ", map {
     cmodule_define_name($_);
 } @cmodule_config_names;
@@ -397,6 +402,7 @@ my $cmodule_template_2 = <<"EOF";
 static void name ## _register_hooks(apr_pool_t *p)
 {
 @cmodule_hooks
+    APACHE_HTTPD_TEST_EXTRA_HOOKS(p);
 }
 
 module AP_MODULE_DECLARE_DATA name ## _module = {
@@ -435,6 +441,8 @@ sub cmodules_generate_include {
     }
 
     print $fh @cmodule_hook_defines, @cmodule_config_defines;
+
+    print $fh $cmodule_config_extra;
 
     print $fh $self->cmodules_module_template;
 
