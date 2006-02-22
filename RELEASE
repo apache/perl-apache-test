@@ -60,7 +60,7 @@ Instructions for Apache-Test Release Manager
 5. Announce the package
 
   a. post ... to the modperl, announce lists
-  Subject: [ANNOUNCE] Apache-Test 1.28
+  Subject: [ANNOUNCE] Apache-Test 1.30
      include 
   - MD5 sig (as it comes from CPAN upload announce).
   - the latest Changes
@@ -72,16 +72,17 @@ Instructions for Apache-Test Release Manager
   b. edit ./Changes:
      - start a new item with incremented version + '-dev'
 
-  =item 1.29-dev
+  =item 1.31-dev
 
   c. bump up version numbers in this file to make it easier to do the
      next release.
 
-   perl -pi -e 's/\.27/.28/g' RELEASE
-   perl -pi -e 's/\.26/.27/g' RELEASE
+   perl -pi -e 's/\.31/.32/g' RELEASE
+   perl -pi -e 's/\.30/.31/g' RELEASE
+   perl -pi -e 's/\.29/.30/g' RELEASE
 
      now reload this file and bump up the last number of the first
      command.
 
   d. commit Changes
-     % svn ci -m "start 1.28-dev cycle" Changes RELEASE lib/Apache/Test.pm
+     % svn ci -m "start 1.29-dev cycle" Changes RELEASE lib/Apache/Test.pm
