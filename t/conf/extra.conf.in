@@ -38,7 +38,9 @@
   </Directory>
 
   # t/next_available_port.t
-  SetEnv NextAvailablePort @NextAvailablePort@
+  <IfModule mod_env.c>
+    SetEnv NextAvailablePort @NextAvailablePort@
+  </IfModule>
 
 </IfModule>
 

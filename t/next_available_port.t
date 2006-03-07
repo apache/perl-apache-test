@@ -7,7 +7,7 @@ use Apache::Test;
 use Apache::TestRequest;
 use Apache::TestUtil;
 
-plan tests => 1, need_cgi;
+plan tests => 1, need need_cgi, need_module('env');
 
 my $url = '/cgi-bin/next_available_port.pl';
 
