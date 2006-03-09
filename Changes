@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.29-dev
 
+the -t_pid_file code resulted in confusing and fatal error message
+for people using stale 1.27 configurations.  so take steps to make
+sure things continue to work.  [Geoffrey Young]
+
 
 =item 1.28 - February 22, 2006 
 

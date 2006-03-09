@@ -118,7 +118,10 @@ sub clean {
 
 sub pid_file {
     my $self = shift;
-    $self->{config}->{vars}->{t_pid_file};
+
+    my $vars = $self->{config}->{vars};
+
+    return $vars->{t_pid_file} || catfile $vars->{t_logs}, 'httpd.pid';
 }
 
 sub dversion {
