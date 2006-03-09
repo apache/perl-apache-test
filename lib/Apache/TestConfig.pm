@@ -1658,6 +1658,17 @@ sub need_reconfiguration {
         }
     }
 
+    # if the generated config was created with a version of Apache-Test
+    # less than the current version
+    {
+      my $current = Apache::Test->VERSION;
+      my $config  = $self->{apache_test_version};
+
+      if (! $config || $config < $current) {
+          push @reasons, "configuration generated with old Apache-Test";
+      }
+    }
+
     return @reasons;
 }
 
@@ -1838,6 +1849,9 @@ sub save {
     my($self) = @_;
 
     return unless $self->{save};
+
+    # add in the Apache-Test version for later comparisions
+    $self->{apache_test_version} = Apache::Test->VERSION;
 
     my $name = 'apache_test_config';
     my $file = catfile $self->{vars}->{t_conf}, "$name.pm";
