@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.29-dev
 
+On Win32, the Apache executable is called httpd.exe in Apache/2.2,
+so let Apache::TestConfig try to find that if Apache.exe isn't
+found [Randy Kobes]
+
 force reconfiguration if existing configuration was generated
 by an older version of Apache-Test [Geoffrey Young]
 
