@@ -716,6 +716,15 @@ sub default_httpd {
             for my $bindir (qw(bin sbin)) {
                 my $httpd = catfile $p, $bindir, $vars->{target};
                 return $httpd if -e $httpd;
+                # The executable on Win32 in Apache/2.2 is httpd.exe,
+                # so try that if Apache.exe doesn't exist
+                if (WIN32) {
+                    $httpd = catfile $p, $bindir, 'httpd.EXE';
+                    if (-e $httpd) {
+                        $vars->{target} = 'httpd.EXE';
+                        return $httpd;
+                    }
+                }
             }
         }
     }
