@@ -557,13 +557,17 @@ sub configure_pm_tests {
                 my @handler_cfg = ($handler => $module);
 
                 if ($outside_container{$handler}) {
-                    $self->postamble(@handler_cfg);
+                    my $cfg = $self->massage_config_args(@handler_cfg);
+                    $self->postamble(IfModule => 'mod_perl.c', $cfg);
                 } else {
                     push @args, @handler_cfg;
                 }
             }
 
-            $self->postamble($self->$container($module), \@args) if @args;
+            if (@args) {
+              my $cfg = $self->massage_config_args($self->$container($module), \@args);
+              $self->postamble(IfModule => 'mod_perl.c', $cfg);
+            }
         }
 
         $self->write_pm_test($module, lc $sub, map { lc } @base);
