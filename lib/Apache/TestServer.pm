@@ -269,7 +269,8 @@ sub start_gdb {
         $command = qq{ddd --gdb --debugger "gdb -command $file" $httpd};
     }
     else {
-        $command = "gdb $httpd -command $file";
+        ## defaults to gdb if not set in %ENV or via -debug
+        $command = "$debugger $httpd -command $file";
     }
 
     $self->note_debugging;
@@ -300,14 +301,28 @@ sub start_debugger {
 
     $opts->{debugger} ||= $ENV{MP_DEBUGGER} || 'gdb';
 
-    unless ($debuggers{ $opts->{debugger} }) {
+    # XXX: FreeBSD 5.2+
+    #      gdb 6.1 and before segfaults when trying to
+    #      debug httpd startup code. 6.5 has been proven
+    #      to work.  FreeBSD typically installs this as
+    #      gdb65.
+    #      Is it worth it to check the debugger and os version 
+    #      and die ?
+ 
+    unless (grep { /^$opts->{debugger}/ } keys %debuggers) {
         error "$opts->{debugger} is not a supported debugger",
               "These are the supported debuggers: ".
               join ", ", sort keys %debuggers;
         die("\n");
     }
 
-    my $method = "start_" . $debuggers{ $opts->{debugger} };
+    my $debugger = $opts->{debugger};  
+    $debugger =~ s/\d+$//;
+
+    my $method = "start_$debugger";
+
+    ## $opts->{debugger} is passed through unchanged
+    ## so when we try to run it next, its found.
     $self->$method($opts);
 }
 

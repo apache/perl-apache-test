@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.29-dev
 
+Allow version variants of debuggers to be passed as arguments
+to -debug.  i.e. -debug=gdb65 for systems with multiple
+versions of the same debugger. [Philip M. Gollucci]
+
 On Win32, the Apache executable is called httpd.exe in Apache/2.2,
 so let Apache::TestConfig try to find that if Apache.exe isn't
 found [Randy Kobes]
