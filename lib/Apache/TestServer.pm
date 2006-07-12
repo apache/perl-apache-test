@@ -316,10 +316,10 @@ sub start_debugger {
         die("\n");
     }
 
-    my $debugger = $opts->{debugger};  
+    my $debugger = $opts->{debugger}; 
     $debugger =~ s/\d+$//;
 
-    my $method = "start_$debugger";
+    my $method = "start_" . $debuggers{$debugger};
 
     ## $opts->{debugger} is passed through unchanged
     ## so when we try to run it next, its found.
