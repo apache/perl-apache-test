@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.29-dev
 
+Add t_start_error_log_watch() and t_finish_error_log_watch()
+to the Apache::TestUtil API which are only exported unpon request.
+[Torsten Foertsch <torsten.foertsch@gmx.net>]
+
 Allow version variants of debuggers to be passed as arguments
 to -debug.  i.e. -debug=gdb65 for systems with multiple
 versions of the same debugger. [Philip M. Gollucci]
