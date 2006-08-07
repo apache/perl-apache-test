@@ -58,7 +58,7 @@ use constant INDENT     => 4;
     my $f;
     sub t_start_error_log_watch {
 
-        my $name=File::Spec->catfile( Apache::Test::vars->{t_logs}, 'error_log' );
+        my $name = File::Spec->catfile(Apache::Test::vars->{t_logs}, 'error_log');
         open $f, "$name" or die "ERROR: Cannot open $name: $!\n";
         seek $f, 0, SEEK_END;
 
