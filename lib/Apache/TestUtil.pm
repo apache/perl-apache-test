@@ -33,7 +33,7 @@ use Apache::TestConfig ();
 
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %CLEAN);
 
-$VERSION = '0.01';
+$VERSION = '0.02';
 @ISA     = qw(Exporter);
 
 @EXPORT = qw(t_cmp t_debug t_append_file t_write_file t_open_file
