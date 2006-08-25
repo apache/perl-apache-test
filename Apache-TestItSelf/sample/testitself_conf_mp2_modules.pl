@@ -11,7 +11,7 @@ my $PERL         = "$perl_base/$perl_ver/bin/perl$perl_ver";
 
 my $httpd_base   = "$base/httpd/svn";
 my $httpd_gen    = '2.0';
-my $httpd_ver    = 'Apache/2.2.333';
+my $httpd_ver    = 'Apache/2.2.3';
 my @mpms         = (qw(prefork worker));
 
 my $mp_gen       = 2.0;
