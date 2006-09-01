@@ -32,6 +32,12 @@ my $CRLF = "\015\012";
 sub request {
     my($method, $url, @headers) = @_;
 
+    ## XXX:
+    ## This is not a FULL URL encode mapping
+    ## space ' '; however is very common, so this
+    ## is useful to convert
+    $url =~ s/ /%20/g;
+
     my $config = Apache::Test::config();
 
     $method  ||= 'GET';

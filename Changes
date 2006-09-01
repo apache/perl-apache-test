@@ -8,6 +8,12 @@ Changes - Apache::Test change logfile
 
 =item 1.29-dev
 
+Teach Apache::TestClient to encode spaces(' ') in query string of URLs
+as %20.  This is not a full mapping of ASCII to URL encoding.
+If you need this, install LWP -- then Apache-Test will use
+LWP -- which does this for you.
+[Philip M. Gollucci]
+
 Allow Apache::TestClient which is used when LWP is not installed
 to accept mutiple headers of the same name.
 [Philip M. Gollucci]
