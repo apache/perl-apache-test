@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.29-dev
 
+Allow Apache::TestClient which is used when LWP is not installed
+to accept mutiple headers of the same name.
+[Philip M. Gollucci]
+
 Add t_start_error_log_watch() and t_finish_error_log_watch()
 to the Apache::TestUtil API which are only exported unpon request.
 [Torsten Foertsch <torsten.foertsch@gmx.net>]

@@ -30,16 +30,16 @@ use Apache::TestRequest ();
 my $CRLF = "\015\012";
 
 sub request {
-    my($method, $url, $headers) = @_;
+    my($method, $url, @headers) = @_;
 
     my $config = Apache::Test::config();
 
     $method  ||= 'GET';
     $url     ||= '/';
-    $headers ||= {};
+    my %headers = ();
 
     my $hostport = Apache::TestRequest::hostport($config);
-    $headers->{Host} = (split ':', $hostport)[0];
+    $headers{Host} = (split ':', $hostport)[0];
 
     my $s = Apache::TestRequest::vhost_socket();
 
@@ -48,18 +48,26 @@ sub request {
         return undef;
     }
 
-    my $content = delete $headers->{'content'};
+    my $content = delete $headers{'content'};
     if ($content) {
-        $headers->{'Content-Length'} ||= length $content;
-        $headers->{'Content-Type'}   ||= 'application/x-www-form-urlencoded';
+        $headers{'Content-Length'} ||= length $content;
+        $headers{'Content-Type'}   ||= 'application/x-www-form-urlencoded';
     }
 
     #for modules/setenvif
-    $headers->{'User-Agent'} ||= 'libwww-perl/0.00';
+    $headers{'User-Agent'} ||= 'libwww-perl/0.00';
 
     my $request = join $CRLF,
       "$method $url HTTP/1.0",
-      (map { "$_: $headers->{$_}" } keys %$headers), $CRLF;
+      (map { "$_: $headers{$_}" } keys %headers);
+
+    $request .= $CRLF;
+
+    for (my $i = 0; $i < scalar @headers; $i += 2) {
+        $request .= "$headers[$i]: $headers[$i+1]$CRLF";
+    }
+
+    $request .= $CRLF;
 
     # using send() avoids the need to use SIGPIPE if the server aborts
     # the connection
@@ -123,8 +131,7 @@ for my $method (qw(GET HEAD POST PUT)) {
     no strict 'refs';
     *$method = sub {
         my $url = shift;
-        my $headers = { @_ };
-        request($method, $url, $headers);
+        request($method, $url, @_);
     };
 }
 
