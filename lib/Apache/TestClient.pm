@@ -32,6 +32,18 @@ my $CRLF = "\015\012";
 sub request {
     my($method, $url, @headers) = @_;
 
+    my @real_headers = ();
+    my $content;
+
+    for (my $i = 0; $i < scalar @headers; $i += 2) {
+        if ($headers[$i] =~ /content/i) {
+            $content = $headers[$i+1];
+        }
+        else {
+            push @real_headers, ($headers[$i], $headers[$i+1]);
+        }
+    }
+
     ## XXX:
     ## This is not a FULL URL encode mapping
     ## space ' '; however is very common, so this
@@ -54,7 +66,6 @@ sub request {
         return undef;
     }
 
-    my $content = delete $headers{'content'};
     if ($content) {
         $headers{'Content-Length'} ||= length $content;
         $headers{'Content-Type'}   ||= 'application/x-www-form-urlencoded';
@@ -69,8 +80,8 @@ sub request {
 
     $request .= $CRLF;
 
-    for (my $i = 0; $i < scalar @headers; $i += 2) {
-        $request .= "$headers[$i]: $headers[$i+1]$CRLF";
+    for (my $i = 0; $i < scalar @real_headers; $i += 2) {
+        $request .= "$real_headers[$i]: $real_headers[$i+1]$CRLF";
     }
 
     $request .= $CRLF;
