@@ -36,7 +36,7 @@ sub request {
     my $content;
 
     for (my $i = 0; $i < scalar @headers; $i += 2) {
-        if ($headers[$i] =~ /content/i) {
+        if ($headers[$i] =~ /^content$/i) {
             $content = $headers[$i+1];
         }
         else {
