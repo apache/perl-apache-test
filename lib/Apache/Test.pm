@@ -647,6 +647,12 @@ need_module() is called for each value in this array. The test is
 skipped if need_module() returns false (which happens when at least
 one C or Perl module from the list cannot be found).
 
+Watch out for case insensitive file systems or duplicate modules
+with the same name.  I.E.  If you mean mod_env.c
+   need_module('mod_env.c')
+Not
+   need_module('env')
+
 =item * a C<CODE> reference
 
 the tests will be skipped if the function returns a false value. For
