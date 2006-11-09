@@ -30,6 +30,8 @@ Instructions for Apache-Test Release Manager
    (or maybe longer to give most people a chance to catch up). no need
    to tag this package
 
+   Subject: [RELEASE CANDIDATE] Apache-Test-1.29 RC\d+
+
   a. if problems are detected during stage 2, repeat stages 1 and 2.
 
 3. when the package has been reported to be good, prepare a new
