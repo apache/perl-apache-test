@@ -18,7 +18,7 @@ package Apache::TestMB;
 
 use strict;
 use vars qw(@ISA);
-use Module::Build;
+use Module::Build 0.18;
 use Apache::Test ();
 use Apache::TestConfig ();
 @ISA = qw(Module::Build);
