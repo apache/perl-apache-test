@@ -6,7 +6,7 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.29-dev
+=item 1.29 November 28, 2006
 
 Require a minium of Module::Build 0.18 when using Apache::TestMB.
 PR: 19513
