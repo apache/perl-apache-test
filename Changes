@@ -11,6 +11,11 @@ Changes - Apache::Test change logfile
 
 =item 1.29 November 28, 2006
 
+Add bwshare.so to the list of modules to not inherit b/c
+it rate limits requests to less then that of a test suite.
+PR: 25548
+[imacat <imacat@mail.imacat.idv.tw>]
+
 Require a minium of Module::Build 0.18 when using Apache::TestMB.
 PR: 19513
 [Philip M. Gollucci]
