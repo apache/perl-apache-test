@@ -258,7 +258,7 @@ complete. Note that C<Build.PL> can be called C<Apache::Test>-specific
 options in addition to the usual C<Module::Build> options. For
 example:
 
-  perl Build.PL -apxs=/usr/local/apache/bin/apxs
+  perl Build.PL -apxs /usr/local/apache/bin/apxs
 
 Consult the L<Apache::Test|Apache::Test> documentation for a complete
 list of options.
