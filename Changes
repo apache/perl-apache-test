@@ -13,6 +13,9 @@ it rate limits requests to less then that of a test suite.
 PR: 25548
 [imacat <imacat@mail.imacat.idv.tw>]
 
+Add EXTRA_CFLAGS to c-module building if defined in the environment
+[Geoffrey Young]
+
 =item 1.29 November 28, 2006
 
 Require a minium of Module::Build 0.18 when using Apache::TestMB.
