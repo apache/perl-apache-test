@@ -126,8 +126,7 @@ sub cmodules_write_makefiles {
     }
 
     my $file = catfile $self->{cmodules_dir}, 'Makefile';
-    my $fh = Symbol::gensym();
-    open $fh, ">$file" or die "open $file: $!";
+    my $fh = $self->genfile($file);
 
     print $fh $self->cmodules_makefile_vars;
 
@@ -176,8 +175,7 @@ sub cmodules_write_makefile_default {
 
     my $lib = $self->cmodules_build_so($name);
 
-    my $fh = Symbol::gensym();
-    open $fh, ">$makefile" or die "open $makefile: $!";
+    my $fh = $self->genfile($makefile);
 
     print $fh <<EOF;
 APXS=$self->{APXS}
