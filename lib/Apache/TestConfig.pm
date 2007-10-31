@@ -870,12 +870,14 @@ sub find_apache_module {
 my %warn_style = (
     html    => sub { "<!-- @_ -->" },
     c       => sub { "/* @_ */" },
+    php     => sub { "<?php /* \n@_ \n*/ ?>" },
     default => sub { join '', grep {s/^/\# /gm} @_ },
 );
 
 my %file_ext = (
     map({$_ => 'html'} qw(htm html)),
     map({$_ => 'c'   } qw(c h)),
+    map({$_ => 'php' } qw(php)),
 );
 
 # return the passed file's extension or '' if there is no one
