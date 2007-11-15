@@ -8,6 +8,9 @@ Changes - Apache::Test change logfile
 
 =item 1.30-dev
 
+Added t_write_test_lib for temporary testing packages
+[Fred Moyer <fred@redhotpenguin.com>]
+
 Fix syntax error in generated PHP files t/conf/*.php.in
 [Philippe M. Chiasson]
 

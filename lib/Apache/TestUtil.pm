@@ -24,7 +24,7 @@ use Exporter ();
 use Carp ();
 use Config;
 use File::Basename qw(dirname);
-use File::Spec::Functions qw(catfile file_name_is_absolute);
+use File::Spec::Functions qw(catfile catdir file_name_is_absolute tmpdir);
 use Symbol ();
 use Fcntl qw(SEEK_END);
 
@@ -37,7 +37,7 @@ $VERSION = '0.02';
 @ISA     = qw(Exporter);
 
 @EXPORT = qw(t_cmp t_debug t_append_file t_write_file t_open_file
-    t_mkdir t_rmtree t_is_equal t_filepath_cmp
+    t_mkdir t_rmtree t_is_equal t_filepath_cmp t_write_test_lib
     t_server_log_error_is_expected t_server_log_warn_is_expected
     t_client_log_error_is_expected t_client_log_warn_is_expected
 );
@@ -189,6 +189,18 @@ sub t_open_file {
     $CLEAN{files}{$file}++;
 
     return $fh;
+}
+
+sub _temp_package_dir {
+    return catdir(tmpdir(), 'apache_test');
+}
+
+sub t_write_test_lib {
+    my $file = shift;
+
+    die "must pass a filename" unless defined $file;
+
+    t_write_file(catdir(_temp_package_dir(), $file), @_);
 }
 
 sub t_write_file {
@@ -546,6 +558,17 @@ default, since you probably don't want debug output under normal
 circumstances unless running under verbose mode.
 
 This function is exported by default.
+
+=item t_write_test_lib()
+
+  t_write_test_lib($filename, @lines)
+
+t_write_test_lib() creates a new file at I<$filename> or overwrites
+the existing file with the content passed in I<@lines>.  The file
+is created in a temporary directory which is added to @INC at
+test configuration time.  It is intended to be used for creating
+temporary packages for testing which can be modified at run time,
+see the Apache::Reload unit tests for an example.
 
 =item t_write_file()
 

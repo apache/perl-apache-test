@@ -206,6 +206,17 @@ sub configure_startup_pl {
             print $fh "use lib '$tlib';\n";
         }
 
+        # directory for temp packages which can change during testing
+        # we use require here since a circular dependency exists
+        # between Apache::TestUtil and Apache::TestConfigPerl, so
+        # use does not work here
+        eval { require Apache::TestUtil; };
+        if ($@) {
+            die "could not require Apache::TestUtil: $@";
+        } else {
+            print $fh "use lib '" . Apache::TestUtil::_temp_package_dir() . "';\n";
+        }
+
         # if Apache::Test is used to develop a project, we want the
         # project/lib directory to be first in @INC (loaded last)
         if ($ENV{APACHE_TEST_LIVE_DEV}) {
