@@ -6,7 +6,7 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.30-dev
+=item 1.30 November 26, 2007
 
 Added t_write_test_lib for temporary testing packages
 [Fred Moyer <fred@redhotpenguin.com>]
