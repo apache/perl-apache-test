@@ -282,7 +282,7 @@ sub log_diff {
 
 # this is a special mode, which really just runs 't/TEST -start;
 # t/TEST -run; t/TEST -stop;' but it runs '-run' separately for each
-# test, and checks whether anything bad has happened after the run 
+# test, and checks whether anything bad has happened after the run
 # of each test (i.e. either a test has failed, or a test may be successful,
 # but server may have dumped a core file, we detect that).
 sub run_bug_mode {
@@ -316,7 +316,7 @@ sub run_iter {
         ($self->{times} > 1 ? "s" : "");
 
     # first time run all tests, or all specified tests
-    my @tests = @{ $self->{tests} }; # copy 
+    my @tests = @{ $self->{tests} }; # copy
     my $bad = $self->run_test($iter, $reduce_iter, \@tests, \@good);
     unless ($bad) {
         $self->{total_iterations}++;
@@ -420,7 +420,7 @@ sub reduce_stream {
     my $c = 0;
 
     return sub {
-        $c++; # remember stream's state 
+        $c++; # remember stream's state
 
         # a single item is not reduce-able
         return \@items if $items == 1;
@@ -659,7 +659,7 @@ sub report_finish {
         my $unique_seqs   = scalar keys %{ $self->{results} };
         my $attempts      = $self->{total_reduction_attempts};
         my $successes     = $self->{total_reduction_successes};
-        my $completion    = $self->{smoking_completed} 
+        my $completion    = $self->{smoking_completed}
             ? "Completed"
             : "Not Completed (aborted by user)";
 
@@ -931,16 +931,16 @@ the items between these two points.
 I<t/SMOKE.PL> is driving this module, if you don't have it, create it:
 
   #!perl
-  
+
   use strict;
   use warnings FATAL => 'all';
-  
+
   use FindBin;
   use lib "$FindBin::Bin/../Apache-Test/lib";
   use lib "$FindBin::Bin/../lib";
-  
+
   use Apache::TestSmoke ();
-  
+
   Apache::TestSmoke->new(@ARGV)->run;
 
 usually I<Makefile.PL> converts it into I<t/SMOKE> while adjusting the

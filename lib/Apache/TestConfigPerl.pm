@@ -81,7 +81,7 @@ sub configure_libmodperl {
             my $lib = "$Config{installbin}\\$Config{libperl}";
             $lib =~ s/lib$/dll/;
             $cfg = 'LoadFile ' . qq("$lib"\n) if -e $lib;
-	}
+        }
         # add the module we found to the cached modules list
         # otherwise have_module('mod_perl') doesn't work unless
         # we have a LoadModule in our base config
@@ -148,7 +148,7 @@ EOF
 # propogate PerlPassEnv settings to the server
 sub configure_env {
     my $self = shift;
-    $self->preamble(IfModule => 'mod_perl.c', 
+    $self->preamble(IfModule => 'mod_perl.c',
                     [ qw(PerlPassEnv APACHE_TEST_TRACE_LEVEL
                          PerlPassEnv HARNESS_PERL_SWITCHES)
                     ]);

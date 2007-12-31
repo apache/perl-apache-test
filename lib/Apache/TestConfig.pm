@@ -761,7 +761,7 @@ my $port_memoized;
 sub select_first_port {
     my $self = shift;
 
-    my $port ||= $port_memoized || $ENV{APACHE_TEST_PORT} 
+    my $port ||= $port_memoized || $ENV{APACHE_TEST_PORT}
         || $self->{vars}{port} || DEFAULT_PORT;
 
     # memoize
@@ -1400,7 +1400,7 @@ sub extra_conf_files_needing_update {
     finddepth(sub {
         return unless /\.in$/;
         (my $generated = $File::Find::name) =~ s/\.in$//;
-        push @need_update, $generated 
+        push @need_update, $generated
             unless -e $generated && -M $generated < -M $File::Find::name;
     }, $self->{vars}->{t_conf});
 
@@ -1645,7 +1645,7 @@ sub need_reconfiguration {
     # if httpd.conf is older than executable
     push @reasons,
         "$exe is newer than $vars->{t_conf_file}"
-            if -e $exe && 
+            if -e $exe &&
                -e $vars->{t_conf_file} &&
                -M $exe < -M $vars->{t_conf_file};
 
@@ -1899,7 +1899,7 @@ sub as_string {
         $cfg .= qx{$command};
 
         $cfg .= ldd_as_string($httpd);
-    } 
+    }
     else {
         $cfg .= "\n\n*** The httpd binary was not found\n";
     }
@@ -1934,7 +1934,7 @@ sub ldd_as_string {
 
     return $cfg;
 }
-  
+
 # make a string suitable for feed to shell calls (wrap in quotes and
 # escape quotes)
 sub shell_ready {
@@ -2213,7 +2213,7 @@ EOC
 sub custom_config_add_conf_opts {
     my $args = shift;
 
-    return unless $Apache::TestConfigData::vars and 
+    return unless $Apache::TestConfigData::vars and
         keys %$Apache::TestConfigData::vars;
 
     debug "overlaying custom config data";
@@ -2330,7 +2330,7 @@ If for some reason you want to skip the test suite, type: skip
         }
         my $optional = 0;
         my $wanted = 'httpd';
-        $vars->{$wanted} = 
+        $vars->{$wanted} =
             _custom_config_prompt_path($wanted, \%choices, $optional);
     }
 
@@ -2369,7 +2369,7 @@ or via the environment variable APACHE_TEST_APXS. For example:
         }
         my $optional = 1;
         my $wanted = 'apxs';
-        $vars->{$wanted} = 
+        $vars->{$wanted} =
             _custom_config_prompt_path($wanted, \%choices, $optional);
     }
 

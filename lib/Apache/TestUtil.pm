@@ -43,7 +43,7 @@ $VERSION = '0.02';
 );
 
 @EXPORT_OK = qw(t_write_perl_script t_write_shell_script t_chown
-               t_catfile_apache t_catfile 
+               t_catfile_apache t_catfile
                t_start_error_log_watch t_finish_error_log_watch);
 
 %CLEAN = ();
@@ -132,7 +132,7 @@ sub t_is_equal ($$) {
 
 
 sub t_cmp ($$;$) {
-    Carp::carp(join(":", (caller)[1..2]) . 
+    Carp::carp(join(":", (caller)[1..2]) .
         ' usage: $res = t_cmp($received, $expected, [$comment])')
             if @_ < 2 || @_ > 3;
 
@@ -364,7 +364,7 @@ sub struct_as_string{
     }
 }
 
-my $banner_format = 
+my $banner_format =
     "\n*** The following %s expected and harmless ***\n";
 
 sub is_expected_banner {
@@ -767,9 +767,9 @@ For example the following client script fails to find the handler:
   use Apache::Test;
   use Apache::TestUtil;
   use Apache::TestRequest qw(GET);
-  
+
   plan tests => 1;
-  
+
   t_client_log_error_is_expected();
   my $url = "/error_document/cannot_be_found";
   my $res = GET($url);
@@ -779,7 +779,7 @@ After running this test the I<error_log> file will include an entry
 similar to the following snippet:
 
   *** The following error entry is expected and harmless ***
-  [Tue Apr 01 14:02:55 2003] [error] [client 127.0.0.1] 
+  [Tue Apr 01 14:02:55 2003] [error] [client 127.0.0.1]
   File does not exist: /tmp/test/t/htdocs/error
 
 When more than one entry is expected, an optional numerical argument,

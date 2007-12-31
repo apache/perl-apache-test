@@ -96,7 +96,7 @@ sub prefix {
 sub c_trace {
     my ($level, $prefix_type) = (shift, shift);
     my $prefix = prefix($prefix_type);
-    print $LogFH 
+    print $LogFH
         map { "$colors{$level}$prefix$_$colors{reset}\n"}
         grep defined($_), expand(@_);
 }
@@ -104,8 +104,8 @@ sub c_trace {
 sub nc_trace {
     my ($level, $prefix_type) = (shift, shift);
     my $prefix = prefix($prefix_type);
-    print $LogFH 
-        map { sprintf "[%7s] %s%s\n", $level, $prefix, $_ } 
+    print $LogFH
+        map { sprintf "[%7s] %s%s\n", $level, $prefix, $_ }
         grep defined($_), expand(@_);
 }
 
@@ -126,10 +126,10 @@ sub nc_trace {
 }
 
 sub trace_level {
-    # overriden by user/-trace 
+    # overriden by user/-trace
     (defined $Level && $levels{$Level}) ||
     # or overriden by env var
-    (exists $ENV{APACHE_TEST_TRACE_LEVEL} && 
+    (exists $ENV{APACHE_TEST_TRACE_LEVEL} &&
         $levels{$ENV{APACHE_TEST_TRACE_LEVEL}}) ||
     # or default
     $levels{$default_level};
@@ -145,39 +145,39 @@ Apache::TestTrace - Helper output generation functions
 =head1 SYNOPSIS
 
     use Apache::TestTrace;
-  
+
     debug "foo bar";
-  
+
     info_sub "missed it";
-  
+
     error_mark "something is wrong";
 
     # test sub that exercises all the tracing functions
     sub test {
-        print $Apache::TestTrace::LogFH 
+        print $Apache::TestTrace::LogFH
               "TraceLevel: $Apache::TestTrace::Level\n";
         $_->($_,[1..3],$_) for qw(emerg alert crit error
                                   warning notice info debug todo);
         print $Apache::TestTrace::LogFH "\n\n"
     };
-  
+
     # demo the trace subs using default setting
     test();
-  
+
     {
         # override the default trace level with 'crit'
         local $Apache::TestTrace::Level = 'crit';
         # now only 'crit' and higher levels will do tracing lower level
         test();
     }
-  
+
     {
         # set the trace level to 'debug'
         local $Apache::TestTrace::Level = 'debug';
         # now only 'debug' and higher levels will do tracing lower level
         test();
     }
-  
+
     {
         open OUT, ">/tmp/foo" or die $!;
         # override the default Log filehandle
@@ -186,10 +186,10 @@ Apache::TestTrace - Helper output generation functions
         test();
         close OUT;
     }
-  
+
     # override tracing level via -trace opt
     % t/TEST -trace=debug
-  
+
     # override tracing level via env var
     % env APACHE_TEST_TRACE_LEVEL=debug t/TEST
 

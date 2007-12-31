@@ -54,7 +54,7 @@ my $passout = "-passout pass:$pass";
 
 # in 0.9.7 s/Email/emailAddress/ in DN
 my $email_field = Apache::Test::normalize_vstring($version) <
-                  Apache::Test::normalize_vstring("0.9.7") ? 
+                  Apache::Test::normalize_vstring("0.9.7") ?
                   "Email" : "emailAddress";
 
 my $ca_dn = {
@@ -214,7 +214,7 @@ emailAddress           = $dn->{$email_field}
 challengePassword      = $pass
 
 [ ca ]
-default_ca	       = CA_default
+default_ca             = CA_default
 
 [ CA_default ]
 certs            = certs        # Where the issued certs are kept
@@ -233,13 +233,13 @@ default_md       = md5          # which md to use.
 preserve         = no           # keep passed DN ordering
 
 [ policy_anything ]
-countryName		= optional
-stateOrProvinceName	= optional
-localityName		= optional
-organizationName	= optional
-organizationalUnitName	= optional
-commonName		= supplied
-emailAddress		= optional
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
 
 [ comment ]
 nsComment = This Is A Comment

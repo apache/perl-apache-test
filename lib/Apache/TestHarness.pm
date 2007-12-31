@@ -86,7 +86,7 @@ sub run_t {
             }
         }
     }
-    
+
     my $cmd = qq[$^X $source_lib $file];
 
     my $h = Symbol::gensym();
@@ -140,15 +140,15 @@ sub get_tests {
     my $ts = $args->{tests} || [];
 
     if (@$ts) {
-	for (@$ts) {
-	    if (-d $_) {
-		push(@tests, sort <$base/$_/*.t>);
-	    }
-	    else {
-		$_ .= ".t" unless /\.t$/;
-		push(@tests, $_);
-	    }
-	}
+        for (@$ts) {
+            if (-d $_) {
+                push(@tests, sort <$base/$_/*.t>);
+            }
+            else {
+                $_ .= ".t" unless /\.t$/;
+                push(@tests, $_);
+            }
+        }
     }
     else {
         if ($args->{tdirs}) {

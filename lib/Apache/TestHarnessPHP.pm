@@ -59,16 +59,16 @@ sub get_tests {
     my $ts = $args->{tests} || [];
 
     if (@$ts) {
-	for (@$ts) {
-	    if (-d $_) {
-		push(@tests, sort <$base/$_/*.t>);
-		push(@tests, sort <$base/$_/*.php>);
-	    }
-	    else {
-		$_ .= ".t" unless /(\.t|\.php)$/;
-		push(@tests, $_);
-	    }
-	}
+        for (@$ts) {
+            if (-d $_) {
+                push(@tests, sort <$base/$_/*.t>);
+                push(@tests, sort <$base/$_/*.php>);
+            }
+            else {
+                $_ .= ".t" unless /(\.t|\.php)$/;
+                push(@tests, $_);
+            }
+        }
     }
     else {
         if ($args->{tdirs}) {

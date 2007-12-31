@@ -28,7 +28,7 @@ BEGIN {
     # check first (and we choose mp2) $mod_perl::VERSION == 2.0
     # just because someone loaded Apache::Test.  This Is Bad.  so,
     # let's try to correct for that here by removing mod_perl from
-    # %INC after the above use() statements settle in.  nobody 
+    # %INC after the above use() statements settle in.  nobody
     # should be relying on us loading up mod_perl.pm anyway...
 
     delete $INC{'mod_perl.pm'};
@@ -73,9 +73,9 @@ sub import {
     if (($_[0] and $_[0] =~ m/^-withtestmore/) || @testmore) {
         # special hoops for Test::More support
 
-        $real_plan = eval { 
+        $real_plan = eval {
 
-            require Test::More; 
+            require Test::More;
 
             no warnings qw(numeric);
             Test::Builder->VERSION('0.18_01');
@@ -152,7 +152,7 @@ sub test_pm_refresh {
         $builder->output(\*STDOUT);
         $builder->todo_output(\*STDOUT);
 
-        # this is STDOUT because Test::More seems to put 
+        # this is STDOUT because Test::More seems to put
         # most of the stuff we want on STDERR, so it ends
         # up in the error_log instead of where the user can
         # see it.   consider leaving it alone based on
@@ -636,7 +636,7 @@ But this won't hint the reason for skipping therefore it's better to
 use need():
 
   plan tests => 5,
-      need 'LWP', 
+      need 'LWP',
            { "not Win32" => sub { $^O eq 'MSWin32'} };
 
 see C<need()> for more info.
@@ -704,7 +704,7 @@ with C<plan()> to decide whether a test will run, but C<have_apache()>
 within test logic to adjust expectations based on older or newer
 server versions.
 
-=over 
+=over
 
 =item need_http11
 
@@ -862,7 +862,7 @@ Currently works only for perl modules.
 
   plan tests => 5,
       need 'LWP',
-           { "perl >= 5.8.0 and w/ithreads is required" => 
+           { "perl >= 5.8.0 and w/ithreads is required" =>
              ($Config{useperlio} && $] >= 5.008) },
            { "not Win32"                 => sub { $^O eq 'MSWin32' },
              "foo is disabled"           => \&is_foo_enabled,
@@ -970,11 +970,11 @@ are returned.
 
 =head1 Test::More Integration
 
-There are a few caveats if you want to use I<Apache::Test> with 
+There are a few caveats if you want to use I<Apache::Test> with
 I<Test::More> instead of the default I<Test> backend.  The first is
 that I<Test::More> requires you to use its own C<plan()> function
 and not the one that ships with I<Apache::Test>.  I<Test::More> also
-defines C<ok()> and C<skip()> functions that are different, and 
+defines C<ok()> and C<skip()> functions that are different, and
 simply C<use>ing both modules in your test script will lead to redefined
 warnings for these subroutines.
 
@@ -990,7 +990,7 @@ with I<Test::More>.
 
     ok ('yes', 'testing ok');  # Test::More::ok()
 
-Now, while this works fine for standard client-side tests 
+Now, while this works fine for standard client-side tests
 (such as C<t/basic.t>), the more advanced features of I<Apache::Test>
 require using I<Test::More> as the sole driver behind the scenes.
 
@@ -1014,7 +1014,7 @@ C<-withtestmore> tells I<Apache::Test> to use I<Test::More>
 instead of I<Test.pm> behind the scenes.  Note that you are not
 required to C<use Test::More> yourself with the C<-withtestmore>
 option and that the C<use Test::More tests =E<gt> 1> syntax
-may have unexpected results.  
+may have unexpected results.
 
 Note that I<Test::More> version 0.49, available within the
 I<Test::Simple> 0.49 distribution on CPAN, or greater is required

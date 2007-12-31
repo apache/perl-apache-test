@@ -306,9 +306,9 @@ sub start_debugger {
     #      debug httpd startup code. 6.5 has been proven
     #      to work.  FreeBSD typically installs this as
     #      gdb65.
-    #      Is it worth it to check the debugger and os version 
+    #      Is it worth it to check the debugger and os version
     #      and die ?
- 
+
     unless (grep { /^$opts->{debugger}/ } keys %debuggers) {
         error "$opts->{debugger} is not a supported debugger",
               "These are the supported debuggers: ".
@@ -316,7 +316,7 @@ sub start_debugger {
         die("\n");
     }
 
-    my $debugger = $opts->{debugger}; 
+    my $debugger = $opts->{debugger};
     $debugger =~ s/\d+$//;
 
     my $method = "start_" . $debuggers{$debugger};

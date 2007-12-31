@@ -49,7 +49,7 @@ my %core_files  = ();
 my %original_t_perms = ();
 
 my @std_run      = qw(start-httpd run-tests stop-httpd);
-my @others       = qw(verbose configure clean help ssl http11 bugreport 
+my @others       = qw(verbose configure clean help ssl http11 bugreport
                       save no-httpd one-process);
 my @flag_opts    = (@std_run, @others);
 my @string_opts  = qw(order trace);
@@ -212,7 +212,7 @@ sub getopts {
     # a workaround to support -verbose and -verbose=0|1
     # $Getopt::Long::VERSION > 2.26 can use the "verbose:1" rule
     # but we have to support older versions as well
-    @ARGV = grep defined, 
+    @ARGV = grep defined,
         map {/-verbose=(\d)/ ? ($1 ? '-verbose' : undef) : $_ } @ARGV;
 
     # permute      : optional values can come before the options
@@ -868,7 +868,7 @@ sub scan_core_incremental {
             $core_files{$file} = -M $file;
             push @cores, $file;
         }
-        return @cores 
+        return @cores
             ? join "\n", "server dumped core, for stacktrace, run:",
                 map { "gdb $vars->{httpd} -core $_" } @cores
             : ();
@@ -980,7 +980,7 @@ sub adjust_t_perms {
         my($uid, $gid) = (getpwnam($user))[2..3]
             or die "Can't find out uid/gid of '$user'";
 
-        warning "root mode: ". 
+        warning "root mode: ".
             "changing the files ownership to '$user' ($uid:$gid)";
         finddepth(sub {
             $original_t_perms{$File::Find::name} = [(stat $_)[4..5]];
@@ -1372,13 +1372,13 @@ your code, just don't use C<make test> but run C<t/TEST>
 directly. Here is an example of a custom C<t/TEST>
 
   My::TestRun->new->run(@ARGV);
-  
+
   package My::TestRun;
   use base 'Apache::TestRun';
 
   sub bug_report {
       my $self = shift;
-  
+
       print <<EOI;
   +--------------------------------------------------------+
   | Please file a bug report: http://perl.apache.org/bugs/ |
@@ -1402,12 +1402,12 @@ I<t/TEST.PL>:
   use base 'Apache::TestRun';
   use Apache::TestConfig;
   __PACKAGE__->new->run(@ARGV);
-  
+
   sub pre_configure {
       my $self = shift;
       # Don't load an installed mod_apreq
       Apache::TestConfig::autoconfig_skip_module_add('mod_apreq.c');
-  
+
       $self->SUPER::pre_configure();
   }
 

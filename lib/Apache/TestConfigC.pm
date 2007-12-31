@@ -385,9 +385,9 @@ static const handler_rec name ## _handlers[] =
 module MODULE_VAR_EXPORT name ## _module =
 {
     STANDARD_MODULE_STUFF,
-    NULL,			/* initializer */
+    NULL,                       /* initializer */
     $cmodule_config_hooks,
-    name ## _handlers,	        /* handlers */
+    name ## _handlers,          /* handlers */
     $cmodule_hooks_1
 }
 EOF

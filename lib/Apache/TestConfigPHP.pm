@@ -509,7 +509,7 @@ function ok($pass, $test_name = '')
     global $_num_failures;
     global $_num_skips;
 
-    $_test_num++; 
+    $_test_num++;
 
     if ($_num_skips)
     {
@@ -715,7 +715,7 @@ function require_ok($module)
 {
     $pass = ((require $module) == 'OK');
     return ok($pass);
-} 
+}
 
 function skip($message, $num)
 {
