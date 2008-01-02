@@ -185,7 +185,7 @@ $lib: $name.c
 	\$(APXS) $dversion $extra -I$self->{cmodules_dir} -c $name.c
 
 clean:
-	-rm -rf $name.o $name.lo $name.slo $name.la .libs
+	-rm -rf $name.o $name.lo $name.slo $name.la $name.i $name.s $name.gcno .libs
 EOF
 
     close $fh or die "close $makefile: $!";
