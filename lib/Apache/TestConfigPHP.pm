@@ -228,6 +228,7 @@ __DATA__
 ; used in place of your locally installed php.ini file
 ; as part of the pristine environment Apache-Test creates
 ; for you
+; [NOTE]: cat php.ini-recommended | grep -v '^;' | sed -e '/^$/d' 
 ;
 ; exceptions to php.ini-recommended are as follows:
 display_startup_errors = On
@@ -241,11 +242,10 @@ output_buffering = Off
 [PHP]
 engine = On
 zend.ze1_compatibility_mode = Off
-short_open_tag = On
+short_open_tag = Off
 asp_tags = Off
 precision    =  14
 y2k_compliance = On
-;output_buffering = 4096
 zlib.output_compression = Off
 implicit_flush = Off
 unserialize_callback_func=
@@ -260,12 +260,11 @@ safe_mode_protected_env_vars = LD_LIBRARY_PATH
 disable_functions =
 disable_classes =
 expose_php = On
-max_execution_time = 30
-max_input_time = 60
-memory_limit = 8M
+max_execution_time = 30     ; Maximum execution time of each script, in seconds
+max_input_time = 60	; Maximum amount of time each script may spend parsing request data
+memory_limit = 128M      ; Maximum amount of memory a script may consume (128MB)
 error_reporting  =  E_ALL
 display_errors = Off
-;display_startup_errors = Off
 log_errors = On
 log_errors_max_len = 1024
 ignore_repeated_errors = Off
@@ -276,6 +275,7 @@ variables_order = "GPCS"
 register_globals = Off
 register_long_arrays = Off
 register_argc_argv = Off
+auto_globals_jit = On
 post_max_size = 8M
 magic_quotes_gpc = Off
 magic_quotes_runtime = Off
@@ -285,12 +285,18 @@ auto_append_file =
 default_mimetype = "text/html"
 doc_root =
 user_dir =
-extension_dir = "./"
 enable_dl = On
 file_uploads = On
 upload_max_filesize = 2M
 allow_url_fopen = On
+allow_url_include = Off
 default_socket_timeout = 60
+[Date]
+[filter]
+[iconv]
+[sqlite]
+[xmlrpc]
+[Pcre]
 [Syslog]
 define_syslog_variables  = Off
 [mail function]
@@ -316,18 +322,19 @@ mysql.default_user =
 mysql.default_password =
 mysql.connect_timeout = 60
 mysql.trace_mode = Off
-[MySQLI]
+[MySQLi]
 mysqli.max_links = -1
 mysqli.default_port = 3306
 mysqli.default_socket =
 mysqli.default_host =
 mysqli.default_user =
-mysqli.default_password =
+mysqli.default_pw =
 mysqli.reconnect = Off
 [mSQL]
 msql.allow_persistent = On
 msql.max_persistent = -1
 msql.max_links = -1
+[OCI8]
 [PostgresSQL]
 pgsql.allow_persistent = On
 pgsql.auto_reset_persistent = Off
@@ -348,8 +355,6 @@ sybct.max_persistent = -1
 sybct.max_links = -1
 sybct.min_server_severity = 10
 sybct.min_client_severity = 10
-[dbx]
-dbx.colnames_case = "lowercase"
 [bcmath]
 bcmath.scale = 0
 [browscap]
@@ -373,6 +378,7 @@ session.auto_start = 0
 session.cookie_lifetime = 0
 session.cookie_path = /
 session.cookie_domain =
+session.cookie_httponly = 
 session.serialize_handler = php
 session.gc_probability = 1
 session.gc_divisor     = 1000
@@ -397,22 +403,10 @@ mssql.min_message_severity = 10
 mssql.compatability_mode = Off
 mssql.secure_connection = Off
 [Assertion]
-[Ingres II]
-ingres.allow_persistent = On
-ingres.max_persistent = -1
-ingres.max_links = -1
-ingres.default_database =
-ingres.default_user =
-ingres.default_password =
-[Verisign Payflow Pro]
-pfpro.defaulthost = "test-payflow.verisign.com"
-pfpro.defaultport = 443
-pfpro.defaulttimeout = 30
-[Sockets]
-sockets.use_system_read = On
-[com]
+[COM]
 [mbstring]
 [FrontBase]
+[gd]
 [exif]
 [Tidy]
 tidy.clean_output = Off
