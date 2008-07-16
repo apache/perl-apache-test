@@ -1769,6 +1769,7 @@ sub apxs {
 # return an untainted PATH
 sub untaint_path {
     my $path = shift;
+    return '' unless defined $path;
     ($path) = ( $path =~ /(.*)/ );
     # win32 uses ';' for a path separator, assume others use ':'
     my $sep = WIN32 ? ';' : ':';
