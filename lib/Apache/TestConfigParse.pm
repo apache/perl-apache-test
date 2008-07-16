@@ -33,7 +33,7 @@ sub strip_quotes {
 
 my %wanted_config = (
     TAKE1 => {map { $_, 1 } qw(ServerRoot ServerAdmin TypesConfig DocumentRoot)},
-    TAKE2 => {map { $_, 1 } qw(LoadModule)},
+    TAKE2 => {map { $_, 1 } qw(LoadModule LoadFile)},
 );
 
 my %spec_init = (
@@ -46,6 +46,7 @@ my %spec_apply = (
     ServerRoot  => sub {}, #dont override $self->{vars}->{serverroot}
     DocumentRoot => \&inherit_directive_var,
     LoadModule  => \&inherit_load_module,
+    LoadFile    => \&inherit_load_file,
 );
 
 #where to add config, default is preamble
@@ -244,6 +245,32 @@ sub inherit_load_module {
         # so we try to workaround this problem using <IfModule>
         $self->preamble(IfModule => "!$name",
                         qq{LoadModule $modname "$file"\n});
+    }
+}
+
+#inherit LoadFile
+sub inherit_load_file {
+    my($self, $c, $directive) = @_;
+
+    for my $args (@{ $c->{$directive} }) {
+        my $file = $self->server_file_rel2abs($args->[0]);
+
+        unless (-e $file) {
+            debug "$file does not exist, skipping LoadFile";
+            next;
+        }
+
+        if ($self->should_skip_module($args->[0])) {
+            debug "Skipping LoadFile of $args->[0]";
+            next;
+        }
+
+        # remember all found modules
+        push @{$self->{load_file}}, $file;
+
+        debug "LoadFile $file";
+
+        $self->preamble_first(qq{LoadFile "$file"\n});
     }
 }
 

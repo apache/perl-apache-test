@@ -8,6 +8,9 @@ Changes - Apache::Test change logfile
 
 =item 1.31-dev
 
+Inherit LoadFile directives from the global httpd.conf
+[Torsten Foertsch <torsten.foertsch@gmx.net]
+
 Don't overwrite php.ini if it already exists
 PR: 32994
 [MAHEX <MAHEX@cpan.org>]
