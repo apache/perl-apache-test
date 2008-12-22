@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.31-dev
 
+Work around a bug introduced in libwww-perl in version
+5.820 for httpd's credentials
+[Gunnar Wolf <gwolf@gwolf.org>, Niko Tyni <ntyni@debian.org>
+
 Make Apache::TestConfig::untaint_path tolerate undefined arguments
 [Torsten Foertsch <torsten.foertsch@gmx.net]
 

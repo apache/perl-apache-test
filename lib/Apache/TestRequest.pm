@@ -256,6 +256,11 @@ sub new {
     $self;
 }
 
+sub credentials {
+    my $self = shift;
+    return $self->get_basic_credentials(@_);
+}
+
 sub get_basic_credentials {
     my($self, $realm, $uri, $proxy) = @_;
 
