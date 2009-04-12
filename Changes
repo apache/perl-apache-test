@@ -8,6 +8,12 @@ Changes - Apache::Test change logfile
 
 =item 1.31-dev
 
+Use need_module('mod_cgi.c') and need_module('mod_cgid.c') in 
+t/next_available_port.t instead of need_cgi.  On case insensitive file
+systems such as OS X, need_cgi will fulfill the requirement with cgi.pm,
+when mod_cgi.c is the desired requirement.
+[Fred Moyer <fred@redhotpenguin.com]
+
 Fix overriden get_basic_credentials test when using NTLM authentication
 [Rick Frankel <cpan@rickster.com>]
 
