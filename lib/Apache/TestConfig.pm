@@ -2407,7 +2407,17 @@ sub _custom_config_prompt_path {
         $prompt .= ":\n\n";
     }
 
+    my $i = 0;
     while (1) {
+
+        # prevent infinite loops in smoke tests, only give the user
+        # five chances to specify httpd or apxs before giving up
+        if ($i++ == 5) {
+
+            Apache::TestRun::skip_test_suite('y');
+            return;
+        }
+
         $ans = ExtUtils::MakeMaker::prompt($prompt, $default);
 
         # strip leading/closing spaces

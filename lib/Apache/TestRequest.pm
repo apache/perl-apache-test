@@ -265,7 +265,7 @@ sub get_basic_credentials {
     my($self, $realm, $uri, $proxy) = @_;
 
     for ($realm, '__ALL__') {
-        next unless $credentials{$_};
+        next unless $_ && $credentials{$_};
         return @{ $credentials{$_} };
     }
 

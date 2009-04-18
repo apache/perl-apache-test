@@ -8,6 +8,20 @@ Changes - Apache::Test change logfile
 
 =item 1.31-dev
 
+Prevent infinite loop when no default apxs or httpd is present and repeated
+attempts to run the test suite under an automated harness (such as a cpan 
+smoke test).  Issue reported by CORION and ANDK, PR: 12911
+[Fred Moyer <fred@redhotpenguin.com]
+
+Use need_module('mod_cgi.c') and need_module('mod_cgid.c') in 
+t/next_available_port.t instead of need_cgi.  On case insensitive file
+systems such as OS X, need_cgi will fulfill the requirement with cgi.pm,
+when mod_cgi.c is the desired requirement.
+[Fred Moyer <fred@redhotpenguin.com]
+
+Fix overriden get_basic_credentials test when using NTLM authentication
+[Rick Frankel <cpan@rickster.com>]
+
 Work around a bug introduced in libwww-perl in version
 5.820 for httpd's credentials
 [Gunnar Wolf <gwolf@gwolf.org>, Niko Tyni <ntyni@debian.org>
