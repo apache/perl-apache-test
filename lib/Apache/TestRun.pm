@@ -1173,6 +1173,7 @@ sub opt_ping {
     }
     else {
         warning "no server is running on $name";
+        exit_perl(0);
     }
 
     return $exit; #means call exit() if true

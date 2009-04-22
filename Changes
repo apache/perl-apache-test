@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.31-dev
 
+PR: 41239
+t/TEST -ping does not return a valid return code to the calling shell
+[ozw1z5rd <alessio.palma@staff.dada.net>]
+
 Prevent infinite loop when no default apxs or httpd is present and repeated
 attempts to run the test suite under an automated harness (such as a cpan 
 smoke test).  Issue reported by CORION and ANDK, PR: 12911
@@ -19,7 +23,7 @@ systems such as OS X, need_cgi will fulfill the requirement with cgi.pm,
 when mod_cgi.c is the desired requirement.
 [Fred Moyer <phred@apache.org>]
 
-Fix overriden get_basic_credentials test when using NTLM authentication
+Fix overridden get_basic_credentials test when using NTLM authentication
 [Rick Frankel <cpan@rickster.com>]
 
 Work around a bug introduced in libwww-perl in version
