@@ -303,7 +303,7 @@ my %getline = (
         do {
             $self->read($c, 1);
             $buf .= $c;
-        } until ($c eq "\n");
+        } until ($c eq "\n" || $c eq "");
         $buf;
     },
 );
