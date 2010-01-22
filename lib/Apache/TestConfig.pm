@@ -2717,9 +2717,7 @@ HostnameLookups Off
 </IfModule>
 
 <IfDefine APACHE1>
-<IfVersion < 2.3.4>
     LockFile             @t_logs@/accept.lock
-</IfVersion>
     StartServers         @MinClients@
     MinSpareServers      @MinClients@
     MaxSpareServers      @MinClients@
