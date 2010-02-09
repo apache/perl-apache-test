@@ -73,6 +73,22 @@ sub configure_modperl {
         Apache::TestRun::exit_perl(0);
     }
 
+    if ($rev == 2) {
+        # load apreq2 if it is present
+        # do things a bit differently that find_and_load_module()
+        # because apreq2 can't be loaded that way (the 2 causes a problem)
+        my $name = 'mod_apreq2.so';
+        my $mod_path = $test_config->find_apache_module($name) or return;
+
+        # don't match the 2 here
+        my ($sym) = $name =~ m/mod_(\w+)2\./;
+
+        if ($mod_path && -e $mod_path) {
+            $test_config->preamble(IfModule => "!mod_$sym.c",
+                        qq{LoadModule ${sym}_module "$mod_path"\n});
+        }
+    }
+
     $test_config->preamble_register(qw(configure_libmodperl
                                        configure_env));
 

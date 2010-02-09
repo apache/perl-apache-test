@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.31-rc2
 
+PR: 21554
+Load mod_apreq2.so if it is available
+[Derek Price, <derek@ximbiot.com>]
+
 Add conditional to ignore IfVersion directive if mod_version is not built.
 [Adam Prime <adam.prime@utoronto.ca>, Fred Moyer <phred@apache.org>]
 
