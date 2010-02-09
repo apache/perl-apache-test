@@ -9,6 +9,10 @@ Instructions for Apache-Test Release Manager
 
   a. edit ./Changes:
      - change -dev to -rc\d+ starting with -rc1
+     - note that you *do not* want to change the version in Apache/Test.pm,
+       this is a significant difference than other Apache::* modules.
+       this means that development proceeds with non '-dev' or '-rc1' version
+       tags, so keep that in mind.
 
   b. nuke any preinstalled Apache-Test libs and run 'make test'
 
@@ -20,11 +24,13 @@ Instructions for Apache-Test Release Manager
 
 2. once confident that the package is good, upload a release candidate
    to perl.apache.org/~username and post 24 hour-ish candidate alert
-   to the various lists
+   to the various lists.  note that you will need to be subscribed to
+   all of the following lists.
 
      o test-dev/perl.apache.org
      o dev/perl.apache.org
      o modperl/perl.apache.org
+     o dev/httpd.apache.org
 
    (or maybe longer to give most people a chance to catch up). no need
    to tag this package
