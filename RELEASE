@@ -25,7 +25,6 @@ Instructions for Apache-Test Release Manager
      o test-dev/perl.apache.org
      o dev/perl.apache.org
      o modperl/perl.apache.org
-     o dev/httpd.apache.org
 
    (or maybe longer to give most people a chance to catch up). no need
    to tag this package
