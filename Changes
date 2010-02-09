@@ -6,7 +6,10 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.31-dev
+=item 1.31-rc2
+
+Add conditional to ignore IfVersion directive if mod_version is not built.
+[Adam Prime <adam.prime@utoronto.ca>, Fred Moyer <phred@apache.org>]
 
 PR: 41239
 t/TEST -ping does not return a valid return code to the calling shell

@@ -2682,9 +2682,11 @@ HostnameLookups Off
 </Directory>
 
 <IfModule @THREAD_MODULE@>
+<IfModule mod_version.c>
 <IfVersion < 2.3.4>
     LockFile             @t_logs@/accept.lock
 </IfVersion>
+</IfModule>
     StartServers         1
     MinSpareThreads      @MinClients@
     MaxSpareThreads      @MinClients@
@@ -2694,9 +2696,11 @@ HostnameLookups Off
 </IfModule>
 
 <IfModule perchild.c>
+<IfModule mod_version.c>
 <IfVersion < 2.3.4>
     LockFile             @t_logs@/accept.lock
 </IfVersion>
+</IfModule>
     NumServers           1
     StartThreads         @MinClients@
     MinSpareThreads      @MinClients@
@@ -2706,9 +2710,11 @@ HostnameLookups Off
 </IfModule>
 
 <IfModule prefork.c>
+<IfModule mod_version.c>
 <IfVersion < 2.3.4>
     LockFile             @t_logs@/accept.lock
 </IfVersion>
+</IfModule>
     StartServers         @MinClients@
     MinSpareServers      @MinClients@
     MaxSpareServers      @MinClients@
