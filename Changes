@@ -8,6 +8,15 @@ Changes - Apache::Test change logfile
 
 =item 1.31-rc2
 
+
+Modify need_cgi so that it looks for cgi.c instead of cgi.  This is a fix
+for the case insensitive filesystem correction listed below.
+[Phillipe M. Chiasson]
+
+t/next_available_port.t doesn't need mod_cgid, use need_cgi instead
+of need_module('mod_cgi.c')
+[Philippe M. Chiasson]
+
 PR: 21554
 Load mod_apreq2.so if it is available
 [Derek Price, <derek@ximbiot.com>]

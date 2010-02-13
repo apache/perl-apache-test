@@ -348,7 +348,7 @@ sub need_min_module_version {
 }
 
 sub need_cgi {
-    return _need_multi(qw(cgi cgid));
+    return _need_multi(qw(cgi.c cgid.c));
 }
 
 sub need_php {
