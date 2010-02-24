@@ -6,8 +6,7 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.31-rc2
-
+=item 1.31 February 24, 2010
 
 Modify need_cgi so that it looks for cgi.c instead of cgi.  This is a fix
 for the case insensitive filesystem correction listed below.
