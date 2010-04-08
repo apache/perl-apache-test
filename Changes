@@ -8,6 +8,7 @@ Changes - Apache::Test change logfile
 
 =item 1.32-dev
 
+Added t_{start,read,finish}_file_watch to Apache::TestUtil [Torsten Foertsch]
 
 =item 1.31 February 24, 2010
 

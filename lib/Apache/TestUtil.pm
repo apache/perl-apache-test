@@ -43,8 +43,9 @@ $VERSION = '0.02';
 );
 
 @EXPORT_OK = qw(t_write_perl_script t_write_shell_script t_chown
-               t_catfile_apache t_catfile
-               t_start_error_log_watch t_finish_error_log_watch);
+                t_catfile_apache t_catfile
+                t_start_error_log_watch t_finish_error_log_watch
+                t_start_file_watch t_read_file_watch t_finish_file_watch);
 
 %CLEAN = ();
 
@@ -55,23 +56,58 @@ use constant HAS_DUMPER => eval { $] >= 5.6 && require Data::Dumper; };
 use constant INDENT     => 4;
 
 {
-    my $f;
-    sub t_start_error_log_watch {
+    my %files;
+    sub t_start_file_watch (;$) {
+        my $name = @_ ? $_[0] : 'error_log';
+        $name = File::Spec->catfile(Apache::Test::vars->{t_logs}, $name)
+            unless (File::Spec->file_name_is_absolute($name));
 
-        my $name = File::Spec->catfile(Apache::Test::vars->{t_logs}, 'error_log');
-        open $f, "$name" or die "ERROR: Cannot open $name: $!\n";
-        seek $f, 0, SEEK_END;
+        if (open my $fh, '<', $name) {
+            seek $fh, 0, SEEK_END;
+            $files{$name} = $fh;
+        }
+        else {
+            delete $files{$name};
+        }
 
         return;
     }
 
+    sub t_finish_file_watch (;$) {
+        my $name = @_ ? $_[0] : 'error_log';
+        $name = File::Spec->catfile(Apache::Test::vars->{t_logs}, $name)
+            unless (File::Spec->file_name_is_absolute($name));
+
+        my $fh = delete $files{$name};
+        unless (defined $fh) {
+            open $fh, '<', $name or return;
+            return readline $fh;
+        }
+
+        return readline $fh;
+     }
+
+    sub t_read_file_watch (;$) {
+        my $name = @_ ? $_[0] : 'error_log';
+        $name = File::Spec->catfile(Apache::Test::vars->{t_logs}, $name)
+            unless (File::Spec->file_name_is_absolute($name));
+
+        my $fh = $files{$name};
+        unless (defined $fh) {
+            open $fh, '<', $name or return;
+            $files{$name} = $fh;
+        }
+
+        return readline $fh;
+    }
+
+    sub t_start_error_log_watch {
+        t_start_file_watch undef;
+    }
+
     sub t_finish_error_log_watch {
-
         local $/ = "\n";
-        my @lines = <$f>;
-        undef $f;
-
-        return @lines;
+        return my @lines = t_finish_file_watch;
     }
 }
 
@@ -432,6 +468,7 @@ sub t_catfile_apache {
 1;
 __END__
 
+=encoding utf8
 
 =head1 NAME
 
@@ -829,13 +866,63 @@ this with a call to one of the t_*_is_expected() functions.
 
   t_start_error_log_watch();
   do_it;
-  ok grep {...} t_finish_error_log_watch()
+  ok grep {...} t_finish_error_log_watch();
+
+Another usage case could be a handler that emits some debugging messages
+to the error_log. Now, if this handler is called in a series of other
+test cases it can be hard to find the relevant messages manually. In such
+cases the following sequence in the test file may help:
+
+  t_start_error_log_watch();
+  GET '/this/or/that';
+  t_debug t_finish_error_log_watch();
+
+=item t_start_file_watch()
+
+  Apache::TestUtil::t_start_file_watch('access_log');
+
+This function is similar to C<t_start_error_log_watch()> but allows for
+other files than C<error_log> to be watched. It opens the given file
+and positions the file pointer at its end. Subsequent calls to
+C<t_read_file_watch()> or C<t_finish_file_watch()> will read lines that
+have been appended after this call.
+
+A file name can be passed as parameter. If omitted
+or undefined the C<error_log> is opened. Relative file name are
+evaluated relative to the directory containing C<error_log>.
+
+If the specified file does not exist (yet) no error is returned. It is
+assumed that it will appear soon. In this case C<t_{read,finish}_file_watch()>
+will open the file silently and read from the beginning.
+
+=item t_read_file_watch(), t_finish_file_watch()
+
+  local $/ = "\n";
+  $line1=Apache::TestUtil::t_read_file_watch('access_log');
+  $line2=Apache::TestUtil::t_read_file_watch('access_log');
+
+  @lines=Apache::TestUtil::t_finish_file_watch('access_log');
+
+This pair of functions reads the file opened by C<t_start_error_log_watch()>.
+
+As does the core C<readline> function, they return one line if called in
+scalar context, otherwise all lines until end of file.
+
+Before calling C<readline> these functions do not set C<$/> as does
+C<t_finish_error_log_watch>. So, if the file has for example a fixed
+record length use this:
+
+  {
+    local $/=\$record_length;
+    @lines=t_finish_file_watch($name);
+  }
 
 =back
 
 =head1 AUTHOR
 
-Stas Bekman <stas@stason.org>
+Stas Bekman <stas@stason.org>,
+Torsten Förtsch <torsten.foertsch@gmx.net>
 
 =head1 SEE ALSO
 
