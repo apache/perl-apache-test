@@ -58,7 +58,7 @@ use constant INDENT     => 4;
 {
     my %files;
     sub t_start_file_watch (;$) {
-        my $name = @_ ? $_[0] : 'error_log';
+        my $name = defined $_[0] ? $_[0] : 'error_log';
         $name = File::Spec->catfile(Apache::Test::vars->{t_logs}, $name)
             unless (File::Spec->file_name_is_absolute($name));
 
@@ -74,7 +74,7 @@ use constant INDENT     => 4;
     }
 
     sub t_finish_file_watch (;$) {
-        my $name = @_ ? $_[0] : 'error_log';
+        my $name = defined $_[0] ? $_[0] : 'error_log';
         $name = File::Spec->catfile(Apache::Test::vars->{t_logs}, $name)
             unless (File::Spec->file_name_is_absolute($name));
 
@@ -88,7 +88,7 @@ use constant INDENT     => 4;
      }
 
     sub t_read_file_watch (;$) {
-        my $name = @_ ? $_[0] : 'error_log';
+        my $name = defined $_[0] ? $_[0] : 'error_log';
         $name = File::Spec->catfile(Apache::Test::vars->{t_logs}, $name)
             unless (File::Spec->file_name_is_absolute($name));
 
@@ -102,7 +102,7 @@ use constant INDENT     => 4;
     }
 
     sub t_start_error_log_watch {
-        t_start_file_watch undef;
+        t_start_file_watch;
     }
 
     sub t_finish_error_log_watch {
