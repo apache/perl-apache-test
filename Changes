@@ -6,7 +6,10 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.32-dev
+=item 1.32-rc1
+
+Fix issue with recent feature where lack of libapreq resulted in test failure.
+[Philippe M. Chiasson]
 
 Added t_{start,read,finish}_file_watch to Apache::TestUtil [Torsten Foertsch]
 
