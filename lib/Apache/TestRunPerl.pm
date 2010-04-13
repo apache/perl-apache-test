@@ -78,14 +78,15 @@ sub configure_modperl {
         # do things a bit differently that find_and_load_module()
         # because apreq2 can't be loaded that way (the 2 causes a problem)
         my $name = 'mod_apreq2.so';
-        my $mod_path = $test_config->find_apache_module($name) or return;
+        if (my $mod_path = $test_config->find_apache_module($name)) {
 
-        # don't match the 2 here
-        my ($sym) = $name =~ m/mod_(\w+)2\./;
+            # don't match the 2 here
+            my ($sym) = $name =~ m/mod_(\w+)2\./;
 
-        if ($mod_path && -e $mod_path) {
-            $test_config->preamble(IfModule => "!mod_$sym.c",
-                        qq{LoadModule ${sym}_module "$mod_path"\n});
+            if ($mod_path && -e $mod_path) {
+                $test_config->preamble(IfModule => "!mod_$sym.c",
+                            qq{LoadModule ${sym}_module "$mod_path"\n});
+            }
         }
     }
 
