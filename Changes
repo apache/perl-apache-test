@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.33-dev
 
+https://rt.cpan.org/Public/Bug/Display.html?id=54476
+Fix error where non root user gets test failure with httpd suexec and mod_fcgid
+[Peter (Stig) Edwards]
+
 =item 1.32 April 15, 2010
 
 Fix issue with recent feature where lack of libapreq resulted in test failure.

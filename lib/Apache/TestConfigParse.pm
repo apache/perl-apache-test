@@ -181,7 +181,9 @@ my %modname_alias = (
 #skip it for now, tomcat has its own test suite anyhow.
 #XXX: mod_casp2.so requires other settings in addition to LoadModule
 #XXX: mod_bwshare.so blocks fast requests that tests are doing
-my @autoconfig_skip_module = qw(mod_jk.c mod_casp2.c mod_bwshare.c);
+#XXX: mod_fcgid.so causes https://rt.cpan.org/Public/Bug/Display.html?id=54476
+my @autoconfig_skip_module = qw(mod_jk.c mod_casp2.c mod_bwshare.c
+    mod_fcgid.c);
 
 # add modules to be not inherited from the existing config.
 # e.g. prevent from LoadModule perl_module to be included twice, when
