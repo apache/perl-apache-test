@@ -22,31 +22,12 @@ use File::Spec::Functions qw(catfile catdir);
 use File::Find qw(finddepth);
 use Apache::TestHarness ();
 use Apache::TestTrace;
+use Apache::TestConfig ();
 
 use vars qw(@ISA);
 @ISA = qw(Apache::TestHarness);
-
-# Test::Harness didn't start using Test::Harness::Straps until 2.38
-# everything except t/foo.php with earlier versions, so let things go
-# on without it
-my $phpclient = eval {
-  require Test::Harness;
-  Test::Harness->VERSION(2.38);
-
-  push @ISA, qw(Test::Harness::Straps);
-
-  $Test::Harness::Strap = __PACKAGE__->new;
-
-  # yes, this is ugly, ugly, ugly
-  $Test::Harness::Strap->{callback} = sub {
-    my($self, $line, $type, $totals) = @_;
-    print $line if $Test::Harness::Verbose;
-    my $meth = *Handlers{$type};
-    $meth->($self, $line, $type, $totals) if $meth;
-  };
-
-  1;
-};
+use TAP::Formatter::Console;
+use TAP::Harness;
 
 sub get_tests {
 
@@ -121,40 +102,38 @@ sub get_tests {
 sub run {
     my $self = shift;
     my $args = shift || {};
+    my $formatter = TAP::Formatter::Console->new;
+    my $agg       = TAP::Parser::Aggregator->new;
+    my $verbose   = $args->{verbose} && $args->{verbose};
+    my $php_harness = TAP::Harness->new
+      ({exec      => $self->command_line(),
+       verbosity  => $verbose});
+    my $perl_harness = TAP::Harness->new
+      ({verbosity  => $verbose});
+    my @tests = $self->get_tests($args, @_);
 
-    $Test::Harness::verbose ||= $args->{verbose};
+    $agg->start();
+    $php_harness->aggregate_tests($agg, grep {m{\.php$}} @tests);
+    $perl_harness->aggregate_tests($agg, grep {m{\.t$}} @tests);
+    $agg->stop();
 
-    if (my(@subtests) = @{ $args->{subtests} || [] }) {
-        $ENV{HTTPD_TEST_SUBTESTS} = "@subtests";
-    }
-
-    Test::Harness::runtests($self->get_tests($args, @_));
+    $formatter->summary($agg);
 }
 
-sub _command_line {
-
+sub command_line {
     my $self = shift;
-    my $file = shift;
-
-    return $self->SUPER::_command_line($file)
-        unless $file =~ m/\.php$/;
-
-    $file = qq["$file"] if ($file =~ /\s/) && ($file !~ /^".*"$/);
 
     my $server_root = Apache::Test::vars('serverroot');
-
-    $ENV{SERVER_ROOT} = $server_root;
 
     my $conf = catfile($server_root, 'conf');
 
     my $ini = catfile($conf, 'php.ini');
 
-    my $switches = join ' ', "--php-ini $ini",
-                             "--define include_path=$conf";
+    my $php = Apache::TestConfig::which('php') ||
+        die 'no php executable found in ' . $ENV{PATH};
 
-    my $line = "php $switches $file";
-
-    return $line;
+    return ["env", "SERVER_ROOT=$server_root",
+            $php, "--php-ini",  $ini, "--define", "include_path=$conf"];
 }
 
 1;
