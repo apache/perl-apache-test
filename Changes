@@ -8,10 +8,14 @@ Changes - Apache::Test change logfile
 
 =item 1.33-dev
 
+Add check for automated testing environment variable before prompting
+with EU::MM to quit the test suite.  Some automated smoke tests were
+failed because the EU::MM prompt was timing out.
+[Adam Prime, Fred Moyer]
+
 https://rt.cpan.org/Public/Bug/Display.html?id=32993
 use TAP::Harness for Apache::TestHarnessPHP
 [Mark A. Hershberger]
-
 
 https://rt.cpan.org/Public/Bug/Display.html?id=54476
 Fix error where non root user gets test failure with httpd suexec and mod_fcgid

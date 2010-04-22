@@ -1311,8 +1311,10 @@ sub skip_test_suite {
 
     # we can't prompt when STDIN is not attached to tty, unless we
     # were told that's it OK via env var (in which case some program
-    # will feed the interactive prompts
-    unless (-t STDIN || $ENV{APACHE_TEST_INTERACTIVE_PROMPT_OK}) {
+    # will feed the interactive prompts).  Also skip the prompt if the
+    # automated testing environment variable is set.
+    unless (-t STDIN || $ENV{APACHE_TEST_INTERACTIVE_PROMPT_OK}
+                     || !$ENV{AUTOMATED_TESTING} ) {
         $no_doubt = 1;
     }
 
