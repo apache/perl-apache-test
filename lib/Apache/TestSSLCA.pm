@@ -243,6 +243,7 @@ emailAddress            = optional
 
 [ comment ]
 nsComment = This Is A Comment
+1.3.6.1.4.1.18060.12.0 = ASN1:UTF8String:Lemons
 
 EOF
 
@@ -313,9 +314,12 @@ sub new_cert {
 
 sub sign_cert {
     my $name = shift;
+    my $exts = '';
+
+    $exts = ' -extensions comment' if $name =~ /client_ok/;
 
     openssl ca => "$capolicy -in csr/$name.csr -out certs/$name.crt",
-                  $passin, config($name), '-batch -extensions comment';
+                  $passin, config($name), '-batch', $exts;
 }
 
 #handy for importing into a browser such as netscape
