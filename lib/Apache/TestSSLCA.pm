@@ -228,7 +228,7 @@ crl              = $cacrl       # The current CRL
 private_key      = $cakey       # The private key
 
 default_days     = 365          # how long to certify for
-default_crl_days = 30           # how long before next CRL
+default_crl_days = 365          # how long before next CRL
 default_md       = md5          # which md to use.
 preserve         = no           # keep passed DN ordering
 
