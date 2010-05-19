@@ -470,6 +470,13 @@ sub generate {
 
     chdir $base;
 
+    # Ensure the CNs used in the server certs match up with the
+    # hostname being used for testing.
+    while (my($key, $val) = each %$cert_dn) {
+        next unless $key =~ /^server/;
+        $val->{CN} = $Config->{vars}->{servername};
+    }        
+
     #make a note that we created the tree
     $Config->clean_add_path($root);
 
