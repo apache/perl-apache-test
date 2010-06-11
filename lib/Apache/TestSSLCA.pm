@@ -243,7 +243,7 @@ emailAddress            = optional
 
 [ comment ]
 nsComment = This Is A Comment
-1.3.6.1.4.1.18060.12.0 = ASN1:UTF8String:Lemons
+1.3.6.1.4.1.18060.12.0 = DER:0c064c656d6f6e73
 
 EOF
 
