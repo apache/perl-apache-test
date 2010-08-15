@@ -74,6 +74,7 @@ sub run_t {
         my $top_dir = Apache::Test::vars('top_dir');
 
         foreach my $lib (catfile($top_dir, qw(Apache-Test lib)),
+                         catfile($top_dir, qw(.. Apache-Test lib)),
                          catfile($top_dir, 'lib')) {
 
             if (-d $lib) {

@@ -105,11 +105,20 @@ sub configure_inc {
     my $top = $self->{vars}->{top_dir};
 
     my $inc = $self->{inc};
-    my @trys = (catdir($top, qw(blib lib)),
-                catdir($top, qw(blib arch)));
 
-    for (@trys) {
-        push @$inc, $_ if -d $_;
+    my $found;
+    for (catdir($top, qw(blib lib)), catdir($top, qw(blib arch))) {
+        if (-d $_) {
+	    push @$inc, $_;
+	    $found=1;
+	}
+    }
+
+    # try ../blib as well for Apache::Reload & Co
+    unless ($found) {
+        for (catdir($top, qw(.. blib lib)), catdir($top, qw(.. blib arch))) {
+	    push @$inc, $_ if -d $_;
+	}
     }
 
     # spec: If PERL5LIB is defined, PERLLIB is not used.

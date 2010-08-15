@@ -35,7 +35,8 @@ use constant IS_MOD_PERL_2_BUILD => IS_MOD_PERL_2 &&
     require Apache2::Build && Apache2::Build::IS_MOD_PERL_BUILD();
 
 use constant IS_APACHE_TEST_BUILD =>
-    grep { -e "$_/lib/Apache/TestConfig.pm" } qw(Apache-Test . ..);
+    grep { -e "$_/lib/Apache/TestConfig.pm" }
+         qw(Apache-Test . .. ../Apache-Test);
 
 use constant CUSTOM_CONFIG_FILE => 'Apache/TestConfigData.pm';
 
@@ -295,8 +296,15 @@ sub new {
     $self->add_inc;
 
     #help to find libmodperl.so
-    my $src_dir = catfile $vars->{top_dir}, qw(src modules perl);
-    $vars->{src_dir}      ||= $src_dir if -d $src_dir;
+    unless ($vars->{src_dir}) {
+        my $src_dir = catfile $vars->{top_dir}, qw(.. src modules perl);
+	if (-d $src_dir) {
+	    $vars->{src_dir} = $src_dir;
+	} else {
+	    $src_dir = catfile $vars->{top_dir}, qw(src modules perl);
+	    $vars->{src_dir} = $src_dir if -d $src_dir;
+	}
+    }
 
     $vars->{t_dir}        ||= catfile $vars->{top_dir}, 't';
     $vars->{serverroot}   ||= $vars->{t_dir};
