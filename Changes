@@ -8,6 +8,11 @@ Changes - Apache::Test change logfile
 
 =item 1.33-dev
 
+Propagate APACHE_TEST_NO_STICKY_PREFERENCES to the Apache environment
+for mod_perl configurations (Apache::TestConfigPerl),
+http://www.gossamer-threads.com/lists/modperl/dev/101929
+[Torsten Foertsch]
+
 Provide build/test environment for modules bundled with mod_perl like
 Apache::Reload and Apache::SizeLimit
 [Torsten Foertsch]

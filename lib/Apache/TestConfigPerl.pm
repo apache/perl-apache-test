@@ -159,7 +159,8 @@ sub configure_env {
     my $self = shift;
     $self->preamble(IfModule => 'mod_perl.c',
                     [ qw(PerlPassEnv APACHE_TEST_TRACE_LEVEL
-                         PerlPassEnv HARNESS_PERL_SWITCHES)
+                         PerlPassEnv HARNESS_PERL_SWITCHES
+                         PerlPassEnv APACHE_TEST_NO_STICKY_PREFERENCES)
                     ]);
 }
 
