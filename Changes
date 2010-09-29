@@ -8,7 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.34-dev
 
-
+Don't attempt to run the test suite as root.  The workarounds needed
+to facilitate root testing cause large maintenance costs, and return
+no tangible benefits.
+[Fred Moyer]
 
 =item 1.33 September 14, 2010
 

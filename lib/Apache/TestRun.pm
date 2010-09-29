@@ -46,7 +46,6 @@ my $orig_cwd;
 my $orig_conf_opts;
 
 my %core_files  = ();
-my %original_t_perms = ();
 
 my @std_run      = qw(start-httpd run-tests stop-httpd);
 my @others       = qw(verbose configure clean help ssl http11 bugreport
@@ -563,7 +562,7 @@ sub start {
         }
     }
 
-    $self->adjust_t_perms();
+    $self->check_runtime_user();
 
     if ($opts->{'start-httpd'}) {
         exit_perl 0 unless $server->start;
@@ -602,8 +601,6 @@ sub run_tests {
 
 sub stop {
     my $self = shift;
-
-    $self->restore_t_perms;
 
     return $self->{server}->stop if $self->{opts}->{'stop-httpd'};
 }
@@ -950,172 +947,21 @@ sub warn_core {
     }, $vars->{top_dir});
 }
 
-# this function handles the cases when the test suite is run under
-# 'root':
-#
-# 1. When user 'bar' is chosen to run Apache with, files and dirs
-#    created by 'root' might be not writable/readable by 'bar'
-#
-# 2. when the source is extracted as user 'foo', and the chosen user
-#    to run Apache under is 'bar', in which case normally 'bar' won't
-#    have the right permissions to write into the fs created by 'foo'.
-#
-# We solve that by 'chown -R bar.bar t/' in a portable way.
-#
-# 3. If the parent directory is not rwx for the chosen user, that user
-#    won't be able to read/write the DocumentRoot. In which case we
-#    have nothing else to do, but to tell the user to fix the situation.
-#
-sub adjust_t_perms {
+# catch any attempts to ./t/TEST the tests as root user
+
+sub check_runtime_user {
     my $self = shift;
 
     return if Apache::TestConfig::WINFU;
-
-    %original_t_perms = (); # reset global
 
     my $user = getpwuid($>) || '';
+
     if ($user eq 'root') {
-        my $vars = $self->{test_config}->{vars};
-        my $user = $vars->{user};
-        my($uid, $gid) = (getpwnam($user))[2..3]
-            or die "Can't find out uid/gid of '$user'";
-
-        warning "root mode: ".
-            "changing the files ownership to '$user' ($uid:$gid)";
-        finddepth(sub {
-            $original_t_perms{$File::Find::name} = [(stat $_)[4..5]];
-            chown $uid, $gid, $_;
-        }, $vars->{t_dir});
-
-        $self->check_perms($user, $uid, $gid);
-
-        $self->become_nonroot($user, $uid, $gid);
+        error "Apache cannot spawn child processes as root, therefore the test suite must be run as a non-privileged user.";
+        exit_perl(0);
     }
-}
 
-sub restore_t_perms {
-    my $self = shift;
-
-    return if Apache::TestConfig::WINFU;
-
-    if (%original_t_perms) {
-        warning "root mode: restoring the original files ownership";
-        my $vars = $self->{test_config}->{vars};
-        while (my($file, $ids) = each %original_t_perms) {
-            next unless -e $file; # files could be deleted
-            chown @$ids, $file;
-        }
-    }
-}
-
-# this sub is executed from an external process only, since it
-# "sudo"'s into a uid/gid of choice
-sub run_root_fs_test {
-    my($uid, $gid, $dir) = @_;
-
-    # first must change gid and egid ("$gid $gid" for an empty
-    # setgroups() call as explained in perlvar.pod)
-    my $groups = "$gid $gid";
-    $( = $) = $groups;
-    die "failed to change gid to $gid"
-        unless $( eq $groups && $) eq $groups;
-
-    # only now can change uid and euid
-    $< = $> = $uid+0;
-    die "failed to change uid to $uid" unless $< == $uid && $> == $uid;
-
-    my $file = catfile $dir, ".apache-test-file-$$-".time.int(rand);
-    eval "END { unlink q[$file] }";
-
-    # unfortunately we can't run the what seems to be an obvious test:
-    # -r $dir && -w _ && -x _
-    # since not all perl implementations do it right (e.g. sometimes
-    # acls are ignored, at other times setid/gid change is ignored)
-    # therefore we test by trying to attempt to read/write/execute
-
-    # -w
-    open TEST, ">$file" or die "failed to open $file: $!";
-
-    # -x
-    -f $file or die "$file cannot be looked up";
-    close TEST;
-
-    # -r
-    opendir DIR, $dir or die "failed to open dir $dir: $!";
-    defined readdir DIR or die "failed to read dir $dir: $!";
-    close DIR;
-
-    # all tests passed
-    print "OK";
-}
-
-sub check_perms {
-    my ($self, $user, $uid, $gid) = @_;
-
-    # test that the base dir is rwx by the selected non-root user
-    my $vars = $self->{test_config}->{vars};
-    my $dir  = $vars->{t_dir};
-    my $perl = Apache::TestConfig::shell_ready($vars->{perl});
-
-    # find where Apache::TestRun was loaded from, so we load this
-    # exact package from the external process
-    my $inc = dirname dirname $INC{"Apache/TestRun.pm"};
-    my $sub = "Apache::TestRun::run_root_fs_test";
-    my $check = <<"EOI";
-$perl -Mlib=$inc -MApache::TestRun -e 'eval { $sub($uid, $gid, q[$dir]) }';
-EOI
-    warning "testing whether '$user' is able to -rwx $dir\n$check\n";
-
-    my $res = qx[$check] || '';
-    warning "result: $res";
-    unless ($res eq 'OK') {
-        $self->user_error(1);
-        #$self->restore_t_perms;
-        error <<"EOI";
-You are running the test suite under user 'root'.
-Apache cannot spawn child processes as 'root', therefore
-we attempt to run the test suite with user '$user' ($uid:$gid).
-The problem is that the path (including all parent directories):
-  $dir
-must be 'rwx' by user '$user', so Apache can read and write under that
-path.
-
-There are several ways to resolve this issue. One is to move and
-rebuild the distribution to '/tmp/' and repeat the 'make test'
-phase. The other is not to run 'make test' as root (i.e. building
-under your /home/user directory).
-
-You can test whether some directory is suitable for 'make test' under
-'root', by running a simple test. For example to test a directory
-'$dir', run:
-
-  % $check
-Only if the test prints 'OK', the directory is suitable to be used for
-testing.
-EOI
-        skip_test_suite();
-        exit_perl 0;
-    }
-}
-
-# in case the client side creates any files after the initial chown
-# adjustments we want the server side to be able to read/write them, so
-# they better be with the same permissions. dropping root permissions
-# and becoming the same user as the server side solves this problem.
-sub become_nonroot {
-    my ($self, $user, $uid, $gid) = @_;
-
-    warning "the client side drops 'root' permissions and becomes '$user'";
-
-    # first must change gid and egid ("$gid $gid" for an empty
-    # setgroups() call as explained in perlvar.pod)
-    my $groups = "$gid $gid";
-    $( = $) = $groups;
-    die "failed to change gid to $gid" unless $( eq $groups && $) eq $groups;
-
-    # only now can change uid and euid
-    $< = $> = $uid+0;
-    die "failed to change uid to $uid" unless $< == $uid && $> == $uid;
+    return 1;
 }
 
 sub run_request {

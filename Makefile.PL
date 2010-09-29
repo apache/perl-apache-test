@@ -223,3 +223,24 @@ sub add_Apache__test_target {
         $string;
     };
 }
+
+sub MY::test {
+    my $self = shift;
+
+    # run tests normally if non root user
+    return $self->Apache::TestMM::test(@_) if (($> != 0) # root user
+        or (Apache::TestConfig::WINFU)); # win users
+        # or win32
+
+    return <<EOF
+test::
+\t\@echo
+\t\@echo Apache::Test tests cannot be run as the root user.
+\t\@echo Apache cannot spawn child processes as 'root', therefore
+\t\@echo the test suite must be run with a non privileged user.
+\t\@echo Please build Apache::Test as a non-privileged user to
+\t\@echo run the test suite.
+\t\@echo
+EOF
+}
+
