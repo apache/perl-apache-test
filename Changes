@@ -8,6 +8,12 @@ Changes - Apache::Test change logfile
 
 =item 1.34-dev
 
+Prevent reconfiguration when t/TEST is called with -run-tests only.
+(rev 1004278) [Torsten Foertsch]
+
+Make "t/TEST -ping=block" work when LWP is installed. (rev 1004275)
+[Torsten Foertsch]
+
 Don't attempt to run the test suite as root.  The workarounds needed
 to facilitate root testing cause large maintenance costs, and return
 no tangible benefits.
