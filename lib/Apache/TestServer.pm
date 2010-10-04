@@ -672,8 +672,10 @@ sub wait_till_is_up {
     my $server_up = sub {
         local $SIG{__WARN__} = sub {}; #avoid "cannot connect ..." warnings
         # avoid fatal errors when LWP is not available
-        my $r = eval { Apache::TestRequest::GET('/index.html') };
-        return !$@ && defined $r ? $r->code : 0;
+        return eval {
+	    my $r=Apache::TestRequest::GET('/index.html');
+	    $r->code!=500 or $r->header('client-warning')!~/internal/i;
+	} || 0;
     };
 
     if ($server_up->()) {
