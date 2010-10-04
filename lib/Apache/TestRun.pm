@@ -716,9 +716,15 @@ sub run {
         $self->opt_clean(1);
     }
 
+    $self->split_test_args;
+
+    $self->die_on_invalid_args;
+
+    $self->default_run_opts;
+
     # if configure() fails for some reason before it has flushed the
     # config to a file, save it so -clean will be able to clean
-    unless ($self->{opts}->{clean}) {
+    if ($self->{opts}->{'start-httpd'} || $self->{opts}->{'configure'}) {
         eval { $self->configure };
         if ($@) {
             error "configure() has failed:\n$@";
@@ -733,12 +739,6 @@ sub run {
         warning "reconfiguration done";
         exit_perl 1;
     }
-
-    $self->default_run_opts;
-
-    $self->split_test_args;
-
-    $self->die_on_invalid_args;
 
     $self->start unless $self->{opts}->{'no-httpd'};
 
