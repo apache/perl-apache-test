@@ -42,15 +42,33 @@ lib/Apache/TestSort.pm
 lib/Apache/TestTrace.pm
 lib/Apache/TestUtil.pm
 lib/Bundle/ApacheTest.pm
-t/TEST.PL
+t/alltest/01bang.t
+t/alltest/all.t
+t/alltest2/01bang.t
+t/alltest2/all.t
 t/bad_coding.t
+t/cgi-bin/cookies.pl
 t/cgi-bin/cookies.pl.PL
+t/cgi-bin/next_available_port.pl
 t/cgi-bin/next_available_port.pl.PL
 t/conf/extra.conf.in
+t/conf/modperl_extra.pl.in
 t/cookies.t
+t/htdocs/index.html
+t/log_watch.t
+t/more/01testpm.t
+t/more/02testmore.t
+t/more/03testpm.t
+t/more/04testmore.t
+t/more/all.t
 t/next_available_port.t
 t/ping.t
 t/redirect.t
 t/request.t
+t/response/TestMore/testmorepm.pm
+t/response/TestMore/testpm.pm
+t/TEST.PL
+
 
 META.yml                                 Module meta-data (added by MakeMaker)
+

@@ -19,6 +19,7 @@ use Apache::TestRun;
 use Apache::TestTrace;
 use Apache::TestReport;
 use Apache::TestConfig ();
+use Apache::TestRunPerl;
 
 my $VERSION;
 set_version();
@@ -35,6 +36,17 @@ finddepth(sub {
     push @scripts, "$File::Find::dir/$1";
 }, '.');
 
+my $has_mp;
+eval { require mod_perl2 };
+if ($@) {
+    eval { require mod_perl };
+    if (!$@) {
+        $has_mp = 1;
+    }
+} else {
+    $has_mp = 2;
+} 
+
 for (@scripts) {
     Apache::TestMM::generate_script($_);
 }
@@ -47,12 +59,10 @@ if (TOP_LEVEL) {
     add_Apache__test_target();
 }
 
-Apache::TestConfig::custom_config_file_stub_write();
-
 my @clean_files =
-    qw(lib/Apache/TestConfigData.pm
-       .mypacklist
+    qw(.mypacklist
        t/TEST
+       t/REPORT
        Makefile.old
       );
 

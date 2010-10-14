@@ -89,7 +89,6 @@ my %usage = (
    'proxy'           => 'proxy requests (default proxy is localhost)',
    'trace=T'         => 'change tracing default to: warning, notice, ' .
                         'info, debug, ...',
-   'save'            => 'save test paramaters into Apache::TestConfigData',
    'one-process'     => 'run the server in single process mode',
    (map { $_, "\U$_\E url" } @request_opts),
 );
@@ -506,13 +505,6 @@ sub configure {
     $test_config->generate_httpd_conf;
     $test_config->save;
 
-    # custom config save if
-    # 1) requested to save
-    # 2) no saved config yet
-    if ($self->{opts}->{save} or
-        !Apache::TestConfig::custom_config_exists()) {
-        $test_config->custom_config_save($self->{conf_opts});
-    }
 }
 
 sub try_exit_opts {
@@ -684,9 +676,6 @@ sub run {
     my(@argv) = @_;
 
     $self->getopts(\@argv);
-
-    # must be called after getopts so the tracing will be set right
-    Apache::TestConfig::custom_config_load();
 
     $self->pre_configure();
 
@@ -1146,44 +1135,6 @@ sub exit_shell {
     CORE::exit $_[0];
 }
 
-# successfully abort the test suite execution (to allow automatic
-# tools like CPAN.pm, to continue with installation).
-#
-# if a true value is passed, quit right away
-# otherwise ask the user, if they may want to change their mind which
-# will return them back to where they left
-sub skip_test_suite {
-    my $no_doubt = shift;
-
-    # we can't prompt when STDIN is not attached to tty, unless we
-    # were told that's it OK via env var (in which case some program
-    # will feed the interactive prompts).  Also skip the prompt if the
-    # automated testing environment variable is set.
-    unless (-t STDIN || $ENV{APACHE_TEST_INTERACTIVE_PROMPT_OK}
-                     || !$ENV{AUTOMATED_TESTING} ) {
-        $no_doubt = 1;
-    }
-
-    print qq[
-
-Running the test suite is important to make sure that the module that
-you are about to install works on your system. If you choose not to
-run the test suite and you have a problem using this module, make sure
-to return and run this test suite before reporting any problems to the
-developers of this module.
-
-];
-    unless ($no_doubt) {
-        my $default = 'No';
-        my $prompt = 'Skip the test suite?';
-        my $ans = ExtUtils::MakeMaker::prompt($prompt, $default);
-        return if lc($ans) =~ /no/;
-    }
-
-    error "Skipping the test suite execution, while returning success status";
-    exit_perl 1;
-}
-
 1;
 
 __END__
@@ -1269,154 +1220,5 @@ Don't forget to run the super class' c<pre_configure()> method.
 =head2 C<new_test_config>
 
 META: to be completed
-
-
-
-=head1 Persistent Custom Configuration
-
-When C<Apache::Test> is first installed or used, it will save the
-values of C<httpd>, C<apxs>, C<port>, C<user>, and C<group>, if set,
-to a configuration file C<Apache::TestConfigData>.  This information
-will then be used in setting these options for subsequent uses of
-C<Apache-Test> unless temprorarily overridden, either by setting the
-appropriate environment variable (C<APACHE_TEST_HTTPD>,
-C<APACHE_TEST_APXS>, C<APACHE_TEST_PORT>, C<APACHE_TEST_USER>, and
-C<APACHE_TEST_GROUP>) or by giving the relevant option (C<-httpd>,
-C<-apxs>, C<-port>, C<-user>, and C<-group>) when the C<TEST> script
-is run.
-
-To avoid either using previous persistent configurations or saving
-current configurations, set the C<APACHE_TEST_NO_STICKY_PREFERENCES>
-environment variable to a true value.
-
-Finally it's possible to permanently override the previously saved
-options by passing C<L<-save|/Saving_Custom_Configuration_Options>>.
-
-Here is the algorithm of how and when options are saved for the first
-time and when they are used. We will use a few variables to simplify
-the pseudo-code/pseudo-chart flow:
-
-C<$config_exists> - custom configuration has already been saved, to
-get this setting run C<custom_config_exists()>, which tests whether
-either C<apxs> or C<httpd> values are set. It doesn't check for other
-values, since all we need is C<apxs> or C<httpd> to get the test suite
-running. custom_config_exists() checks in the following order
-F<lib/Apache/TestConfigData.pm> (if during Apache-Test build) ,
-F<~/.apache-test/Apache/TestConfigData.pm> and
-F<Apache/TestConfigData.pm> in the perl's libraries.
-
-C<$config_overriden> - that means that we have either C<apxs> or
-C<httpd> values provided by user, via env vars or command line options.
-
-=over
-
-=item 1 Building Apache-Test or modperl-2.0 (or any other project that
-bundles Apache-Test).
-
-  1) perl Apache-Test/Makefile.PL
-  (for bundles top-level Makefile.PL will run this as well)
-
-  if $config_exists
-      do nothing
-  else
-      create lib/Apache/TestConfigData.pm w/ empty config: {}
-
-  2) make
-
-  3) make test
-
-  if $config_exists
-      if $config_overriden
-          override saved options (for those that were overriden)
-      else
-          use saved options
-  else
-      if $config_overriden
-          save them in lib/Apache/TestConfigData.pm
-          (which will be installed on 'make install')
-      else
-          - run interactive prompt for C<httpd> and optionally for C<apxs>
-          - save the custom config in lib/Apache/TestConfigData.pm
-          - restart the currently run program
-
-  modperl-2.0 is a special case in (3). it always overrides 'httpd'
-  and 'apxs' settings. Other settings like 'port', can be used from
-  the saved config.
-
-  4) make install
-
-     if $config_exists only in lib/Apache/TestConfigData.pm
-        it will be installed system-wide
-     else
-        nothing changes (since lib/Apache/TestConfigData.pm won't exist)
-
-=item 2 Testing 3rd party modules (after Apache-Test was installed)
-
-Notice that the following situation is quite possible:
-
-  cd Apache-Test
-  perl Makefile.PL && make install
-
-so that Apache-Test was installed but no custom configuration saved
-(since its C<make test> wasn't run). In which case the interactive
-configuration should kick in (unless config options were passed) and
-in any case saved once configured.
-
-C<$custom_config_path> - perl's F<Apache/TestConfigData.pm> (at the
-same location as F<Apache/TestConfig.pm>) if that area is writable by
-that user (e.g. perl's lib is not owned by 'root'). If not, in
-F<~/.apache-test/Apache/TestConfigData.pm>.
-
-  1) perl Apache-Test/Makefile.PL
-  2) make
-  3) make test
-
-  if $config_exists
-      if $config_overriden
-          override saved options (for those that were overriden)
-      else
-          use saved options
-  else
-      if $config_overriden
-          save them in $custom_config_path
-      else
-          - run interactive prompt for C<httpd> and optionally for C<apxs>
-          - save the custom config in $custom_config_path
-          - restart the currently run program
-
-  4) make install
-
-=back
-
-
-
-=head2 Saving Custom Configuration Options
-
-If you want to override the existing custom configurations options to
-C<Apache::TestConfigData>, use the C<-save> flag when running C<TEST>.
-
-If you are running C<Apache::Test> as a user who does not have
-permission to alter the system C<Apache::TestConfigData>, you can
-place your own private configuration file F<TestConfigData.pm> under
-C<$ENV{HOME}/.apache-test/Apache/>, which C<Apache::Test> will use, if
-present. An example of such a configuration file is
-
-  # file $ENV{HOME}/.apache-test/Apache/TestConfigData.pm
-  package Apache::TestConfigData;
-  use strict;
-  use warnings;
-  use vars qw($vars);
-
-  $vars = {
-      'group' => 'me',
-      'user' => 'myself',
-      'port' => '8529',
-      'httpd' => '/usr/local/apache/bin/httpd',
-
-  };
-  1;
-
-
-
 
 =cut
