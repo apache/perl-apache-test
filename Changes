@@ -8,6 +8,18 @@ Changes - Apache::Test change logfile
 
 =item 1.34-dev
 
+Fix build edge case where rpm based mp sources missing Apache2::Build cause
+require failure in Apache-TestConfig.  Reported by Ryan Gies.
+[Fred Moyer]
+
+When an explicit shared mod_perl lib is not defined, default to the first
+shared module found by find_apache_module().
+[Fred Moyer]
+
+Fix logic error in TOP_LEVEL constant calculation.  Remove Apache::test
+compatibility from mod_perl 1.27.
+[Fred Moyer]
+
 Remove the custom config feature, and instead use inline directives,
 ENV vars, and look for apxs et al in PATH.
 [Fred Moyer]

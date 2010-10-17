@@ -8,7 +8,6 @@ README
 INSTALL
 SUPPORT
 ToDo
-install-pl
 lib/Apache/Test.pm
 lib/Apache/Test5005compat.pm
 lib/Apache/TestBuild.pm
