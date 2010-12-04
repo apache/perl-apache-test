@@ -42,7 +42,7 @@ my @need = qw(need_lwp need_http11 need_cgi need_access need_auth
               need_module need_apache need_min_apache_version
               need_apache_version need_perl need_min_perl_version
               need_min_module_version need_threads need_apache_mpm
-              need_php need_php4 need_ssl need_imagemap);
+              need_php need_php4 need_ssl need_imagemap need_cache_disk);
 
 my @have = map { (my $need = $_) =~ s/need/have/; $need } @need;
 
@@ -350,6 +350,11 @@ sub need_min_module_version {
 sub need_cgi {
     return _need_multi(qw(cgi.c cgid.c));
 }
+
+sub need_cache_disk {
+    return _need_multi(qw(cache_disk.c disk_cache.c));
+}
+
 
 sub need_php {
     return _need_multi(qw(php4 php5 sapi_apache2.c));
@@ -731,6 +736,13 @@ Require LWP support.
   plan tests => 5, need_cgi;
 
 Requires mod_cgi or mod_cgid to be installed.
+
+=item need_cache_disk
+
+  plan tests => 5, need_cache_disk
+
+Requires mod_cache_disk or mod_disk_cache to be installed.
+
 
 =item need_php
 
