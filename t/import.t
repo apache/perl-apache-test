@@ -113,7 +113,7 @@ Test::ok $warning, qr/^Ignoring -withtestmore due to a previous call /,
     "Ignore -withtestmore warning";
 
 use Config ();
-my $pio=!$Config::Config{useperlio};
+my $pio=$Config::Config{useperlio} ? '' : 'need perlio';
 my $output;
 Test::skip $pio, sub {
     my @res;
