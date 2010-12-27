@@ -54,10 +54,6 @@ my @have = map { (my $need = $_) =~ s/need/have/; $need } @need;
 %SubTests = ();
 @SkipReasons = ();
 
-if (my $subtests = $ENV{HTTPD_TEST_SUBTESTS}) {
-    %SubTests = map { $_, 1 } split /\s+/, $subtests;
-}
-
 sub cp {
     my @l;
     for( my $i=1; (@l=caller $i)[0] eq __PACKAGE__; $i++ ) {};
@@ -152,21 +148,37 @@ sub sok (&;$) {
     my $sub = shift;
     my $nok = shift || 1; #allow sok to have 'ok' within
 
-    if (%SubTests and not $SubTests{ $Test::ntest }) {
-        for my $n (1..$nok) {
-            skip("skipping this subtest", 0);
-        }
-        return;
-    }
+    my ($caller,$f,$l)=cp;
 
-    my($package, $filename, $line) = caller;
+    if (exists $wtm{$caller} and $wtm{$caller}->[0]==1) { # -withtestmore
+	require Test::Builder;
+	my $tb=Test::Builder->new;
 
-    # trick ok() into reporting the caller filename/line when a
-    # sub-test fails in sok()
-    return eval <<EOE;
-#line $line $filename
-    ok(\$sub->());
+	if (%SubTests and not $SubTests{ 1+$tb->current_test }) {
+	    $tb->skip("skipping this subtest") for (1..$nok);
+	    return;
+	}
+
+	# trick ok() into reporting the caller filename/line when a
+	# sub-test fails in sok()
+	return eval <<EOE;
+#line $l $f
+    Test::More::ok(\$sub->());
 EOE
+    }
+    else {
+	if (%SubTests and not $SubTests{ $Test::ntest }) {
+	    skip("skipping this subtest", 0) for (1..$nok);
+	    return;
+	}
+
+	# trick ok() into reporting the caller filename/line when a
+	# sub-test fails in sok()
+	return eval <<EOE;
+#line $l $f
+    Test::ok(\$sub->());
+EOE
+    }
 }
 
 #so Perl's Test.pm can be run inside mod_perl
@@ -269,6 +281,11 @@ sub plan {
     @SkipReasons = (); # reset
 
     my ($caller,$f,$l)=cp;
+
+    %SubTests=();
+    if (my $subtests=$ENV{HTTPD_TEST_SUBTESTS}) {
+	%SubTests=map { $_, 1 } split /\s+/, $subtests;
+    }
 
     if (exists $wtm{$caller} and $wtm{$caller}->[0]==1) { # -withtestmore
 	Test::More::plan(@_);

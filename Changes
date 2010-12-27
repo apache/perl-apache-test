@@ -8,6 +8,9 @@ Changes - Apache::Test change logfile
 
 =item 1.35-dev
 
+Make Apache::Test::sok() compatible with the -withtestmore option
+[Torsten Foertsch]
+
 Make -withtestmore a per-package option (make it behave sane).
 [Torsten Foertsch]
 
