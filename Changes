@@ -8,6 +8,8 @@ Changes - Apache::Test change logfile
 
 =item 1.35-dev
 
+Make -withtestmore a per-package option (make it behave sane).
+[Torsten Foertsch]
 
 =item 1.34 December 18, 2010
 

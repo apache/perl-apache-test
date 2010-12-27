@@ -21,6 +21,7 @@ use warnings FATAL => 'all';
 use Exporter ();
 use Config;
 use Apache::TestConfig ();
+use Test qw/ok skip/;
 
 BEGIN {
     # Apache::Test loads a bunch of mp2 stuff while getting itself
@@ -47,13 +48,8 @@ my @need = qw(need_lwp need_http11 need_cgi need_access need_auth
 my @have = map { (my $need = $_) =~ s/need/have/; $need } @need;
 
 @ISA = qw(Exporter);
-@EXPORT = (qw(ok skip sok plan skip_reason under_construction need),
+@EXPORT = (qw(sok plan skip_reason under_construction need),
            @need, @have);
-
-# everything but ok(), skip(), and plan() - Test::More provides these
-my @test_more_exports = grep { ! /^(ok|skip|plan)$/ } @EXPORT;
-
-%EXPORT_TAGS = (withtestmore => \@test_more_exports);
 
 %SubTests = ();
 @SkipReasons = ();
@@ -62,48 +58,79 @@ if (my $subtests = $ENV{HTTPD_TEST_SUBTESTS}) {
     %SubTests = map { $_, 1 } split /\s+/, $subtests;
 }
 
+sub cp {
+    my @l;
+    for( my $i=1; (@l=caller $i)[0] eq __PACKAGE__; $i++ ) {};
+    return wantarray ? @l : $l[0];
+}
+
 my $Config;
-my $real_plan;
-my @testmore;
-
+my %wtm;
 sub import {
-    my $class = shift;
+    my $class=$_[0];
+    my $wtm=0;
+    my @base_exp;
+    my @exp;
+    my %my_exports;
+    undef @my_exports{@EXPORT};
 
-    # once Test::More always Test::More until plan() is called
-    if (($_[0] and $_[0] =~ m/^-withtestmore/) || @testmore) {
-        # special hoops for Test::More support
+    my ($caller,$f,$l)=cp;
 
-        $real_plan = eval {
-
-            require Test::More;
-
-            no warnings qw(numeric);
-            Test::Builder->VERSION('0.18_01');
-
-            # required for Test::More::import() and Apache::Test::plan()
-            # if we don't do this, Test::More exports plan() anyway
-            # and we get collisions.  go figure.
-            @testmore = (import => [qw(!plan)]);
-
-            Test::More->import(@testmore);
-
-            \&Test::More::plan;
-        } or die "-withtestmore error: $@";
-
-        # clean up arguments to export_to_level
-        shift;
-        @EXPORT = (@test_more_exports, @Test::More::EXPORT);
+    for( my $i=1; $i<@_; $i++ ) {
+	if( $_[$i] eq '-withtestmore' ) {
+	    $wtm=1;
+	}
+	elsif( $_[$i] eq ':DEFAULT' ) {
+	    push @exp, $_[$i];
+	    push @base_exp, $_[$i];
+	}
+	elsif( $_[$i] eq '!:DEFAULT' ) {
+	    push @exp, $_[$i];
+	    push @base_exp, $_[$i];
+	}
+	elsif( $_[$i]=~m@^[:/!]@ ) {
+	    warn("Ignoring import spec $_[$i] ".
+		 "at $f line $l\n")
+	}
+	elsif( exists $my_exports{$_[$i]} ) {
+	    push @exp, $_[$i];
+	}
+	else {
+	    push @base_exp, $_[$i];
+	}
     }
-    else {
-        # the default - Test.pm support
-
-        require Test;
-        Test->import(qw(ok skip));
-        @testmore = ();               # reset, just in case.
-        $real_plan = \&Test::plan;
+    if (!@exp and @base_exp) {
+	@exp=('!:DEFAULT');
+    }
+    elsif (@exp and !@base_exp) {
+	@base_exp=('!:DEFAULT');
     }
 
-    $class->export_to_level(1, undef, @_ ? @_ : @EXPORT);
+    $wtm{$caller}=[$wtm,$f,$l] unless exists $wtm{$caller};
+
+    warn("Ignoring -withtestmore due to a previous call ".
+	 "($wtm{$caller}->[1]:$wtm{$caller}->[2]) without it ".
+	 "at $f line $l\n")
+	if $wtm{$caller}->[0]==0 and $wtm==1;
+
+    $class->export_to_level(1, $class, @exp);
+
+    push @base_exp, '!plan';
+    if( $wtm{$caller}->[0] ) {	# -withtestmore
+	eval <<"EVAL"
+package $caller;
+#line $l $f
+use Test::More import=>\\\@base_exp;
+EVAL
+    }
+    else {			# -withouttestmore
+	eval <<"EVAL";
+package $caller;
+#line $l $f
+use Test \@base_exp;
+EVAL
+    }
+    die $@ if $@;
 }
 
 sub config {
@@ -144,7 +171,10 @@ EOE
 
 #so Perl's Test.pm can be run inside mod_perl
 sub test_pm_refresh {
-    if (@testmore) {
+    my ($caller,$f,$l)=cp;
+
+    if (exists $wtm{$caller} and $wtm{$caller}->[0]==1) { # -withtestmore
+	require Test::Builder;
         my $builder = Test::Builder->new;
 
         $builder->reset;
@@ -159,11 +189,23 @@ sub test_pm_refresh {
         # later user reports.
         $builder->failure_output(\*STDOUT);
     }
-    else {
-        $Test::TESTOUT = \*STDOUT;
-        $Test::planned = 0;
-        $Test::ntest = 1;
-        %Test::todo = ();
+    else {                                                # -withouttestmore
+	unless (exists $wtm{$caller}) {
+	    warn "You forgot to 'use Apache::Test' in package $caller\n";
+	    $wtm{$caller}=[0,$f,$l];
+	}
+	if (defined &Test::_reset_globals) {
+	    Test::_reset_globals();
+	    # Test.pm uses $TESTOUT=*STDOUT{IO}. We cannot do that
+	    # due to the way SetupEnv works.
+	    $Test::TESTOUT = \*STDOUT;
+	}
+	else {
+	    $Test::TESTOUT = \*STDOUT;
+	    $Test::planned = 0;
+	    $Test::ntest = 1;
+	    %Test::todo = ();
+	}
     }
 }
 
@@ -184,34 +226,6 @@ sub init_test_pm {
     }
 
     $r->content_type('text/plain');
-}
-
-sub need_http11 {
-    require Apache::TestRequest;
-    if (Apache::TestRequest::install_http11()) {
-        return 1;
-    }
-    else {
-        push @SkipReasons,
-           "LWP version 5.60+ required for HTTP/1.1 support";
-        return 0;
-    }
-}
-
-sub need_ssl {
-    my $vars = vars();
-    need_module([$vars->{ssl_module_name}, 'Net::SSL']);
-}
-
-sub need_lwp {
-    require Apache::TestRequest;
-    if (Apache::TestRequest::has_lwp()) {
-        return 1;
-    }
-    else {
-        push @SkipReasons, "libwww-perl is not installed";
-        return 0;
-    }
 }
 
 sub plan {
@@ -254,10 +268,49 @@ sub plan {
     }
     @SkipReasons = (); # reset
 
-    $real_plan->(@_, @testmore);
+    my ($caller,$f,$l)=cp;
+
+    if (exists $wtm{$caller} and $wtm{$caller}->[0]==1) { # -withtestmore
+	Test::More::plan(@_);
+    }
+    else {                                                # -withouttestmore
+	unless (exists $wtm{$caller}) {
+	    warn "You forgot to 'use Apache::Test' in package $caller\n";
+	    $wtm{$caller}=[0,$f,$l];
+	}
+	Test::plan(@_);
+    }
 
     # add to Test.pm verbose output
     print "# Using Apache/Test.pm version $VERSION\n";
+}
+
+sub need_http11 {
+    require Apache::TestRequest;
+    if (Apache::TestRequest::install_http11()) {
+        return 1;
+    }
+    else {
+        push @SkipReasons,
+           "LWP version 5.60+ required for HTTP/1.1 support";
+        return 0;
+    }
+}
+
+sub need_ssl {
+    my $vars = vars();
+    need_module([$vars->{ssl_module_name}, 'Net::SSL']);
+}
+
+sub need_lwp {
+    require Apache::TestRequest;
+    if (Apache::TestRequest::has_lwp()) {
+        return 1;
+    }
+    else {
+        push @SkipReasons, "libwww-perl is not installed";
+        return 0;
+    }
 }
 
 sub need {
