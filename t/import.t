@@ -125,7 +125,15 @@ Test::skip $pio, sub {
 
 	local *STDOUT;
 	open STDOUT, '>', \$output;
-	Apache::Test::plan tests=>17;
+	{
+	    # suppress an 'uninitialized' warning in older perl versions
+	    local $SIG{__WARN__}=sub {
+		warn $_[0]
+		    unless $_[0]=~m!uninitialized\svalue\sin\sopen\b.+
+				    Test/Builder\.pm!x;
+	    };
+	    Apache::Test::plan tests=>17;
+	}
 	Test::More::isnt "hugo", "erwin", "hugo is not erwin";
 	@res=($Test::ntest, $Test::planned);
 	Test::Builder->new->reset;
@@ -133,5 +141,5 @@ Test::skip $pio, sub {
     return "@res";
 }, '-19 -42', '$Test::ntest, $Test::planned did not change';
 
-Test::skip $pio, $output, qr/^1\.\.17$/m, 'planned';
-Test::skip $pio, $output, qr/^ok 1 - hugo is not erwin$/m, 'Test::More::isnt';
+Test::skip $pio, $output=~/^1\.\.17$/m;
+Test::skip $pio, $output=~/^ok 1 - hugo is not erwin$/m;
