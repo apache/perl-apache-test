@@ -53,6 +53,7 @@ t/cgi-bin/next_available_port.pl.PL
 t/conf/extra.conf.in
 t/conf/modperl_extra.pl.in
 t/cookies.t
+t/import.t
 t/log_watch.t
 t/more/01testpm.t
 t/more/02testmore.t
@@ -65,6 +66,7 @@ t/redirect.t
 t/request.t
 t/response/TestMore/testmorepm.pm
 t/response/TestMore/testpm.pm
+t/sok.t
 t/TEST.PL
 
 
