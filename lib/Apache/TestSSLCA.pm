@@ -145,17 +145,29 @@ sub dn_vars {
 }
 
 sub dn_oneline {
-    my($dn) = @_;
+    my($dn, $rfc2253) = @_;
 
     unless (ref $dn) {
         $dn = dn($dn);
     }
 
     my $string = "";
+    my @parts = (qw(C ST L O OU CN), $email_field);
+    @parts = reverse @parts if $rfc2253;
 
-    for my $k ((qw(C ST L O OU CN), $email_field)) {
+    for my $k (@parts) {
         next unless $dn->{$k};
-        $string .= "/$k=$dn->{$k}";
+        if ($rfc2253) {
+            my $tmp = $dn->{$k};
+            $tmp =~ s{([,+"\\<>;])}{\\$1}g;
+            $tmp =~ s{^([ #])}{\\$1};
+            $tmp =~ s{ $}{\\ };
+            $string .= "," if $string;
+            $string .= "$k=$tmp";
+        }
+        else {
+            $string .= "/$k=$dn->{$k}";
+        }
     }
 
     $string;
