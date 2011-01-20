@@ -8,6 +8,9 @@ Changes - Apache::Test change logfile
 
 =item 1.35-dev
 
+Return value on running tests as root should be 0, not 1.  Thanks to Michael Schout for the spot.
+[Fred Moyer]
+
 Add support for RFC2253 DN string format to dn_oneline in Apache::TestSSLCA
 [Stefan Fritsch]
 

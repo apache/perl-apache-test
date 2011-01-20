@@ -947,7 +947,7 @@ sub check_runtime_user {
 
     if ($user eq 'root') {
         error "Apache cannot spawn child processes as root, therefore the test suite must be run as a non-privileged user.";
-        exit_perl(0);
+        exit_perl(1);
     }
 
     return 1;
