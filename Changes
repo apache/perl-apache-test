@@ -6,7 +6,7 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.35-dev
+=item 1.35-rc1
 
 Return value on running tests as root should be 0, not 1.  Thanks to Michael Schout for the spot.
 [Fred Moyer]
