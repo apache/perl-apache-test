@@ -8,6 +8,12 @@ Changes - Apache::Test change logfile
 
 =item 1.36-dev
 
+Deprecate t/TEST -times=X in favor of t/SMOKE -times=X.  Changes to
+TAP::Harness have removed the ability to re-use test object attributes.
+Also generate t/SMOKE on build now, instead of requiring the user to build it.
+Thanks to Jim Jagielski for the spot on the -times=X issue on t/TEST.
+[Fred Moyer]
+
 more or less cosmetical, this patch prevents repeating "adding source lib"
 info lines in the output while testing Apache::Test, SizeLimit and similar
 [Torsten Foertsch]

@@ -114,7 +114,7 @@ sub prune {
         next if $test =~ /\.#/; # skip temp emacs files
         my $dir = dirname $test;
         if ($test =~ m:\Wall\.t$:) {
-            unless ($self->run_t($test)) {
+            unless (__PACKAGE__->run_t($test)) {
                 $skip_dirs{$dir} = 1;
                 @new_tests = grep { m:\Wall\.t$: ||
                                     not $skip_dirs{dirname $_} } @new_tests;

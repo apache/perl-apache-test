@@ -21,6 +21,7 @@ use warnings FATAL => 'all';
 use Config;
 use Apache::TestConfig ();
 use Apache::TestTrace;
+use Apache::TestSmoke;
 
 sub import {
     my $class = shift;
@@ -139,6 +140,7 @@ sub generate_script {
 
     info "generating script $file";
     Apache::Test::basic_config()->write_perlscript($file, $body);
+    Apache::TestSmoke->generate_script;
 }
 
 sub filter_args {

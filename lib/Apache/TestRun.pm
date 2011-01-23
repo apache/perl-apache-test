@@ -54,7 +54,6 @@ my @flag_opts    = (@std_run, @others);
 my @string_opts  = qw(order trace);
 my @ostring_opts = qw(proxy ping);
 my @debug_opts   = qw(debug);
-my @num_opts     = qw(times);
 my @list_opts    = qw(preamble postamble breakpoint);
 my @hash_opts    = qw(header);
 my @help_opts    = qw(clean help);
@@ -66,9 +65,8 @@ my @exit_opts_need_httpd    = (@debug_opts, qw(ping));
 my %usage = (
    'start-httpd'     => 'start the test server',
    'run-tests'       => 'run the tests',
-   'times=N'         => 'repeat the tests N times',
    'order=mode'      => 'run the tests in one of the modes: ' .
-                        '(repeat|rotate|random|SEED)',
+                        '(repeat|random|SEED)',
    'stop-httpd'      => 'stop the test server',
    'no-httpd'        => 'run the tests without configuring or starting httpd',
    'verbose[=1]'     => 'verbose output',
@@ -221,7 +219,6 @@ sub getopts {
     GetOptions(\%opts, @flag_opts, @help_opts,
                (map "$_:s", @debug_opts, @request_opts, @ostring_opts),
                (map "$_=s", @string_opts),
-               (map "$_=i", @num_opts),
                (map { ("$_=s", $vopts{$_} ||= []) } @list_opts),
                (map { ("$_=s", $vopts{$_} ||= {}) } @hash_opts));
 
@@ -577,7 +574,6 @@ sub run_tests {
     my $test_opts = {
         verbose => $self->{opts}->{verbose},
         tests   => $self->{tests},
-        times   => $self->{opts}->{times},
         order   => $self->{opts}->{order},
         subtests => $self->{subtests} || [],
     };

@@ -24,6 +24,7 @@ use Apache::TestTrace;
 
 use Apache::TestHarness ();
 use Apache::TestRun (); # for core scan functions
+use Apache::TestSort;
 
 use Getopt::Long qw(GetOptions);
 use File::Spec::Functions qw(catfile);
@@ -36,25 +37,20 @@ use Symbol ();
 # how many times to run all tests at the first iteration
 use constant DEFAULT_TIMES  => 10;
 
-# how many various seeds to try in NONSTOP mode
-use constant DEFAULT_ITERATIONS  => 10;
-
 # if after this number of tries to reduce the number of tests fails we
 # give up on more tries
 use constant MAX_REDUCTION_TRIES => 50;
 
-my @num_opts  = qw(times iterations);
+my @num_opts  = qw(times);
 my @string_opts  = qw(order report);
 my @flag_opts = qw(help verbose bug_mode);
 
-my %order = map {$_ => 1} qw(random repeat rotate);
+my %order = map {$_ => 1} qw(random repeat);
 
 my %usage = (
-   'iterations=N'    => 'number of random iterations to run' .
-                        ' (default: ' . DEFAULT_ITERATIONS . ')',
-   'times=N'         => 'try to repeat all tests at most N times' .
+   'times=N'         => 'how many times to run the entire test suite' .
                         ' (default: ' . DEFAULT_TIMES . ')',
-   'order=MODE'      => 'modes: random, repeat, rotate' .
+   'order=MODE'      => 'modes: random, repeat' .
                         ' (default: random)',
    'report=FILENAME' => 'save report in a filename' .
                         ' (default: smoke-report-<date>.txt)',
@@ -84,18 +80,11 @@ sub new {
     my $opts = $self->{opts};
 
     chdir "$FindBin::Bin/..";
-
-    $self->{times}   = $opts->{times}   || DEFAULT_TIMES;
+    $self->{times} = $opts->{times} || DEFAULT_TIMES;
     $self->{order}   = $opts->{order}   || 'random';
     $self->{verbose} = $opts->{verbose} || 0;
 
-    # unless specifically asked to, it doesn't make sense to run a
-    # known sequence more than once
-    $self->{run_iter} = $opts->{iterations} || DEFAULT_ITERATIONS;
-    if ($self->{order} ne 'random' and !$opts->{iterations}) {
-        error "forcing only one iteration for non-random order";
-        $self->{run_iter} = 1;
-    }
+    $self->{run_iter} = $self->{times};
 
     # this is like 'make test' but produces an output to be used in
     # the bug report
@@ -104,7 +93,7 @@ sub new {
         $self->{run_iter} = 1;
         $self->{times}    = 1;
         $self->{verbose}  = 1;
-        $self->{order}    = 'rotate';
+        $self->{order}    = 'random';
         $self->{trace}    = 'debug';
     }
 
@@ -113,9 +102,8 @@ sub new {
     $self->Apache::TestRun::split_test_args();
 
     my $test_opts = {
-        #verbose  => $self->{verbose},
+        verbose  => $self->{verbose},
         tests    => $self->{tests},
-        times    => $self->{times},
         order    => $self->{order},
         subtests => $self->{subtests} || [],
     };
@@ -306,17 +294,20 @@ sub run_bug_mode {
 # returns true if for some reason no more iterations should be made
 sub run_iter {
     my($self, $iter) = @_;
-
     my $stop_now = 0;
     my $reduce_iter = 0;
     my @good = ();
     warning "\n" . sep("-");
-    warning sprintf "[%03d-%02d-%02d] trying all tests %d time%s",
-        $iter, $reduce_iter, 0, $self->{times},
-        ($self->{times} > 1 ? "s" : "");
+    warning sprintf "[%03d-%02d-%02d] running all tests",
+        $iter, $reduce_iter, $self->{times};
+
 
     # first time run all tests, or all specified tests
     my @tests = @{ $self->{tests} }; # copy
+
+    # hack to ensure a new random seed is generated
+    Apache::TestSort->run(\@tests, $self);
+
     my $bad = $self->run_test($iter, $reduce_iter, \@tests, \@good);
     unless ($bad) {
         $self->{total_iterations}++;
@@ -514,23 +505,28 @@ sub run_test {
             my $test_command = "$command $test";
             my $log = '';
             IPC::Run3::run3($test_command, undef, \$log, \$log);
-            my $ok = ($log =~ /All tests successful/) ? 1 : 0;
+            my $ok = ($log =~ /All tests successful|NOTESTS/) ? 1 : 0;
 
             my @core_files_msg = $self->Apache::TestRun::scan_core_incremental(1);
 
             # if the test has caused core file(s) it's not ok
             $ok = 0 if @core_files_msg;
 
-            if ($ok) {
+            if ($ok == 1) {
                 push @$ra_ok, $test;
                 if ($self->{verbose}) {
-                    print STDERR "$test_name${fill}ok\n";
+
+                    if ($log =~ m/NOTESTS/) {
+                        print STDERR "$test_name${fill}skipped\n";
+                    } else {
+                        print STDERR "$test_name${fill}ok\n";
+                    }
                 }
                 # need to run log_diff to reset the position of the fh
                 my %log_diffs = map { $_ => $self->log_diff($_) } @log_files;
 
             }
-            else {
+            elsif ($ok == 0) {
                 push @$ra_nok, $test;
                 $bad = $test;
 
@@ -791,9 +787,9 @@ Apache::TestSmoke - Special Tests Sequence Failure Finder
   # get the usage and the default values
   % t/SMOKE -help
 
-  # repeat all tests 5 times and try 20 random iterations
-  # and save the report into the file 'myreport'
-  % t/SMOKE -times=5 -iterations=20 -report=myreport
+  # repeat all tests 5 times and save the report into
+  # the file 'myreport'
+  % t/SMOKE -times=5 -report=myreport
 
   # run all tests default number of iterations, and repeat tests
   # default number of times

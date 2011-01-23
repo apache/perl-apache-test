@@ -86,7 +86,6 @@ sub run_tests {
     my $test_opts = {
         verbose => $self->{opts}->{verbose},
         tests   => $self->{tests},
-        times   => $self->{opts}->{times},
         order   => $self->{opts}->{order},
         subtests => $self->{subtests} || [],
     };

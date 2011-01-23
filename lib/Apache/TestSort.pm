@@ -20,21 +20,12 @@ use warnings FATAL => 'all';
 use Apache::TestTrace;
 
 sub repeat {
-    my($list, $times) = @_;
-    # a, a, b, b
-    @$list = map { ($_) x $times } @$list;
-}
-
-sub rotate {
-    my($list, $times) = @_;
-    # a, b, a, b
-    @$list = (@$list) x $times;
+    my($list) = @_;
+    return @{$list};
 }
 
 sub random {
-    my($list, $times) = @_;
-
-    rotate($list, $times); #XXX: allow random,repeat
+    my($list) = @_;
 
     my $seed = $ENV{APACHE_TEST_SEED} || '';
     my $info = "";
@@ -63,8 +54,7 @@ sub random {
 sub run {
     my($self, $list, $args) = @_;
 
-    my $times = $args->{times} || 1;
-    my $order = $args->{order} || 'rotate';
+    my $order = $args->{order} || 'random';
     if ($order =~ /^\d+$/) {
         #dont want an explicit -seed option but env var can be a pain
         #so if -order is number assume it is the random seed
@@ -75,7 +65,7 @@ sub run {
 
     # re-shuffle the list according to the requested order
     if (defined &$sort) {
-        $sort->($list, $times);
+        $sort->($list);
     }
     else {
         error "unknown order '$order'";
