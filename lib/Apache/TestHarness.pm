@@ -61,49 +61,47 @@ sub skip {
 }
 
 #test if all.t would skip tests or not
-sub run_t {
-    my($self, $file) = @_;
-    my $ran = 0;
-
+{
     my $source_lib = '';
 
-    if (Apache::TestConfig::IS_APACHE_TEST_BUILD) {
-        # so we can find Apache/Test.pm from both the perl-framework/
-        # and Apache-Test/
+    sub run_t {
+        my($self, $file) = @_;
+        my $ran = 0;
 
-        my $top_dir = Apache::Test::vars('top_dir');
+        if (Apache::TestConfig::IS_APACHE_TEST_BUILD and !length $source_lib) {
+            # so we can find Apache/Test.pm from both the perl-framework/
+            # and Apache-Test/
 
-        foreach my $lib (catfile($top_dir, qw(Apache-Test lib)),
-                         catfile($top_dir, qw(.. Apache-Test lib)),
-                         catfile($top_dir, 'lib')) {
+            my $top_dir = Apache::Test::vars('top_dir');
+            foreach my $lib (catfile($top_dir, qw(Apache-Test lib)),
+                             catfile($top_dir, qw(.. Apache-Test lib)),
+                             catfile($top_dir, 'lib')) {
 
-            if (-d $lib) {
+                if (-d $lib) {
+                    info "adding source lib $lib to \@INC";
+                    $source_lib = qq[-Mlib="$lib"];
+                    last;
+                }
+            }
+        }
 
-                info "adding source lib $lib to \@INC";
+        my $cmd = qq[$^X $source_lib $file];
 
-                $source_lib = qq[-Mlib="$lib"];
+        my $h = Symbol::gensym();
+        open $h, "$cmd|" or die "open $cmd: $!";
 
+        local $_;
+        while (<$h>) {
+            if (/^1\.\.(\d)/) {
+                $ran = $1;
                 last;
             }
         }
-    }
 
-    my $cmd = qq[$^X $source_lib $file];
+        close $h;
 
-    my $h = Symbol::gensym();
-    open $h, "$cmd|" or die "open $cmd: $!";
-
-    local $_;
-    while (<$h>) {
-        if (/^1\.\.(\d)/) {
-            $ran = $1;
-            last;
-        }
-    }
-
-    close $h;
-
-    $ran;
+        $ran;
+     }
 }
 
 #if a directory has an all.t test
