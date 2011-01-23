@@ -631,6 +631,8 @@ for my $func (@have) {
 
 package Apache::TestToString;
 
+Apache::Test->import('!:DEFAULT');
+
 sub TIEHANDLE {
     my $string = "";
     bless \$string;

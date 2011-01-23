@@ -18,7 +18,7 @@ package Apache::TestHandler;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Test ();
+use Apache::Test qw/!:DEFAULT/;	# call import() to tell about -withouttestmore
 use Apache::TestRequest ();
 
 use Apache2::Const -compile => qw(OK NOT_FOUND SERVER_ERROR);
