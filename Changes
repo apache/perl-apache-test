@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.36-dev
 
+more or less cosmetical, this patch prevents repeating "adding source lib"
+info lines in the output while testing Apache::Test, SizeLimit and similar
+[Torsten Foertsch]
+
 =item 1.35 January 22, 2011
 
 Return value on running tests as root should be 0, not 1.  Thanks to Michael Schout for the spot.
