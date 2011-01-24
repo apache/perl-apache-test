@@ -6,7 +6,8 @@ use warnings FATAL=>'all';
 use Test ();
 use Config ();
 unless ($Config::Config{useperlio}) {
-    print 
+    print "1..0 # need perlio\n";
+    exit 0;
 }
 
 Test::plan tests=>8;
