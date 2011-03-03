@@ -8,6 +8,11 @@ Changes - Apache::Test change logfile
 
 =item 1.37-dev
 
+Add $boolean parameter to Apache::TestHandler::ok and Apache::TestHandler::ok1
+Add a few bits of documentation [Torsten Foertsch]
+
+Apache::TestHandler forgot to require Apache2::RequestRec [Torsten Foertsch]
+
 =item 1.36 February 2, 2011
 
 Skip sok.t unless perlio is enabled [Torsten Foertsch]

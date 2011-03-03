@@ -27,7 +27,8 @@ use Apache2::Const -compile => qw(OK NOT_FOUND SERVER_ERROR);
 #see modperl-2.0/t/hooks/TestHooks/authen.pm
 
 if ($ENV{MOD_PERL} && require mod_perl2) {
-    require Apache2::RequestIO; # puts
+    require Apache2::RequestRec; # content_type
+    require Apache2::RequestIO;  # puts
 }
 
 #compat with 1.xx
@@ -35,17 +36,17 @@ my $send_http_header = Apache->can('send_http_header') || sub {};
 my $print = Apache2->can('print') || Apache2::RequestRec->can('puts');
 
 sub ok {
-    my $r = shift;
+    my ($r, $boolean) = @_;
     $r->$send_http_header;
     $r->content_type('text/plain');
-    $r->$print("ok");
+    $r->$print((@_>1 && !$boolean ? "not " : '')."ok");
     0;
 }
 
 sub ok1 {
-    my $r = shift;
+    my ($r, $boolean) = @_;
     Apache::Test::plan($r, tests => 1);
-    Apache::Test::ok(1);
+    Apache::Test::ok(@_==1 || $boolean);
     0;
 }
 
@@ -101,3 +102,74 @@ sub same_interp_fixup {
 
 1;
 __END__
+
+=encoding utf8
+
+=head1 NAME
+
+Apache::TestHandler - a few response handlers and helpers
+
+=head1 SYNOPSIS
+
+    package My::Test;
+    use Apache::TestHandler ();
+    sub handler {
+        my ($r) = @_;
+        my $result = do_my_test;
+        Apache::TestHandler::ok1 $r, $result;
+    }
+
+    sub handler2 {
+        my ($r) = @_;
+        my $result = do_my_test;
+        Apache::TestHandler::ok $r, $result;
+    }
+
+=head1 DESCRIPTION
+
+C<Apache::TestHandler> provides 2 very simple response handler.
+
+=head1 FUNCTIONS
+
+=over 4
+
+=item ok $r, $boolean
+
+The handler simply prints out C<ok> or C<not ok> depending on the
+optional C<$boolean> parameter.
+
+If C<$boolean> is omitted C<true> is assumed.
+
+=item ok1 $r, $boolean
+
+This handler implements a simple response-only test. It can be used on its
+own to check if for a certain URI the response phase is reached. Or it
+can be called like a normal function to print out the test result. The
+client side is automatically created as described in
+L<http://perl.apache.org/docs/general/testing/testing.html#Developing_Response_only_Part_of_a_Test>.
+
+C<$boolean> is optional. If omitted C<true> is assumed.
+
+=item same_interp_counter
+
+=item same_interp_fixup
+
+TODO
+
+=back
+
+=head1 SEE ALSO
+
+The Apache-Test tutorial:
+L<http://perl.apache.org/docs/general/testing/testing.html>.
+
+L<Apache::Test>.
+
+=head1 AUTHOR
+
+Doug MacEachern, Geoffrey Young, Stas Bekman, Torsten Förtsch and others.
+
+Questions can be asked at the test-dev <at> httpd.apache.org list
+For more information see: http://httpd.apache.org/test/.
+
+=cut
