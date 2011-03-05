@@ -8,6 +8,8 @@ Changes - Apache::Test change logfile
 
 =item 1.37-dev
 
+Add t_file_watch_for to Apache::TestUtil [Torsten Foertsch]
+
 Add $boolean parameter to Apache::TestHandler::ok and Apache::TestHandler::ok1
 Add a few bits of documentation [Torsten Foertsch]
 

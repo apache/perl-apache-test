@@ -43,7 +43,7 @@ $VERSION = '0.02';
 );
 
 @EXPORT_OK = qw(t_write_perl_script t_write_shell_script t_chown
-                t_catfile_apache t_catfile
+                t_catfile_apache t_catfile t_file_watch_for
                 t_start_error_log_watch t_finish_error_log_watch
                 t_start_file_watch t_read_file_watch t_finish_file_watch);
 
@@ -99,6 +99,33 @@ use constant INDENT     => 4;
         }
 
         return readline $fh;
+    }
+
+    sub t_file_watch_for ($$$) {
+	my ($name, $re, $timeout) = @_;
+	local $/ = "\n";
+	$re = qr/$re/ unless ref $re;
+	$timeout *= 10;
+	my $buf = '';
+	my @acc;
+	while ($timeout >= 0) {
+	    my $line = t_read_file_watch $name;
+	    unless (defined $line) { # EOF
+		select undef, undef, undef, 0.1;
+		$timeout--;
+		next;
+	    }
+	    $buf .= $line;
+	    next unless $buf =~ /\n$/; # incomplete line
+
+	    # found a complete line
+	    $line = $buf;
+	    $buf = '';
+
+	    push @acc, $line;
+	    return wantarray ? @acc : $line if $line =~ $re;
+	}
+	return;
     }
 
     sub t_start_error_log_watch {
@@ -916,6 +943,36 @@ record length use this:
     local $/=\$record_length;
     @lines=t_finish_file_watch($name);
   }
+
+=item t_file_watch_for()
+
+  @lines=Apache::TestUtil::t_file_watch_for('access_log',
+                                            qr/condition/,
+                                            $timeout);
+
+This function reads the file from the current position and looks for the
+first line that matches C<qr/condition/>. If no such line could be found
+until end of file the function pauses and retries until either such a line
+is found or the timeout (in seconds) is reached.
+
+In scalar or void context only the matching line is returned. In list
+context all read lines are returned with the matching one in last position.
+
+The function uses C<\n> and end-of-line marker and waits for complete lines.
+
+The timeout although it can be specified with sub-second precision is not very
+accurate. It is simply multiplied by 10. The result is used as a maximum loop
+count. For the intented purpose this should be good enough.
+
+Use this function to check for logfile entries when you cannot be sure that
+they are already written when the test program reaches the point, for example
+to check for messages that are written in a PerlCleanupHandler or a
+PerlLogHandler.
+
+ ok t_file_watch_for 'access_log', qr/expected log entry/, 2;
+
+This call reads the C<access_log> and waits for maximum 2 seconds for the
+expected entry to appear.
 
 =back
 
