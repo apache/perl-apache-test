@@ -54,7 +54,7 @@ sub random {
 sub run {
     my($self, $list, $args) = @_;
 
-    my $order = $args->{order} || 'random';
+    my $order = $args->{order} || 'repeat';
     if ($order =~ /^\d+$/) {
         #dont want an explicit -seed option but env var can be a pain
         #so if -order is number assume it is the random seed

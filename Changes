@@ -8,6 +8,9 @@ Changes - Apache::Test change logfile
 
 =item 1.37-dev
 
+Run t/TEST tests by default in alphabetical order and
+only t/SMOKE tests by default in random order. [Rainer Jung]
+
 Add t_file_watch_for to Apache::TestUtil [Torsten Foertsch]
 
 Add $boolean parameter to Apache::TestHandler::ok and Apache::TestHandler::ok1
