@@ -557,6 +557,7 @@ sub massage_config_args {
             }
         }
         else {
+            $data=~s/\n(?!\z)/\n    /g;
             $args .= "    $data";
         }
         $args .= "</$directive>\n";
@@ -610,7 +611,8 @@ sub add_config_hooks_run {
 
     for (@{ $self->{$where} }) {
         $self->replace;
-        print $out "$_\n";
+        s/\n?$/\n/;
+        print $out "$_";
     }
 }
 

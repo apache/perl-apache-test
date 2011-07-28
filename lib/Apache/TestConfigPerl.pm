@@ -540,6 +540,13 @@ sub configure_pm_tests {
         my ($file, $module, $subdir, $status) = @$entry;
         my @args = ();
 
+        my $file_display;
+        {
+          $file_display=$file;
+          my $topdir=$self->{vars}->{top_dir};
+          $file_display=~s!^\Q$topdir\E(.)(?:\1)*!!;
+        }
+        $self->postamble("\n# included from $file_display");
         my $directives = $self->add_module_config($file, \@args);
         $module =~ s,\.pm$,,;
         $module =~ s/^[a-z]://i; #strip drive if any
@@ -568,10 +575,7 @@ sub configure_pm_tests {
 
         debug "configuring $module";
 
-        if ($directives->{noautoconfig}) {
-            $self->postamble(""); # which adds "\n"
-        }
-        else {
+        unless ($directives->{noautoconfig}) {
             if (my $cv = $add_hook_config{$hook}) {
                 $self->$cv($module, \@args);
             }
@@ -595,6 +599,7 @@ sub configure_pm_tests {
               $self->postamble(IfModule => 'mod_perl.c', $cfg);
             }
         }
+        $self->postamble("# end of $file_display\n");
 
         $self->write_pm_test($module, lc $sub, map { lc } @base);
     }
