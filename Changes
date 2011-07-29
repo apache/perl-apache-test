@@ -8,6 +8,9 @@ Changes - Apache::Test change logfile
 
 =item 1.37-dev
 
+Add comments about the source files of auto configurated tests to
+the generated httpd.conf and improve indentation a bit. [Torsten Foertsch]
+
 Run t/TEST tests by default in alphabetical order and
 only t/SMOKE tests by default in random order. [Rainer Jung]
 
