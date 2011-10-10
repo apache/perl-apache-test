@@ -8,6 +8,11 @@ Changes - Apache::Test change logfile
 
 =item 1.37-dev
 
+As of httpd revision 1053230 (version 2.3.11) the NameVirtualHost directive
+became superfluous and a warning is issued when it is met. So, Apache::Test
+now wraps NameVirtualHost directives in <IfVersion> blocks.
+[Kaspar Brand <httpd-dev.2011@velox.ch>]
+
 Add comments about the source files of auto configurated tests to
 the generated httpd.conf and improve indentation a bit. [Torsten Foertsch]
 

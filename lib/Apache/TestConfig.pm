@@ -1240,7 +1240,9 @@ sub parse_vhost {
         @out_config = ([Listen => '0.0.0.0:' . $port]);
 
         if ($self->{vhosts}->{$module}->{namebased}) {
-            push @out_config => [NameVirtualHost => "*:$port"];
+            push @out_config => ["<IfVersion < 2.3.11>\n".
+                                 "${indent}${indent}NameVirtualHost"
+                                 => "*:$port\n${indent}</IfVersion>"];
         }
     }
 
