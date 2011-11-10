@@ -23,6 +23,7 @@ use constant OSX     => $^O eq 'darwin';
 use constant CYGWIN  => $^O eq 'cygwin';
 use constant NETWARE => $^O eq 'NetWare';
 use constant SOLARIS => $^O eq 'solaris';
+use constant AIX     => $^O eq 'aix';
 use constant WINFU   => WIN32 || NETWARE;
 use constant COLOR   => ($ENV{APACHE_TEST_COLOR} && -t STDOUT) ? 1 : 0;
 
