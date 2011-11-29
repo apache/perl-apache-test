@@ -159,6 +159,14 @@ sub user_agent {
         };
     }
 
+    # in LWP 6, verify_hostname defaults to on, so SSL_ca_file
+    # needs to be set accordingly
+    if ($LWP::VERSION >= 6.0 and not exists $args->{ssl_opts}->{SSL_ca_file}) {
+        my $vars = Apache::Test::vars();
+        $args->{ssl_opts}->{SSL_ca_file} = "$vars->{sslca}/" .
+                                           "$vars->{sslcaorg}/certs/ca.crt";
+    }
+
     eval { $UA ||= __PACKAGE__->new(%$args); };
 }
 
@@ -352,7 +360,7 @@ sub prepare {
         }
         push @$pass, content => $content;
     }
-    if ($keep->{cert}) {
+    if (exists $keep->{cert}) {
         set_client_cert($keep->{cert});
     }
 
@@ -620,11 +628,18 @@ sub set_client_cert {
     if ($name) {
         $ENV{HTTPS_CERT_FILE} = "$dir/certs/$name.crt";
         $ENV{HTTPS_KEY_FILE}  = "$dir/keys/$name.pem";
+        if ($LWP::VERSION >= 6.0) {
+            # LWP 6 no longer honors HTTPS_{CERT,KEY}_FILE
+            user_agent(reset => 1,
+                       ssl_opts => { SSL_cert_file => "$dir/certs/$name.crt",
+                                     SSL_key_file  => "$dir/keys/$name.pem" });
+        }
     }
     else {
         for (qw(CERT KEY)) {
             delete $ENV{"HTTPS_${_}_FILE"};
         }
+        user_agent(reset => 1) if $LWP::VERSION >= 6.0;
     }
 }
 
