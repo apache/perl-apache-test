@@ -161,7 +161,7 @@ sub user_agent {
 
     # in LWP 6, verify_hostname defaults to on, so SSL_ca_file
     # needs to be set accordingly
-    if ($LWP::VERSION >= 6.0 and not exists $args->{ssl_opts}->{SSL_ca_file}) {
+    if ($have_lwp and $LWP::VERSION >= 6.0 and not exists $args->{ssl_opts}->{SSL_ca_file}) {
         my $vars = Apache::Test::vars();
         my $cafile = "$vars->{sslca}/$vars->{sslcaorg}/certs/ca.crt";
         $args->{ssl_opts}->{SSL_ca_file} = $cafile;
