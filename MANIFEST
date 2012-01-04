@@ -46,9 +46,7 @@ t/alltest/all.t
 t/alltest2/01bang.t
 t/alltest2/all.t
 t/bad_coding.t
-t/cgi-bin/cookies.pl
 t/cgi-bin/cookies.pl.PL
-t/cgi-bin/next_available_port.pl
 t/cgi-bin/next_available_port.pl.PL
 t/conf/extra.conf.in
 t/conf/modperl_extra.pl.in
