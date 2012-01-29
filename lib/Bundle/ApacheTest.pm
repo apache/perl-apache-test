@@ -31,31 +31,31 @@ Bundle::ApacheTest - A bundle to install all Apache-Test related modules
 
 =head1 CONTENTS
 
-Crypt::SSLeay      - For https support
+Crypt::SSLeay        - For https support
 
-Devel::CoreStack   - For getting core stack info
+Devel::CoreStack     - For getting core stack info
 
-Devel::Symdump     - For, uh, dumping symbols
+Devel::Symdump       - For, uh, dumping symbols
 
-Digest::MD5        - Needed for Digest authentication
+Digest::MD5          - Needed for Digest authentication
 
-URI                - There are URIs everywhere
+URI                  - There are URIs everywhere
 
-Net::Cmd           - For libnet
+Net::Cmd             - For libnet
 
-MIME::Base64       - Used in authentication headers
+MIME::Base64         - Used in authentication headers
 
-HTML::Tagset       - Needed by HTML::Parser
+HTML::Tagset         - Needed by HTML::Parser
 
-HTML::Parser       - Need by HTML::HeadParser
+HTML::Parser         - Need by HTML::HeadParser
 
-HTML::HeadParser   - To get the correct $res->base
+HTML::HeadParser     - To get the correct $res->base
 
-LWP                - For libwww-perl
+LWP                  - For libwww-perl
 
 LWP::Protocol::https - LWP plug-in for the https protocol
 
-IPC::Run3          - Used in Apache::TestSmoke
+IPC::Run3            - Used in Apache::TestSmoke
 
 =head1 DESCRIPTION
 
