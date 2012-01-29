@@ -15,7 +15,7 @@
 #
 package Bundle::ApacheTest;
 
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 1;
 
@@ -52,6 +52,8 @@ HTML::Parser       - Need by HTML::HeadParser
 HTML::HeadParser   - To get the correct $res->base
 
 LWP                - For libwww-perl
+
+LWP::Protocol::https - LWP plug-in for the https protocol
 
 IPC::Run3          - Used in Apache::TestSmoke
 
