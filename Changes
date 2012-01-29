@@ -6,6 +6,8 @@ Changes - Apache::Test change logfile
 
 =over 3
 
+=item 1.38-dev
+
 =item 1.37 January 29, 2012
 
 Apache::TestRequest: improve compatibility for SSL requests with LWP 6 and
