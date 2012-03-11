@@ -8,6 +8,11 @@ Changes - Apache::Test change logfile
 
 =item 1.38-dev
 
+have Apache::TestConfigPerl::configure_inc set up @INC to include
+../blib/lib and ../blib/arch if they exist. The bundled Apache::Reload
+may fail to load Apache2::Const & co otherwise when testing.
+[Torsten Foertsch]
+
 =item 1.37 January 29, 2012
 
 Apache::TestRequest: improve compatibility for SSL requests with LWP 6 and
