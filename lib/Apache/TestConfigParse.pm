@@ -183,7 +183,7 @@ my %modname_alias = (
 # - mod_casp2 requires other settings in addition to LoadModule
 # - mod_bwshare and mod_evasive20 block fast requests that tests are doing
 # - mod_fcgid causes https://rt.cpan.org/Public/Bug/Display.html?id=54476
-# - mod_modnss.c mod_rev.c
+# - mod_modnss.c and mod_rev.c require further configuration
 my @autoconfig_skip_module = qw(mod_jk.c mod_casp2.c mod_bwshare.c
     mod_fcgid.c mod_evasive20.c mod_modnss.c mod_rev.c);
 
