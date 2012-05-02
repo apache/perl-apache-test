@@ -177,13 +177,15 @@ my %modname_alias = (
     'mod_modperl.c'        => 'mod_perl.c',
 );
 
-#XXX mod_jk requires JkWorkerFile or JkWorker to be configured
-#skip it for now, tomcat has its own test suite anyhow.
-#XXX: mod_casp2.so requires other settings in addition to LoadModule
-#XXX: mod_bwshare.so blocks fast requests that tests are doing
-#XXX: mod_fcgid.so causes https://rt.cpan.org/Public/Bug/Display.html?id=54476
+# Block modules which inhibit testing:
+# - mod_jk requires JkWorkerFile or JkWorker to be configured
+#   skip it for now, tomcat has its own test suite anyhow.
+# - mod_casp2 requires other settings in addition to LoadModule
+# - mod_bwshare and mod_evasive20 block fast requests that tests are doing
+# - mod_fcgid causes https://rt.cpan.org/Public/Bug/Display.html?id=54476
+# - mod_modnss.c mod_rev.c
 my @autoconfig_skip_module = qw(mod_jk.c mod_casp2.c mod_bwshare.c
-    mod_fcgid.c);
+    mod_fcgid.c mod_evasive20.c mod_modnss.c mod_rev.c);
 
 # add modules to be not inherited from the existing config.
 # e.g. prevent from LoadModule perl_module to be included twice, when
