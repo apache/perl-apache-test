@@ -8,6 +8,8 @@ Changes - Apache::Test change logfile
 
 =item 1.38-dev
 
+Remove use of Nullsv as per modperl commit 1362399. [Steve Hay]
+
 have Apache::TestConfigPerl::configure_inc set up @INC to include
 ../blib/lib and ../blib/arch if they exist. The bundled Apache::Reload
 may fail to load Apache2::Const & co otherwise when testing.

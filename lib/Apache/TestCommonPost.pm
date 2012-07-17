@@ -141,7 +141,7 @@ __C__
 #include <curl/easy.h>
 
 static CURL *curl = NULL;
-static SV *response = Nullsv;
+static SV *response = (SV *)NULL;
 static long total = 0;
 
 static size_t my_curl_read(char *buffer, size_t size,
