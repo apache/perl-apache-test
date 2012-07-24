@@ -222,8 +222,8 @@ sub t_cmp ($$;$) {
 sub t_filepath_cmp ($$;$) {
     my @a = (shift, shift);
     if (Apache::TestConfig::WIN32) {
-        $a[0] = Win32::GetLongPathName($a[0]) if defined $a[0];
-        $a[1] = Win32::GetLongPathName($a[1]) if defined $a[1];
+        $a[0] = Win32::GetLongPathName($a[0]) if defined $a[0] && -e $a[0];
+        $a[1] = Win32::GetLongPathName($a[1]) if defined $a[1] && -e $a[1];
     }
     return @_ == 1 ? t_cmp($a[0], $a[1], $_[0]) : t_cmp($a[0], $a[1]);
 }
@@ -477,7 +477,7 @@ END {
 sub t_catfile {
     my $f = catfile(@_);
     return $f unless file_name_is_absolute($f);
-    return Apache::TestConfig::WIN32 ?
+    return Apache::TestConfig::WIN32 && -e $f ?
         Win32::GetLongPathName($f) : $f;
 }
 
@@ -488,7 +488,7 @@ sub t_catfile {
 sub t_catfile_apache {
     my $f = File::Spec::Unix->catfile(@_);
     return $f unless file_name_is_absolute($f);
-    return Apache::TestConfig::WIN32 ?
+    return Apache::TestConfig::WIN32 && -e $f ?
         Win32::GetLongPathName($f) : $f;
 }
 

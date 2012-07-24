@@ -57,6 +57,9 @@ t_start_file_watch 'watch';
 ok t_cmp [t_read_file_watch 'watch'], [],
     "t_read_file_watch at EOF";
 
+# Make sure the file is closed before deleting it on Windows.
+t_finish_file_watch 'watch' if $^O eq 'MSWin32';
+
 unlink $fn;
 t_start_file_watch 'watch';
 
