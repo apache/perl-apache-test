@@ -6,7 +6,7 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.38-dev
+=item 1.38 Aug 6 2012
 
 Fix log_watch.t on Windows, which can't (naturally) delete open files.
 [Steve Hay]
