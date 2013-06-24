@@ -458,6 +458,13 @@ sub get_httpd_defines {
 
     $httpd = shell_ready($httpd);
     my $cmd = "$httpd -V";
+
+    my $httpdconf = $self->{vars}->{httpd_conf};
+    $cmd .= " -f $httpdconf" if $httpdconf;
+
+    my $serverroot = $self->{vars}->{serverroot};
+    $cmd .= " -d $serverroot" if $serverroot;
+
     my $proc = $self->open_cmd($cmd);
 
     while (<$proc>) {
