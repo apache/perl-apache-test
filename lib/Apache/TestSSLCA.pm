@@ -100,8 +100,9 @@ my $cert_dn = {
 };
 
 #generate DSA versions of the server certs/keys
-while (my($key, $val) = each %$cert_dn) {
+for my $key (keys %$cert_dn) {
     next unless $key =~ /^server/;
+    my $val = $$cert_dn{$key};
     my $name = join '_', $key, 'dsa';
     $cert_dn->{$name} = { %$val }; #copy
     $cert_dn->{$name}->{OU} =~ s/rsa/dsa/;
