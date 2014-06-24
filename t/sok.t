@@ -68,7 +68,7 @@ Test::ok $output=~/^ok 1$/m &&
     sok {1};
 }
 Test::ok $output=~/^ok 1$/m &&
-         $output=~/^ok 2 # skip skipping this subtest$/m &&
+         $output=~/^ok 2 # skip skipping this subtest$/mi &&
          $output=~/^ok 3$/m;
 
 {
@@ -86,7 +86,7 @@ Test::ok $output=~/^ok 1$/m &&
     sok {1};
 }
 Test::ok $output=~/^ok 1$/m &&
-         $output=~/^ok 2 # skip skipping this subtest$/m &&
+         $output=~/^ok 2 # skip skipping this subtest$/mi &&
          $output=~/^ok 3$/m;
 
 {
@@ -144,8 +144,8 @@ Test::ok $output=~/^ok 1$/m &&
     sok {1};
 }
 Test::ok $output=~/^ok 1$/m &&
-         $output=~/^ok 2 # skip skipping this subtest$/m &&
-         $output=~/^ok 3 # skip skipping this subtest$/m &&
+         $output=~/^ok 2 # skip skipping this subtest$/mi &&
+         $output=~/^ok 3 # skip skipping this subtest$/mi &&
          $output=~/^ok 4$/m;
 
 {
@@ -163,6 +163,6 @@ Test::ok $output=~/^ok 1$/m &&
     sok {1};
 }
 Test::ok $output=~/^ok 1$/m &&
-         $output=~/^ok 2 # skip skipping this subtest$/m &&
-         $output=~/^ok 3 # skip skipping this subtest$/m &&
+         $output=~/^ok 2 # skip skipping this subtest$/mi &&
+         $output=~/^ok 3 # skip skipping this subtest$/mi &&
          $output=~/^ok 4$/m;
