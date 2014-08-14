@@ -85,6 +85,15 @@ sub post_config {
         $self->{rev} = 0; # unknown
     }
 
+    ($self->{revminor}) = $self->{version} =~ m|/\d\.(\d)|;
+
+    if ($self->{revminor}) {
+        debug "Matched Apache revminor $self->{version} $self->{revminor}";
+    }
+    else {
+        $self->{revminor} = 0;
+    }
+
     $self;
 }
 
@@ -126,7 +135,14 @@ sub pid_file {
 
 sub dversion {
     my $self = shift;
-    "-D APACHE$self->{rev}";
+
+    my $dv = "-D APACHE$self->{rev}";
+
+    if ($self->{rev} == 2 and $self->{revminor} == 4) {
+        $dv .= " -D APACHE2_4";
+    }
+
+    return $dv;
 }
 
 sub config_defines {

@@ -6,6 +6,10 @@ Changes - Apache::Test change logfile
 
 =over 3
 
+=item 1.39-dev
+
+CPAN RT#87620: Add -D APACHE2_4 to identify httpd-2.4. [Michael Schout]
+
 =item 1.38 Aug 6 2012
 
 Fix log_watch.t on Windows, which can't (naturally) delete open files.
