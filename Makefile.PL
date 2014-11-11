@@ -146,6 +146,12 @@ sub set_version {
     close $fh;
 }
 
+sub add_dep {
+    my($string, $targ, $add) = @_;
+    $$string =~ s/($targ\s+::)/$1 $add/;
+}
+
+no warnings 'redefine';
 sub MY::postamble {
     my $self = shift;
 
@@ -160,10 +166,7 @@ EOF
     return $string;
 }
 
-sub add_dep {
-    my($string, $targ, $add) = @_;
-    $$string =~ s/($targ\s+::)/$1 $add/;
-}
+
 
 sub MY::test {
     my $self = shift;
