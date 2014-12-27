@@ -376,7 +376,7 @@ sub httpd_config {
             # not sure what else could go wrong but we can't continue
             die "something is wrong, mod_perl 2.0 build should have " .
                 "supplied all the needed information to run the tests. " .
-                "Please post lib/Apache/BuildConfig.pm along with the " .
+                "Please post lib/Apache2/BuildConfig.pm along with the " .
                 "bug report";
         }
 
