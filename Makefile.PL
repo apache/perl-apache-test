@@ -98,14 +98,14 @@ check_prereqs();
 
 sub check_prereqs {
     my %fail = ();
-    for (keys %prereq) {
+    for (sort keys %prereq) {
         unless (chk_version($_, $prereq{$_})) {
             $fail{$_} = $prereq{$_};
         }
     }
     if (%fail) {
         error "\nThe following Apache-Test dependencies aren't satisfied:",
-            map { "\t$_: $fail{$_}" } keys %fail;
+            map { "\t$_: $fail{$_}" } sort keys %fail;
         error "Install those from http://search.cpan.org and try again";
         exit 0;
     }
