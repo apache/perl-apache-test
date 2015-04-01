@@ -153,7 +153,7 @@ sub passenv {
 sub passenv_makestr {
     my @vars;
 
-    for (keys %passenv) {
+    for (sort keys %passenv) {
         push @vars, "$_=\$($_)";
     }
 
@@ -1124,7 +1124,7 @@ sub clean {
     $self->cmodules_clean;
     $self->sslca_clean;
 
-    for (keys %{ $self->{clean}->{files} }) {
+    for (sort keys %{ $self->{clean}->{files} }) {
         if (-e $_) {
             debug "unlink $_";
             unlink $_;
@@ -1620,7 +1620,7 @@ sub generate_httpd_conf {
     # but wasn't included in the system-wide httpd.conf
 
     print $out "<IfModule mod_alias.c>\n";
-    for (keys %aliases) {
+    for (sort keys %aliases) {
         next unless $vars->{$aliases{$_}};
         print $out "    Alias /getfiles-$_ $vars->{$aliases{$_}}\n";
     }
@@ -1672,7 +1672,7 @@ sub need_reconfiguration {
     # last run and thus avoid the reconfiguration?
     {
         my $passenv = passenv();
-        if (my @env_vars = grep { $ENV{$_} } keys %$passenv) {
+        if (my @env_vars = sort grep { $ENV{$_} } keys %$passenv) {
             push @reasons, "environment variables (@env_vars) are set";
         }
     }
