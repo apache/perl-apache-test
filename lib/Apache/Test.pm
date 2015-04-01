@@ -42,7 +42,7 @@ $VERSION = '1.38';
 my @need = qw(need_lwp need_http11 need_cgi need_access need_auth
               need_module need_apache need_min_apache_version
               need_apache_version need_perl need_min_perl_version
-              need_min_module_version need_threads need_apache_mpm
+              need_min_module_version need_threads need_fork need_apache_mpm
               need_php need_php4 need_ssl need_imagemap need_cache_disk);
 
 my @have = map { (my $need = $_) =~ s/need/have/; $need } @need;
@@ -594,6 +594,22 @@ sub need_threads {
     return $status;
 }
 
+sub need_fork {
+    my $have_fork = $Config{d_fork} ||
+                    $Config{d_pseudofork} ||
+                    (($^O eq 'MSWin32' || $^O eq 'NetWare') &&
+                     $Config{useithreads} &&
+                     $Config{ccflags} =~ /-DPERL_IMPLICIT_SYS/);
+
+     if (!$have_fork) {
+         push @SkipReasons, 'The fork function is unimplemented';
+         return 0;
+     }
+     else {
+         return 1;
+     }
+}
+
 sub under_construction {
     push @SkipReasons, "This test is under construction";
     return 0;
@@ -898,6 +914,10 @@ For example:
   plan tests => 5, need_min_perl_version("5.008001");
 
 requires Perl 5.8.1 or higher.
+
+=item need_fork
+
+Requires the perl built-in function C<fork> to be implemented.
 
 =item need_module
 

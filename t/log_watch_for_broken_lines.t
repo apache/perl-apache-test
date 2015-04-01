@@ -7,7 +7,7 @@ use Apache::Test;
 use Apache::TestUtil qw/t_start_file_watch t_file_watch_for
 			t_cmp t_catfile t_append_file/;
 
-plan tests => 5;
+plan tests => 5, need_fork;
 
 my $fn=t_catfile(Apache::Test::vars->{t_logs}, 'watch');
 unlink $fn;
