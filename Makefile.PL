@@ -124,7 +124,7 @@ sub chk_version {
 
     my $vstr = ${"${pkg}::VERSION"} ? "found v" . ${"${pkg}::VERSION"}
         : "not found";
-    my $vnum = ${"${pkg}::VERSION"} || 0;
+    my $vnum = eval(${"${pkg}::VERSION"}) || 0;
 
     print $vnum >= $wanted ? "ok\n" : " " . $vstr . "\n";
 
