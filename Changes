@@ -6,7 +6,7 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.39-rc1
+=item 1.39 Apr 21 2015
 
 Test scripts can now test if perl has a fork() implementation available by
 using the Apache::Test::need_fork() function. [Steve Hay]
