@@ -46,6 +46,7 @@ my $cakey    = 'keys/ca.pem';
 my $cacert   = 'certs/ca.crt';
 my $capolicy = '-policy policy_anything';
 my $cacrl    = 'crl/ca-bundle.crl';
+my $dgst     = 'sha256';
 
 #we use the same password for everything
 my $pass    = 'httpd';
@@ -56,6 +57,12 @@ my $passout = "-passout pass:$pass";
 my $email_field = Apache::Test::normalize_vstring($version) <
                   Apache::Test::normalize_vstring("0.9.7") ?
                   "Email" : "emailAddress";
+
+# downgrade to SHA-1 for OpenSSL before 0.9.8
+if (Apache::Test::normalize_vstring($version) <
+    Apache::Test::normalize_vstring("0.9.8")) {
+    $dgst = 'sha1';
+}
 
 my $ca_dn = {
     asf => {
@@ -211,7 +218,7 @@ sub config_file {
 distinguished_name     = req_distinguished_name
 attributes             = req_attributes
 prompt                 = no
-default_bits           = 1024
+default_bits           = 2048
 output_password        = $pass
 
 [ req_distinguished_name ]
@@ -242,7 +249,7 @@ private_key      = $cakey       # The private key
 
 default_days     = 365          # how long to certify for
 default_crl_days = 365          # how long before next CRL
-default_md       = sha1         # which md to use.
+default_md       = $dgst        # which md to use.
 preserve         = no           # keep passed DN ordering
 
 [ policy_anything ]
@@ -305,12 +312,12 @@ sub new_key {
         #this takes a long time so just do it once
         #don't do this in real life
         unless (-e 'dsa-param') {
-            openssl dsaparam => '-inform PEM -out dsa-param 1024';
+            openssl dsaparam => '-inform PEM -out dsa-param 2048';
         }
         openssl gendsa => "dsa-param $out";
     }
     else {
-        openssl genrsa => "$out 1024";
+        openssl genrsa => "$out 2048";
     }
 }
 
@@ -550,6 +557,10 @@ sub version {
     my $version = qx($openssl version);
     return $1 if $version =~ /^OpenSSL (\S+) /;
     return 0;
+}
+
+sub dgst {
+    return $dgst;
 }
 
 1;
