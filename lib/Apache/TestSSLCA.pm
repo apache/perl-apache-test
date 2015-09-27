@@ -228,7 +228,7 @@ L                      = $dn->{L}
 O                      = $dn->{O}
 OU                     = $dn->{OU}
 CN                     = $dn->{CN}
-emailAddress           = $dn->{$email_field}
+$email_field           = $dn->{$email_field}
 
 [ req_attributes ]
 challengePassword      = $pass
@@ -259,7 +259,7 @@ localityName            = optional
 organizationName        = optional
 organizationalUnitName  = optional
 commonName              = supplied
-emailAddress            = optional
+$email_field            = optional
 
 [ comment ]
 nsComment = This Is A Comment
@@ -561,6 +561,10 @@ sub version {
 
 sub dgst {
     return $dgst;
+}
+
+sub email_field {
+    return $email_field;
 }
 
 1;
