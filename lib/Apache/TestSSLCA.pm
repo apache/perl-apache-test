@@ -53,6 +53,10 @@ my $pass    = 'httpd';
 my $passin  = "-passin pass:$pass";
 my $passout = "-passout pass:$pass";
 
+# (limited) subjectAltName otherName testing
+my $san_msupn  = ', otherName:msUPN;UTF8:$mail';
+my $san_dnssrv = ', otherName:1.3.6.1.5.5.7.8.7;IA5:_https.$CN';
+
 # in 0.9.7 s/Email/emailAddress/ in DN
 my $email_field = Apache::Test::normalize_vstring($version) <
                   Apache::Test::normalize_vstring("0.9.7") ?
@@ -62,6 +66,8 @@ my $email_field = Apache::Test::normalize_vstring($version) <
 if (Apache::Test::normalize_vstring($version) <
     Apache::Test::normalize_vstring("0.9.8")) {
     $dgst = 'sha1';
+    # otherNames in x509v3_config are not supported either
+    $san_msupn = $san_dnssrv = "";
 }
 
 my $ca_dn = {
@@ -214,6 +220,9 @@ sub config_file {
     writefile($db, '', 1);
 
     writefile($file, <<EOF);
+mail                   = $dn->{$email_field}
+CN                     = $dn->{CN}
+
 [ req ]
 distinguished_name     = req_distinguished_name
 attributes             = req_attributes
@@ -227,8 +236,8 @@ ST                     = $dn->{ST}
 L                      = $dn->{L}
 O                      = $dn->{O}
 OU                     = $dn->{OU}
-CN                     = $dn->{CN}
-$email_field           = $dn->{$email_field}
+CN                     = \$CN
+$email_field           = \$mail
 
 [ req_attributes ]
 challengePassword      = $pass
@@ -261,10 +270,13 @@ organizationalUnitName  = optional
 commonName              = supplied
 $email_field            = optional
 
-[ comment ]
+[ client_ok_ext ]
 nsComment = This Is A Comment
 1.3.6.1.4.1.18060.12.0 = DER:0c064c656d6f6e73
+subjectAltName = email:\$mail$san_msupn
 
+[ server_ext ]
+subjectAltName = DNS:\$CN$san_dnssrv
 EOF
 
     return $file;
@@ -336,7 +348,9 @@ sub sign_cert {
     my $name = shift;
     my $exts = '';
 
-    $exts = ' -extensions comment' if $name =~ /client_ok/;
+    $exts = ' -extensions client_ok_ext' if $name =~ /client_ok/;
+
+    $exts = ' -extensions server_ext' if $name =~ /server/;
 
     openssl ca => "$capolicy -in csr/$name.csr -out certs/$name.crt",
                   $passin, config($name), '-batch', $exts;
