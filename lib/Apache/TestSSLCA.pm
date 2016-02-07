@@ -326,7 +326,7 @@ sub new_key {
         unless (-e 'dsa-param') {
             openssl dsaparam => '-inform PEM -out dsa-param 2048';
         }
-        openssl gendsa => "dsa-param $out";
+        openssl gendsa => "$out dsa-param";
     }
     else {
         openssl genrsa => "$out 2048";
