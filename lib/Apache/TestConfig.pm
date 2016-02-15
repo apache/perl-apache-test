@@ -1558,8 +1558,6 @@ sub generate_httpd_conf {
     $self->generate_index_html;
 
     $self->gendir($vars->{t_logs});
-    # Directory for CTSCTStorage is needed, otherwise mod_ssl_ct does not load
-    $self->gendir(catdir $vars->{t_logs}, "ssl_ct_storage");
     $self->gendir($vars->{t_conf});
 
     my @very_last_postamble = ();
