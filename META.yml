@@ -8,6 +8,8 @@ requires:
 
 distribution_type: module
 
+license: apache_2_0
+
 no_index:
     package:
         - HTTP::Request::Common
