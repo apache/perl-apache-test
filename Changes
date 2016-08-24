@@ -8,6 +8,16 @@ Changes - Apache::Test change logfile
 
 =item 1.40-dev
 
+Specify licence (Apache 2.0) in META.yml. [Steve Hay, CPAN RT#111359]
+
+Fix broken POD. [Steve Hay]
+
+Switch argument order in "openssl gendsa". [rjung]
+
+Add (limited) checks for *_SAN_*_n and *_DN_Email variables. [kbrand]
+
+Update key sizes and message digest to what is common in 2015. [kbrand]
+
 =item 1.39 Apr 21 2015
 
 Test scripts can now test if perl has a fork() implementation available by
