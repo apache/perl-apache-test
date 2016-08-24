@@ -6,7 +6,7 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.40-dev
+=item 1.40-rc1
 
 Specify licence (Apache 2.0) in META.yml. [Steve Hay, CPAN RT#111359]
 
