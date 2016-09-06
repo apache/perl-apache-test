@@ -158,12 +158,13 @@ no warnings 'redefine';
 sub MY::postamble {
     my $self = shift;
 
+    my $q = ($^O =~ /MSWin32/i ? '"' : "'");
+
     my $string = $self->MM::postamble;
 
-    $string .= <<'EOF';
+    $string .= <<"EOF";
 tag :
-	svn copy https://svn.apache.org/repos/asf/perl/Apache-Test/trunk https://svn.apache.org/repos/asf/perl/Apache-Test/tags/$(VERSION_SYM)
-	@echo update lib/Apache/Test.pm VERSION now
+	svn copy -m $q\$(VERSION_SYM) tag$q https://svn.apache.org/repos/asf/perl/Apache-Test/trunk https://svn.apache.org/repos/asf/perl/Apache-Test/tags/\$(VERSION_SYM)
 EOF
 
     return $string;
