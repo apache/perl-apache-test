@@ -40,7 +40,7 @@ use vars qw(@ISA @EXPORT %EXPORT_TAGS $VERSION %SubTests @SkipReasons);
 $VERSION = '1.41';
 
 my @need = qw(need_lwp need_http11 need_cgi need_access need_auth
-              need_module need_apache need_min_apache_version
+              need_module need_apache need_min_apache_version need_min_apache_fix
               need_apache_version need_perl need_min_perl_version
               need_min_module_version need_threads need_fork need_apache_mpm
               need_php need_php4 need_ssl need_imagemap need_cache_disk);
@@ -499,6 +499,38 @@ sub need_min_apache_version {
     }
 }
 
+sub need_min_apache_fix {
+    my @wantlevels = @_;
+    my $cfg = Apache::Test::config();
+    (my $current) = $cfg->{server}->{version} =~ m:^Apache/(\d)\.(\d+)\.(\d+):;
+    my $current_major = $1;
+    my $current_minor = $2;
+    my $current_micro = $3;
+
+    foreach(@wantlevels) { 
+        if ($_ =~ m/(\d)\.(\d+)\.(\d+)/) { 
+             print "matched";
+        }
+        my $wanted_major = $1;
+        my $wanted_minor = $2;
+        my $wanted_micro = $3;
+        if ($wanted_major eq $current_major && $wanted_minor eq $current_minor) { 
+            if (normalize_vstring($wanted_micro) < normalize_vstring($current_micro)) {
+                push @SkipReasons,
+                     "apache version $_ or higher is required," .
+                         " this is version $current";
+                return 0;
+            }
+            else { 
+                return 1;
+            }
+        }
+    }
+
+    # We didn't match major+minor, run the test and let the author sort it out
+    return 1;
+}
+
 sub need_apache_version {
     my $wanted = shift;
     my $cfg = Apache::Test::config();
@@ -881,6 +913,16 @@ For example:
   plan tests => 5, need_apache_version("2.0.40");
 
 requires Apache 2.0.40.
+
+=item need_min_apache_fix
+
+Used to require a particular micro version from corresponding minor release
+
+For example:
+
+  plan tests => 5, need_min_apache_fix("2.0.40", "2.2.30", "2.4.18");
+
+requires Apache 2.0.40 or higher.
 
 =item need_apache_mpm
 
