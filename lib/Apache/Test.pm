@@ -502,20 +502,18 @@ sub need_min_apache_version {
 sub need_min_apache_fix {
     my @wantlevels = @_;
     my $cfg = Apache::Test::config();
-    (my $current) = $cfg->{server}->{version} =~ m:^Apache/(\d)\.(\d+)\.(\d+):;
-    my $current_major = $1;
-    my $current_minor = $2;
-    my $current_micro = $3;
+    (my $current) = $cfg->{server}->{version} =~ m:^Apache/((\d)\.(\d+)\.(\d+)):;
+    my $current_major = $2;
+    my $current_minor = $3;
+    my $current_micro = $4;
 
     foreach(@wantlevels) { 
-        if ($_ =~ m/(\d)\.(\d+)\.(\d+)/) { 
-             print "matched";
-        }
+        $_ =~ m/(\d)\.(\d+)\.(\d+)/;
         my $wanted_major = $1;
         my $wanted_minor = $2;
         my $wanted_micro = $3;
         if ($wanted_major eq $current_major && $wanted_minor eq $current_minor) { 
-            if (normalize_vstring($wanted_micro) < normalize_vstring($current_micro)) {
+            if (normalize_vstring($wanted_micro) >= normalize_vstring($current_micro)) {
                 push @SkipReasons,
                      "apache version $_ or higher is required," .
                          " this is version $current";
