@@ -87,7 +87,7 @@ sub server_file_rel2abs {
                        'user-supplied $base' ],
                  [ $self->{inherit_config}->{ServerRoot},
                        'httpd.conf inherited ServerRoot' ],
-                 [ $self->apxs('PREFIX'),
+                 [ $self->apxs('PREFIX', 1),
                        'apxs-derived ServerRoot' ]);
 
     # remove surrounding quotes if any
