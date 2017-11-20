@@ -92,6 +92,9 @@ my $cert_dn = {
     },
     client_ok => {
     },
+    client_colon => {
+        CN => "user:colon",
+    },
     client_revoked => {
     },
     server => {
