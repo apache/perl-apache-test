@@ -1027,6 +1027,8 @@ sub perlscript_header {
         push @dirs, $dir if -d $dir;
     }
 
+    push @dirs, canonpath $FindBin::Bin;
+    
     my $dirs = join("\n    ", '', @dirs) . "\n";;
 
     return <<"EOF";
