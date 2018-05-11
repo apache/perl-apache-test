@@ -218,9 +218,9 @@ sub config_file {
     return $file if -e $file;
 
     my $dn = dn($name);
-    my $db = sslca_db($name);
+    my $db = SSLCA_DB;
 
-    writefile($db, '', 1);
+    writefile($db, '', 1) unless -e $db;
 
     writefile($file, <<EOF);
 mail                   = $dn->{$email_field}
@@ -369,11 +369,6 @@ sub export_cert {
                       "-out export/$name.p12", $passin, $passout;
 }
 
-sub sslca_db {
-    my $name = shift;
-    return "$name-" . SSLCA_DB;
-}
-
 sub revoke_cert {
     my $name = shift;
 
@@ -381,15 +376,6 @@ sub revoke_cert {
 
     #revokes in the SSLCA_DB database
     openssl ca => "-revoke certs/$name.crt", @args;
-
-    my $db = sslca_db($name);
-    unless (-e $db) {
-        #hack required for win32
-        my $new = join '.', $db, 'new';
-        if (-e $new) {
-            cp $new, $db;
-        }
-    }
 
     #generates crl from the index.txt database
     openssl ca => "-gencrl -out $cacrl", @args;
