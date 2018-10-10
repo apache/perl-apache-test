@@ -304,7 +304,7 @@ sub new {
         $vars->{sslproto} = Apache::TestSSLCA::sslproto();
     }
     else {
-        $vars->{sslproto} = 'all';
+        $vars->{sslproto} ||= 'all';
     }
 
     $vars->{t_logs}       ||= catfile $vars->{serverroot}, 'logs';
