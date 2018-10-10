@@ -86,6 +86,7 @@ use vars qw(%Usage);
    proxyssl_url    => 'url for testing ProxyPass / https (default is localhost)',
    sslca           => 'location of SSL CA (default is $t_conf/ssl/ca)',
    sslcaorg        => 'SSL CA organization to use for tests (default is asf)',
+   sslproto        => 'SSL/TLS protocol version(s) to test',
    libmodperl      => 'path to mod_perl\'s .so (full or relative to LIBEXECDIR)',
    defines         => 'values to add as -D defines (for example, "VAR1 VAR2")',
    (map { $_ . '_module_name', "$_ module name"} qw(cgi ssl thread access auth php)),
@@ -296,6 +297,16 @@ sub new {
     $vars->{t_conf}       ||= catfile $vars->{serverroot}, 'conf';
     $vars->{sslca}        ||= catfile $vars->{t_conf}, 'ssl', 'ca';
     $vars->{sslcaorg}     ||= 'asf';
+
+    if (!defined($vars->{sslproto})) {
+        require Apache::TestSSLCA;
+
+        $vars->{sslproto} = Apache::TestSSLCA::sslproto();
+    }
+    else {
+        $vars->{sslproto} = 'all';
+    }
+
     $vars->{t_logs}       ||= catfile $vars->{serverroot}, 'logs';
     $vars->{t_conf_file}  ||= catfile $vars->{t_conf},   'httpd.conf';
     $vars->{t_pid_file}   ||= catfile $vars->{t_logs},   'httpd.pid';

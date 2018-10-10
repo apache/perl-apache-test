@@ -70,6 +70,20 @@ if (Apache::Test::normalize_vstring($version) <
     $san_msupn = $san_dnssrv = "";
 }
 
+my $sslproto = "all";
+
+if (Apache::Test::normalize_vstring($version) >= 
+    Apache::Test::normalize_vstring("1.1.1")
+    && !defined(&Net::SSLeay::CTX_set_post_handshake_auth)) {
+    # OpenSSL 1.1.1 disables PHA by default client-side in TLSv1.3 but
+    # most clients are not updated to enable it (at time of writing).
+    # Many mod_ssl tests require working PHA, so disable v1.3 unless
+    # using an updated Net::SSLeay. This is strictly insufficient
+    # since an updated IO::Socket::SSL is also needed; to be
+    # continued.  Ref: https://github.com/openssl/openssl/issues/6933
+    $sslproto = "all -TLSv1.3";
+}
+
 my $ca_dn = {
     asf => {
         C  => 'US',
@@ -568,6 +582,10 @@ sub dgst {
 
 sub email_field {
     return $email_field;
+}
+
+sub sslproto {
+    return $sslproto;
 }
 
 1;
