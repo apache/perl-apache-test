@@ -23,6 +23,7 @@ use DirHandle ();
 use File::Path ();
 use File::Copy 'cp';
 use File::Basename;
+use Net::SSLeay;
 use Apache::TestConfig ();
 use Apache::TestTrace;
 
