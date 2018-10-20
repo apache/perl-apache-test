@@ -656,6 +656,15 @@ sub set_client_cert {
     }
 }
 
+# Only for IO::Socket:SSL raw socket compatibility,
+# when using user_agent() already done in its
+# constructor.
+sub set_ca_cert {
+    my $vars = Apache::Test::vars();
+    my $cafile = "$vars->{sslca}/$vars->{sslcaorg}/certs/ca.crt";
+    $conn_opts->{SSL_ca_file} = $cafile;
+}
+
 #want news: urls to work with the LWP shortcuts
 #but cant find a clean way to override the default nntp port
 #by brute force we trick Net::NTTP into calling FixupNNTP::new
