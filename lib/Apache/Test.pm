@@ -316,7 +316,7 @@ sub need_http11 {
 
 sub need_ssl {
     my $vars = vars();
-    need_module([$vars->{ssl_module_name}, 'Net::SSL']);
+    need_module([$vars->{ssl_module_name}, 'IO::Socket::SSL']);
 }
 
 sub need_lwp {

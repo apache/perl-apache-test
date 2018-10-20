@@ -84,6 +84,7 @@ require Exporter;
 
 my $UA;
 my $REDIR = $have_lwp ? undef : 1;
+my $conn_opts = {};
 
 sub module {
     my $module = shift;
@@ -165,8 +166,8 @@ sub user_agent {
         my $vars = Apache::Test::vars();
         my $cafile = "$vars->{sslca}/$vars->{sslcaorg}/certs/ca.crt";
         $args->{ssl_opts}->{SSL_ca_file} = $cafile;
-        # Net:SSL compatibility (legacy)
-        $ENV{HTTPS_CA_FILE} = $cafile;
+        # IO::Socket:SSL raw socket compatibility
+        $conn_opts->{SSL_ca_file} = $cafile;
     }
 
     eval { $UA ||= __PACKAGE__->new(%$args); };
@@ -292,9 +293,10 @@ sub vhost_socket {
     my(%args) = (PeerAddr => $host, PeerPort => $port);
 
     if ($module and $module =~ /ssl/) {
-        require Net::SSL;
-        local $ENV{https_proxy} ||= ""; #else uninitialized value in Net/SSL.pm
-        return Net::SSL->new(%args, Timeout => UA_TIMEOUT);
+        require IO::Socket::SSL;
+        # Add all conn_opts to args
+        map {$args{$_} = $conn_opts->{$_}} keys %{$conn_opts};
+        return IO::Socket::SSL->new(%args, Timeout => UA_TIMEOUT);
     }
     else {
         require IO::Socket;
@@ -302,11 +304,11 @@ sub vhost_socket {
     }
 }
 
-#Net::SSL::getline is nothing like IO::Handle::getline
+#IO::Socket::SSL::getline is nothing like IO::Handle::getline
 #could care less about performance here, just need a getline()
 #that returns the same results with or without ssl
 my %getline = (
-    'Net::SSL' => sub {
+    'IO::Socket::SSL' => sub {
         my $self = shift;
         my $buf = '';
         my $c = '';
@@ -629,7 +631,9 @@ sub set_client_cert {
 
     if ($name) {
         my ($cert, $key) = ("$dir/certs/$name.crt", "$dir/keys/$name.pem");
-        @ENV{qw/HTTPS_CERT_FILE HTTPS_KEY_FILE/} = ($cert, $key);
+        # IO::Socket:SSL raw socket compatibility
+        $conn_opts->{SSL_cert_file} = $cert;
+        $conn_opts->{SSL_key_file} = $key;
         if ($LWP::VERSION >= 6.0) {
             # IO::Socket:SSL doesn't look at environment variables
             if ($UA) {
@@ -642,9 +646,9 @@ sub set_client_cert {
         }
     }
     else {
-        for (qw(CERT KEY)) {
-            delete $ENV{"HTTPS_${_}_FILE"};
-        }
+        # IO::Socket:SSL raw socket compatibility
+        $conn_opts->{SSL_cert_file} = undef;
+        $conn_opts->{SSL_key_file} = undef;
         if ($LWP::VERSION >= 6.0 and $UA) {
             $UA->ssl_opts(SSL_cert_file => undef);
             $UA->ssl_opts(SSL_key_file  => undef);
