@@ -304,27 +304,9 @@ sub vhost_socket {
     }
 }
 
-#IO::Socket::SSL::getline is nothing like IO::Handle::getline
-#could care less about performance here, just need a getline()
-#that returns the same results with or without ssl
-my %getline = (
-    'IO::Socket::SSL' => sub {
-        my $self = shift;
-        my $buf = '';
-        my $c = '';
-        do {
-            $self->read($c, 1);
-            $buf .= $c;
-        } until ($c eq "\n" || $c eq "");
-        $buf;
-    },
-);
-
 sub getline {
     my $sock = shift;
-    my $class = ref $sock;
-    my $method = $getline{$class} || 'getline';
-    $sock->$method();
+    $sock->getline();
 }
 
 sub socket_trace {
