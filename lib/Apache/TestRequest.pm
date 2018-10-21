@@ -304,9 +304,44 @@ sub vhost_socket {
     }
 }
 
+#IO::Socket::SSL::getline does not correctly handle OpenSSL *_WANT_*.
+#Could care less about performance here, just need a getline()
+#that returns the same results with or without ssl.
+#Inspired from Net::SSLeay::ssl_read_all().
+my %getline = (
+    'IO::Socket::SSL' => sub {
+        my $self = shift;
+        # _get_ssl_object in IO::Socket::SSL only meant for internal use!
+        # But we need to compensate for unsufficient getline impl there.
+        my $ssl = $self->_get_ssl_object;
+        my ($got, $rv, $errs);
+        my $reply = '';
+    
+        while (1) {
+            ($got, $rv) = Net::SSLeay::read($ssl, 1);
+            if (! defined $got) {
+                my $err = Net::SSLeay::get_error($ssl, $rv);
+                if ($err != Net::SSLeay::ERROR_WANT_READ() and
+                    $err != Net::SSLeay::ERROR_WANT_WRITE()) {
+                    $errs = Net::SSLeay::print_errs('SSL_read');
+                    last;
+                }
+                next;
+            }
+            last if $got eq '';  # EOF
+            $reply .= $got;
+            last if $got eq "\n";
+        }
+
+        wantarray ? ($reply, $errs) : $reply;
+    },
+);
+
 sub getline {
     my $sock = shift;
-    $sock->getline();
+    my $class = ref $sock;
+    my $method = $getline{$class} || 'getline';
+    $sock->$method();
 }
 
 sub socket_trace {
