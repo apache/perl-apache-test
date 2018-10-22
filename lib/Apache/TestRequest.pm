@@ -292,7 +292,7 @@ sub vhost_socket {
     my($host, $port) = split ':', $hostport;
     my(%args) = (PeerAddr => $host, PeerPort => $port);
 
-    if ($module and $module =~ /ssl/) {
+    if ($module and ($module =~ /ssl/ || $module eq 'h2')) {
         require IO::Socket::SSL;
         # Add all conn_opts to args
         map {$args{$_} = $conn_opts->{$_}} keys %{$conn_opts};
