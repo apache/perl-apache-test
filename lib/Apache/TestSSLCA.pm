@@ -573,8 +573,8 @@ sub gendir {
 
 sub version {
     my $version = qx($openssl version);
-    return $1 if $version =~ /^OpenSSL (\S+) /;
-    return 0;
+    return $1 if $version =~ /^\S+SSL (\S+)/;
+    die "FATAL: unable to determine openssl version via `$openssl version` from: $version";
 }
 
 sub dgst {
