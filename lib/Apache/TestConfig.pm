@@ -524,6 +524,9 @@ sub configure_proxy {
         unless ($vars->{maxclients_preset}) {
             $vars->{minclients}++;
             $vars->{maxclients}++;
+            #In addition allow for some backend processes
+            #in keep-alive state
+            $vars->{maxclients} += 3;
         }
         $vars->{proxy} = $self->{vhosts}->{'mod_proxy'}->{hostport};
         return $vars->{proxy};
@@ -1409,6 +1412,9 @@ sub check_vars {
             unless ($vars->{maxclients_preset}) {
                 $vars->{minclients}++;
                 $vars->{maxclients}++;
+                #In addition allow for some backend processes
+                #in keep-alive state
+                $vars->{maxclients} += 3;
             }
         }
     }
