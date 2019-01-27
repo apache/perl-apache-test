@@ -82,6 +82,7 @@ use vars qw(%Usage);
    httpd_conf_extra=> 'inherit additional config from this file',
    minclients      => 'minimum number of concurrent clients (default is 1)',
    maxclients      => 'maximum number of concurrent clients (default is minclients+1)',
+   threadsperchild => 'number of threads per child when using threaded MPMs (default is 10)',
    perlpod         => 'location of perl pod documents (for testing downloads)',
    proxyssl_url    => 'url for testing ProxyPass / https (default is localhost)',
    sslca           => 'location of SSL CA (default is $t_conf/ssl/ca)',
@@ -326,6 +327,7 @@ sub new {
     $vars->{group}        ||= $self->default_group;
     $vars->{serveradmin}  ||= $self->default_serveradmin;
 
+    $vars->{threadsperchild} ||= 10;
     $vars->{minclients}   ||= 1;
     $vars->{maxclients_preset} = $vars->{maxclients} || 0;
     # if maxclients wasn't explicitly passed try to
@@ -338,13 +340,33 @@ sub new {
         $vars->{maxclients_preset} < $vars->{minclients}) {
         $vars->{minclients} = $vars->{maxclients_preset};
     }
+    if ($vars->{minclients} < 2) {
+        $vars->{maxspare} = 2;
+    } else {
+        $vars->{maxspare} = $vars->{minclients};
+    }
+    if ($vars->{maxclients} < $vars->{maxspare} + 1) {
+        $vars->{maxclients} = $vars->{maxspare} + 1;
+    }
 
-    # for threaded mpms MaxClients must be a multiple of
-    # ThreadsPerChild (i.e. maxclients % minclients == 0)
-    # so unless -maxclients was explicitly specified use a double of
-    # minclients
-    $vars->{maxclientsthreadedmpm} =
-        $vars->{maxclients_preset} || $vars->{minclients} * 2;
+    # for threaded mpms MinClients and MaxClients must be a
+    # multiple of ThreadsPerChild
+    {
+        use integer;
+        $vars->{minclientsthreadedmpm} = ($vars->{minclients} + $vars->{threadsperchild} - 1) /
+            $vars->{threadsperchild} * $vars->{threadsperchild};
+        $vars->{maxclientsthreadedmpm} = ($vars->{maxclients} + $vars->{threadsperchild} - 1) /
+            $vars->{threadsperchild} * $vars->{threadsperchild};
+        $vars->{maxsparethreadedmpm} = ($vars->{maxspare} + $vars->{threadsperchild} - 1) /
+            $vars->{threadsperchild} * $vars->{threadsperchild};
+        $vars->{startserversthreadedmpm} = $vars->{minclientsthreadedmpm} / $vars->{threadsperchild};
+    }
+    if ($vars->{maxsparethreadedmpm} < 2 * $vars->{threadsperchild}) {
+        $vars->{maxsparethreadedmpm} = 2 * $vars->{threadsperchild};
+    }
+    if ($vars->{maxclientsthreadedmpm} < $vars->{maxsparethreadedmpm} + $vars->{threadsperchild}) {
+        $vars->{maxclientsthreadedmpm} = $vars->{maxsparethreadedmpm} + $vars->{threadsperchild};
+    }
 
     $vars->{proxy}        ||= 'off';
     $vars->{proxyssl_url} ||= '';
@@ -524,8 +546,14 @@ sub configure_proxy {
         unless ($vars->{maxclients_preset}) {
             $vars->{minclients}++;
             $vars->{maxclients}++;
+            $vars->{maxspare}++;
+            $vars->{startserversthreadedmpm} ++;
+            $vars->{minclientsthreadedmpm} += $vars->{threadsperchild};
+            $vars->{maxclientsthreadedmpm} += $vars->{threadsperchild};
+            $vars->{maxsparethreadedmpm} += $vars->{threadsperchild};
             #In addition allow for some backend processes
-            #in keep-alive state
+            #in keep-alive state. For threaded MPMs we
+            #already should be fine.
             $vars->{maxclients} += 3;
         }
         $vars->{proxy} = $self->{vhosts}->{'mod_proxy'}->{hostport};
@@ -1412,8 +1440,14 @@ sub check_vars {
             unless ($vars->{maxclients_preset}) {
                 $vars->{minclients}++;
                 $vars->{maxclients}++;
+                $vars->{maxspare}++;
+                $vars->{startserversthreadedmpm} ++;
+                $vars->{minclientsthreadedmpm} += $vars->{threadsperchild};
+                $vars->{maxclientsthreadedmpm} += $vars->{threadsperchild};
+                $vars->{maxsparethreadedmpm} += $vars->{threadsperchild};
                 #In addition allow for some backend processes
-                #in keep-alive state
+                #in keep-alive state. For threaded MPMs we
+                #already should be fine.
                 $vars->{maxclients} += 3;
             }
         }
@@ -2200,10 +2234,10 @@ HostnameLookups Off
     LockFile             @t_logs@/accept.lock
 </IfVersion>
 </IfModule>
-    StartServers         1
-    MinSpareThreads      @MinClients@
-    MaxSpareThreads      @MinClients@
-    ThreadsPerChild      @MinClients@
+    StartServers         @StartServersThreadedMPM@
+    MinSpareThreads      @ThreadsPerChild@
+    MaxSpareThreads      @MaxSpareThreadedMPM@
+    ThreadsPerChild      @ThreadsPerChild@
     MaxClients           @MaxClientsThreadedMPM@
     MaxRequestsPerChild  0
 </IfModule>
@@ -2216,8 +2250,8 @@ HostnameLookups Off
 </IfModule>
     NumServers           1
     StartThreads         @MinClients@
-    MinSpareThreads      @MinClients@
-    MaxSpareThreads      @MinClients@
+    MinSpareThreads      1
+    MaxSpareThreads      @MaxSpare@
     MaxThreadsPerChild   @MaxClients@
     MaxRequestsPerChild  0
 </IfModule>
@@ -2229,8 +2263,8 @@ HostnameLookups Off
 </IfVersion>
 </IfModule>
     StartServers         @MinClients@
-    MinSpareServers      @MinClients@
-    MaxSpareServers      @MinClients@
+    MinSpareServers      1
+    MaxSpareServers      @MaxSpare@
     MaxClients           @MaxClients@
     MaxRequestsPerChild  0
 </IfModule>
@@ -2238,8 +2272,8 @@ HostnameLookups Off
 <IfDefine APACHE1>
     LockFile             @t_logs@/accept.lock
     StartServers         @MinClients@
-    MinSpareServers      @MinClients@
-    MaxSpareServers      @MinClients@
+    MinSpareServers      1
+    MaxSpareServers      @MaxSpare@
     MaxClients           @MaxClients@
     MaxRequestsPerChild  0
 </IfDefine>
