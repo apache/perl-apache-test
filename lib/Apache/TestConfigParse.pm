@@ -342,7 +342,7 @@ sub inherit_config_file_or_directory {
 
         (my $directive, $_) = split /\s+/, $_, 2;
 
-        if ($directive eq "Include") {
+        if ($directive eq "Include" or $directive eq "IncludeOptional") {
             foreach my $include (glob($self->server_file_rel2abs($_))) {
                 $self->inherit_config_file_or_directory($include);
             }
