@@ -63,6 +63,7 @@ use vars qw(%Usage);
    t_dir           => 'the t/ test directory (default is $top_dir/t)',
    t_conf          => 'the conf/ test directory (default is $t_dir/conf)',
    t_logs          => 'the logs/ test directory (default is $t_dir/logs)',
+   t_state         => 'the state/ test directory (default is $t_dir/state)',
    t_pid_file      => 'location of the pid file (default is $t_logs/httpd.pid)',
    t_conf_file     => 'test httpd.conf file (default is $t_conf/httpd.conf)',
    src_dir         => 'source directory to look for mod_foos.so',
@@ -94,7 +95,7 @@ use vars qw(%Usage);
 );
 
 my %filepath_conf_opts = map { $_ => 1 }
-    qw(top_dir t_dir t_conf t_logs t_pid_file t_conf_file src_dir serverroot
+    qw(top_dir t_dir t_conf t_logs t_state t_pid_file t_conf_file src_dir serverroot
        documentroot bindir sbindir httpd apxs httpd_conf httpd_conf_extra
        perlpod sslca libmodperl);
 
@@ -309,6 +310,7 @@ sub new {
     }
 
     $vars->{t_logs}       ||= catfile $vars->{serverroot}, 'logs';
+    $vars->{t_state}      ||= catfile $vars->{serverroot}, 'state';
     $vars->{t_conf_file}  ||= catfile $vars->{t_conf},   'httpd.conf';
     $vars->{t_pid_file}   ||= catfile $vars->{t_logs},   'httpd.pid';
 
@@ -1611,6 +1613,7 @@ sub generate_httpd_conf {
     $self->generate_index_html;
 
     $self->gendir($vars->{t_logs});
+    $self->gendir($vars->{t_state});
     $self->gendir($vars->{t_conf});
 
     my @very_last_postamble = ();
@@ -2205,6 +2208,9 @@ LogLevel    debug
 <IfVersion > 2.4.1>
     DefaultRunTimeDir "@t_logs@"
     LogLevel trace8
+</IfVersion>
+<IfVersion > 2.5.0>
+    DefaultStateDir "@t_state@"
 </IfVersion>
 </IfModule>
 
