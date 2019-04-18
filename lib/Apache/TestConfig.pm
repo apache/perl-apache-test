@@ -2209,8 +2209,10 @@ LogLevel    debug
     DefaultRunTimeDir "@t_logs@"
     LogLevel trace8
 </IfVersion>
-<IfVersion > 2.5.0>
+<IfVersion > 2.4.34>
+<IfDirective DefaultStateDir>
     DefaultStateDir "@t_state@"
+</IfDirective>
 </IfVersion>
 </IfModule>
 
