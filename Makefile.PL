@@ -74,6 +74,11 @@ my %prereq = (
     'Cwd'        => '2.06',
 );
 
+# Apache::TestServer uses Win32::Process on Windows.
+if ($^O =~ /MSWin32/i) {
+    $prereq{'Win32::Process'} = '0'
+}
+
 # Apache-Test/META.yml is excluded from mp2 distro to make PAUSE
 # indexer happy, but then perl Makefile.PL complains about a missing
 # META.yml, so autogenerate it if it wasn't in the distro
