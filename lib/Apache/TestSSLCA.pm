@@ -23,7 +23,6 @@ use DirHandle ();
 use File::Path ();
 use File::Copy 'cp';
 use File::Basename;
-use Net::SSLeay;
 use Apache::TestConfig ();
 use Apache::TestTrace;
 
@@ -73,6 +72,7 @@ if (Apache::Test::normalize_vstring($version) <
 
 my $sslproto = "all";
 
+eval { require Net::SSLeay; };
 if (Apache::Test::normalize_vstring($version) >= 
     Apache::Test::normalize_vstring("1.1.1")
     && !defined(&Net::SSLeay::CTX_set_post_handshake_auth)) {
