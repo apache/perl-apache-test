@@ -46,17 +46,6 @@ finddepth(sub {
     push @scripts, "$File::Find::dir/$1";
 }, '.');
 
-my $has_mp;
-eval { require mod_perl2 };
-if ($@) {
-    eval { require mod_perl };
-    if (!$@) {
-        $has_mp = 1;
-    }
-} else {
-    $has_mp = 2;
-} 
-
 for (@scripts) {
     Apache::TestMM::generate_script($_);
 }
