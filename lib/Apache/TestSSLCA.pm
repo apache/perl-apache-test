@@ -23,6 +23,7 @@ use DirHandle ();
 use File::Path ();
 use File::Copy 'cp';
 use File::Basename;
+use File::Spec::Functions qw(devnull);
 use Apache::TestConfig ();
 use Apache::TestTrace;
 
@@ -572,7 +573,8 @@ sub gendir {
 }
 
 sub version {
-    my $version = qx($openssl version);
+    my $devnull = devnull();
+    my $version = qx($openssl version 2>$devnull);
     return $1 if $version =~ /^\S+SSL (\S+)/;
     die "FATAL: unable to determine openssl version via `$openssl version` from: $version";
 }
