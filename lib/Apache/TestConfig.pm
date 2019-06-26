@@ -300,9 +300,7 @@ sub new {
     $vars->{sslca}        ||= catfile $vars->{t_conf}, 'ssl', 'ca';
     $vars->{sslcaorg}     ||= 'asf';
 
-    if (!defined($vars->{sslproto})) {
-        require Apache::TestSSLCA;
-
+    if (!defined($vars->{sslproto}) and eval { require Apache::TestSSLCA; 1; }) {
         $vars->{sslproto} = Apache::TestSSLCA::sslproto();
     }
     else {
