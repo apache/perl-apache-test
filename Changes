@@ -6,7 +6,7 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.41-rc1
+=item 1.41 Jul 11 2019
 
 Set DefaultStateDir for > 2.5.1 and add -t_state to override. [jorton]
 
