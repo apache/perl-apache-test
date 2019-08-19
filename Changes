@@ -6,7 +6,7 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.42-dev
+=item 1.42-rc1
 
 Fix loading apache_test_config.pm for recent perls in which '.' is
 no longer in @INC by default. [Steve Hay]
