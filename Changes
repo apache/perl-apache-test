@@ -8,6 +8,9 @@ Changes - Apache::Test change logfile
 
 =item 1.42-dev
 
+Fix loading apache_test_config.pm for recent perls in which '.' is
+no longer in @INC by default. [Steve Hay]
+
 =item 1.41 Jul 11 2019
 
 Set DefaultStateDir for > 2.5.1 and add -t_state to override. [jorton]
