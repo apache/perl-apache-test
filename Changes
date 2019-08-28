@@ -6,6 +6,8 @@ Changes - Apache::Test change logfile
 
 =over 3
 
+=item 1.43-dev
+
 =item 1.42 Aug 28 2019
 
 Fix loading apache_test_config.pm for recent perls in which '.' is
