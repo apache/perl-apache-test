@@ -1782,6 +1782,11 @@ sub which {
 
     return undef unless $program;
 
+    # No need to search PATH components
+    # if $program already contains a path
+    return $program if !OSX and !WINFU and
+        $program =~ /\// and -f $program and -x $program;
+
     my @dirs = File::Spec->path();
 
     require Config;
