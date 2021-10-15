@@ -6,7 +6,7 @@ Changes - Apache::Test change logfile
 
 =over 3
 
-=item 1.43-dev
+=item 1.43-rc1
 
 Our implementation of "which" should not search
 for a program in the elements of PATH when program
