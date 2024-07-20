@@ -427,7 +427,7 @@ sub need_cache_disk {
 
 
 sub need_php {
-    return _need_multi(qw(php4 php5 sapi_apache2.c));
+    return _need_multi(qw(php4 php5 php7 php sapi_apache2.c));
 }
 
 sub need_php4 {
