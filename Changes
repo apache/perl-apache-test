@@ -8,6 +8,10 @@ Changes - Apache::Test change logfile
 
 =item 1.44-dev
 
+Switch des3 encryption of keys to aes256. Switch generation of
+DSA certificates to ECDSA certificates. Remove dependency on
+the legacy provider in OpenSSL. [minfrin]
+
 =item 1.43 Nov 7 2021
 
 Our implementation of "which" should not search

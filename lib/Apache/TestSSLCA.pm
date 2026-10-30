@@ -50,9 +50,10 @@ my $cacrl    = 'crl/ca-bundle.crl';
 my $dgst     = 'sha256';
 
 #we use the same password for everything
-my $pass    = 'httpd';
-my $passin  = "-passin pass:$pass";
-my $passout = "-passout pass:$pass";
+my $pass     = 'httpd';
+my $passin   = "-passin pass:$pass";
+my $passout  = "-passout pass:$pass";
+my $passpass = "-pass pass:$pass";
 
 # (limited) subjectAltName otherName testing
 my $san_msupn  = ', otherName:msUPN;UTF8:$mail';
@@ -121,23 +122,23 @@ my $cert_dn = {
         CN => 'localhost',
         OU => 'httpd-test/rsa-test-2',
     },
-    server_des3 => {
+    server_aes256 => {
         CN => 'localhost',
-        OU => 'httpd-test/rsa-des3-test',
+        OU => 'httpd-test/rsa-aes256-test',
     },
-    server2_des3 => {
+    server2_aes256 => {
         CN => 'localhost',
-        OU => 'httpd-test/rsa-des3-test-2',
+        OU => 'httpd-test/rsa-aes256-test-2',
     },
 };
 
-#generate DSA versions of the server certs/keys
+#generate ECDSA versions of the server certs/keys
 for my $key (keys %$cert_dn) {
     next unless $key =~ /^server/;
     my $val = $$cert_dn{$key};
-    my $name = join '_', $key, 'dsa';
+    my $name = join '_', $key, 'ecdsa';
     $cert_dn->{$name} = { %$val }; #copy
-    $cert_dn->{$name}->{OU} =~ s/rsa/dsa/;
+    $cert_dn->{$name}->{OU} =~ s/rsa/ecdsa/;
 }
 
 sub ca_dn {
@@ -347,20 +348,15 @@ sub new_ca {
 sub new_key {
     my $name = shift;
 
-    my $encrypt = @_ ? "@_ $passout" : "";
+    my $encrypt = @_ ? "@_ $passpass" : "";
 
     my $out = "-out keys/$name.pem $encrypt";
 
-    if ($name =~ /dsa/) {
-        #this takes a long time so just do it once
-        #don't do this in real life
-        unless (-e 'dsa-param') {
-            openssl dsaparam => '-inform PEM -out dsa-param 2048';
-        }
-        openssl gendsa => "$out dsa-param";
+    if ($name =~ /ecdsa/) {
+        openssl genpkey => "-algorithm EC -pkeyopt ec_paramgen_curve:prime256v1 $out";
     }
     else {
-        openssl genrsa => "$out 2048";
+        openssl genpkey => "-algorithm RSA -pkeyopt rsa_keygen_bits:2048 $out";
     }
 }
 
@@ -492,8 +488,8 @@ sub setup {
 
     for my $name (@names) {
         my @key_args = ();
-        if ($name =~ /_des3/) {
-            push @key_args, '-des3';
+        if ($name =~ /_aes256/) {
+            push @key_args, '-aes-256-cbc';
         }
 
         new_key($name, @key_args);
